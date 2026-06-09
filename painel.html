@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel — Wil Taekwondo</title>
+    <style>
+        body { font-family: sans-serif; background: #0a0a0a; color: #fff; padding: 20px; margin: 0; }
+        h2 { font-size: 22px; text-align: center; margin-bottom: 25px; }
+        .Abas-container { display: flex; gap: 10px; max-width: 1200px; margin: 0 auto 25px auto; }
+        .aba-botao { flex: 1; padding: 14px; background: #141414; color: #a0a0a0; border: 1px solid #262626; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; }
+        .aba-botao.ativa { background: #ff1a1a; color: #fff; border-color: #ff1a1a; }
+        .conteudo-secao { display: none; background: #141414; padding: 24px; border-radius: 8px; max-width: 1200px; margin: 0 auto; border: 1px solid #262626; box-sizing: border-box; }
+        .conteudo-secao.ativa { display: block; }
+        #aba-cadastro form { max-width: 500px; margin: 0 auto; }
+        .form-group { margin-bottom: 16px; display: flex; flex-direction: column; }
+        label { font-size: 12px; color: #a0a0a0; margin-bottom: 6px; text-transform: uppercase; }
+        input, select, textarea { padding: 12px; background: #222; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 14px; }
+        .btn-submit { width: 100%; padding: 14px; background: #ff1a1a; color: #fff; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; }
+        .tabela-wrapper { overflow-x: auto; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { padding: 12px 8px; text-align: left; color: #a0a0a0; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #262626; }
+        td { padding: 12px 8px; vertical-align: middle; }
+    </style>
+</head>
+<body>
+    <h2>Wil Taekwondo — Dojang</h2>
+    <div class="Abas-container">
+        <button class="aba-botao ativa" onclick="alternarAba('aba-chamada', this)">📅 Chamada</button>
+        <button class="aba-botao" onclick="alternarAba('aba-cadastro', this)">🥋 Matrícula</button>
+    </div>
+    <div id="aba-chamada" class="conteudo-secao ativa">
+        <h3>Lista de Chamada Diária</h3>
+        <div class="form-group"><input type="date" id="data_chamada" style="max-width: 200px;"></div>
+        <div class="tabela-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">Foto</th>
+                        <th>Nome</th>
+                        <th>Idade</th>
+                        <th>Graduação</th>
+                        <th>Treinos</th>
+                        <th style="text-align: center; width: 60px;">Editar</th> <th style="text-align: right;">Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaChamada"></tbody>
+            </table>
+        </div>
+    </div>
+    <div id="aba-cadastro" class="conteudo-secao">
+        <h3>Cadastrar Novo Aluno</h3>
+        <form id="formAluno">
+            <form id="formAluno">
+            <input type="hidden" id="aluno_id_edicao" value=""> 
+            <div class="form-group"><label>Nome Completo</label><input type="text" id="nome" required></div>
+            <div class="form-group"><label>Data de Nascimento</label><input type="date" id="data_nascimento" required></div>
+            <div class="form-group"><label>CPF</label><input type="text" id="cpf" placeholder="000.000.000-00"></div>
+            <div class="form-group">
+                <label>Graduação Atual</label>
+                <select id="faixa_inicial">
+                    <option value="Branca">10º Gub - Branca</option>
+                    <option value="Ponta Amarela">9º Gub - Branca Ponta Amarela</option>
+                    <option value="Amarela">8º Gub - Amarela</option>
+                    <option value="Ponta Verde">7º Gub - Amarela Ponta Verde</option>
+                    <option value="Verde">6º Gub - Verde</option>
+                    <option value="Ponta Azul">5º Gub - Verde Ponta Azul</option>
+                    <option value="Azul">4º Gub - Azul</option>
+                    <option value="Ponta Vermelha">3º Gub - Azul Ponta Vermelha</option>
+                    <option value="Vermelha">2º Gub - Vermelha</option>
+                    <option value="Ponta Preta">1º Gub - Vermelha Ponta Preta</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Dobok (cm)</label><input type="number" id="tamanho_dobok"></div>
+            <div class="form-group"><label>Faixa (cm)</label><input type="number" id="tamanho_faixa"></div>            
+            <div class="form-group"><label>Histórico Médico</label><textarea id="observacoes" rows="3"></textarea></div>
+            <div class="form-group">
+                <label>Obs:/Geral Desempenho</label>
+                <textarea id="observacoes" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Foto do Aluno (Para Carteirinha/Certificado)</label>
+                <input type="file" id="foto_aluno" accept="image/*">
+            </div>
+
+            <button type="submit" class="btn-submit">Gravar Aluno</button>
+        </form>
+    </div>
+    <script>
+        function alternarAba(secaoId, botaoClicado) {
+            document.querySelectorAll('.conteudo-secao').forEach(s => s.classList.remove('ativa'));
+            document.querySelectorAll('.aba-botao').forEach(b => b.classList.remove('ativa'));
+            document.getElementById(secaoId).classList.add('ativa');
+            botaoClicado.classList.add('ativa');
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="conexao.js"></script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -82,9 +83,10 @@
             transition: color 0.2s, text-shadow 0.2s;
         }
 
-        nav a:hover, nav .active {
+        nav a:hover,
+        nav .active {
             color: var(--text-main);
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
         /* Seção Hero de Impacto */
@@ -99,7 +101,10 @@
         .hero::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: linear-gradient(to bottom, transparent 60%, var(--dark-bg));
             pointer-events: none;
         }
@@ -139,10 +144,25 @@
         }
 
         @media (max-width: 900px) {
-            .main-container { grid-template-columns: 1fr; padding-bottom: 40px; }
-            header { padding: 15px 24px; flex-direction: column; gap: 15px; text-align: center; }
-            .hero h2 { font-size: 32px; }
-            .hero h2 span { font-size: 38px; }
+            .main-container {
+                grid-template-columns: 1fr;
+                padding-bottom: 40px;
+            }
+
+            header {
+                padding: 15px 24px;
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .hero h2 {
+                font-size: 32px;
+            }
+
+            .hero h2 span {
+                font-size: 38px;
+            }
         }
 
         /* Cartões Visuais */
@@ -203,8 +223,8 @@
             justify-content: space-between;
             align-items: center;
             padding: 14px 16px;
-            background-color: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 8px;
         }
 
@@ -244,11 +264,23 @@
             transition: transform 0.2s, filter 0.2s;
         }
 
-        .btn:active { transform: scale(0.98); }
-        .btn:hover { filter: brightness(1.1); }
+        .btn:active {
+            transform: scale(0.98);
+        }
 
-        .btn-nextfit { background-color: var(--info); color: #ffffff; }
-        .btn-whatsapp { background-color: var(--success); color: #ffffff; }
+        .btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn-nextfit {
+            background-color: var(--info);
+            color: #ffffff;
+        }
+
+        .btn-whatsapp {
+            background-color: var(--success);
+            color: #ffffff;
+        }
 
         /* Estilização da Imagem da Logo Interna */
         .card-logo {
@@ -281,7 +313,7 @@
 
         /* Rodapé Fino */
         footer {
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             padding: 32px 24px;
             text-align: center;
             font-size: 13px;
@@ -289,88 +321,108 @@
             border-top: 1px solid var(--card-border);
         }
 
-        footer p { margin: 4px 0; }
-        footer span { color: var(--text-main); font-weight: 500; }
-        footer .highlight { color: var(--primary); }
+        footer p {
+            margin: 4px 0;
+        }
+
+        footer span {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        footer .highlight {
+            color: var(--primary);
+        }
     </style>
 </head>
+
 <body>
 
-<header>
-    <div class="brand">
-        <h1>WIL <span>TKD</span></h1>
-        <div class="subtitle">Team Marchesini</div>
-    </div>
-    <nav>
-        <ul>
-            <li><a href="index.html" class="active">Início</a></li>
-            <li><a href="curriculo.html">Currículo</a></li>
-            <li><a href="exame.html">Exame</a></li>
-            <li><a href="formas.html">Formas</a></li>
-            <li><a href="dicionario.html">Dicionário</a></li>
-            <li><a href="historia.html">História</a></li>
-        </ul>
-    </nav>
-</header>
+    <header>
+        <div class="brand">
+            <h1>WIL <span>TKD</span></h1>
+            <div class="subtitle">Team Marchesini</div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html" class="active">Início</a></li>
+                <li><a href="curriculo.html">Currículo</a></li>
+                <li><a href="exame.html">Exame</a></li>
+                <li><a href="formas.html">Formas</a></li>
+                <li><a href="dicionario.html">Dicionário</a></li>
+                <li><a href="historia.html">História</a></li>
+            </ul>
+        </nav>
+    </header>
 
-<section class="hero">
-    <h2>FORMAÇÃO DE CAMPEÕES <span>PARA A VIDA</span></h2>
-    <p>"O Taekwondo é uma arte marcial coreana que, através do treinamento, possibilita aos alunos um corpo e mente fortes e saudáveis, com base no respeito e na humildade."</p>
-</section>
+    <section class="hero">
+        <h2>FORMAÇÃO DE CAMPEÕES <span>PARA A VIDA</span></h2>
+        <p>"O Taekwondo é uma arte marcial coreana que, através do treinamento, possibilita aos alunos um corpo e mente
+            fortes e saudáveis, com base no respeito e na humildade."</p>
+    </section>
 
-<main class="main-container">
-    <div class="card">
-        <div>
-            <h3>Horários & Treinos</h3>
-            <p>Turmas planejadas para o desenvolvimento marcial, foco, autocontrole e alta performance física.</p>
-            
-            <div class="schedule-box">
-                <div class="schedule-row">
-                    <span class="tag">Adultos</span>
-                    <span class="time">Terças & Quintas — 18:30h às 19:30h</span>
+    <main class="main-container">
+        <div class="card">
+            <div>
+                <h3>Horários & Treinos</h3>
+                <p>Turmas planejadas para o desenvolvimento marcial, foco, autocontrole e alta performance física.</p>
+
+                <div class="schedule-box">
+                    <div class="schedule-row">
+                        <span class="tag">Adultos</span>
+                        <span class="time">Terças & Quintas — 18:30h às 19:30h</span>
+                    </div>
+                    <div class="schedule-row">
+                        <span class="tag">Kids</span>
+                        <span class="time">Terças & Quintas — 19:30h às 20:30h</span>
+                    </div>
                 </div>
-                <div class="schedule-row">
-                    <span class="tag">Kids</span>
-                    <span class="time">Terças & Quintas — 19:30h às 20:30h</span>
-                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="https://agendamento.nextfit.com.br/ee5940af-b75d-4d4e-b098-b4db33903915" target="_blank"
+                    class="btn btn-nextfit">
+                    Agendar Aula Experimental (Nextfit)
+                </a>
+                <a href="https://api.whatsapp.com/send/?phone=5511948759648&text=Olá! Gostaria de saber mais sobre as aulas de Taekwondo."
+                    target="_blank" class="btn btn-whatsapp">
+                    Fale Conosco via WhatsApp
+                </a>
             </div>
         </div>
 
-        <div class="action-buttons">
-            <a href="https://agendamento.nextfit.com.br/ee5940af-b75d-4d4e-b098-b4db33903915" target="_blank" class="btn btn-nextfit">
-                Agendar Aula Experimental (Nextfit)
-            </a>
-            <a href="https://api.whatsapp.com/send/?phone=5511948759648&text=Olá! Gostaria de saber mais sobre as aulas de Taekwondo." target="_blank" class="btn btn-whatsapp">
-                Fale Conosco via WhatsApp
-            </a>
-        </div>
-    </div>
+        <div class="card">
+            <div>
+                <h3>Onde Treinar</h3>
 
-    <div class="card">
-        <div>
-            <h3>Onde Treinar</h3>
-            
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREGhCvAbr3PHOavhJXC1ahmmDXRMunoxFMMg&s" alt="Logo CT Ellite Fighters" class="card-logo">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREGhCvAbr3PHOavhJXC1ahmmDXRMunoxFMMg&s"
+                    alt="Logo CT Ellite Fighters" class="card-logo">
 
-            <div class="contact-info">
-                <strong>Academia:</strong><br>
-                Centro de Treinamento Ellite Fighters (CT Ellite Fighters)<br><br>
-                <strong>Endereço:</strong><br>
-                Av. Francisco Prestes Maia, 144 - Centro<br>
-                São Bernardo do Campo - SP, 09770-000<br><br>
-                <strong>Contato Direto:</strong><br>
-                (11) 94875-9648
+                <div class="contact-info">
+                    <strong>Academia:</strong><br>
+                    Centro de Treinamento Ellite Fighters (CT Ellite Fighters)<br><br>
+                    <strong>Endereço:</strong><br>
+                    Av. Francisco Prestes Maia, 144 - Centro<br>
+                    São Bernardo do Campo - SP, 09770-000<br><br>
+                    <strong>Contato Direto:</strong><br>
+                    (11) 94875-9648
+                </div>
             </div>
-        </div>
-        
-        <iframe class="map-frame" src="http://googleusercontent.com/maps.google.com/4" allowfullscreen loading="lazy"></iframe>
-    </div>
-</main>
 
-<footer>
-    <p>© Todos os direitos reservados: <span>Wil Taekwondo — <span class="highlight">Team Marchesini</span></span></p>
-    <p>Desenvolvido por Wiliam Longo</p>
-</footer>
+            <iframe class="map-frame" src="http://googleusercontent.com/maps.google.com/4" allowfullscreen
+                loading="lazy"></iframe>
+        </div>
+    </main>
+
+    <footer>
+        <p>© Todos os direitos reservados: <span>Wil Taekwondo — <span class="highlight">Team Marchesini</span></span>
+        </p>
+        <p>Desenvolvido por Wiliam Longo</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="conexao.js"></script>
 
 </body>
+
 </html>
