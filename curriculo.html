@@ -134,22 +134,6 @@
             box-shadow: 0 0 15px var(--primary-glow);
         }
 
-        summary {
-            background-color: #1a1a1a;
-            color: var(--text-main);
-            font-size: 16px;
-            font-weight: 700;
-            padding: 18px 24px;
-            cursor: pointer;
-            user-select: none;
-            outline: none;
-            list-style: none;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background-color 0.2s;
-        }
-
         summary:hover {
             background-color: #222222;
         }
@@ -157,22 +141,6 @@
         details[open] summary {
             border-bottom: 1px solid var(--card-border);
             background-color: #1c1c1e;
-        }
-
-        summary::-webkit-details-marker {
-            display: none;
-        }
-
-        summary::after {
-            content: "▼";
-            font-size: 12px;
-            color: var(--text-muted);
-            transition: transform 0.2s ease;
-        }
-
-        details[open] summary::after {
-            transform: rotate(180deg);
-            color: var(--primary);
         }
 
         .content-block {
@@ -226,7 +194,8 @@
         }
 
         td {
-            padding: 14px 16px;
+            padding: 8px 16px !important;
+            /* Altura achatada para os requisitos ficarem baixos */
             border-bottom: 1px solid var(--card-border);
             color: var(--text-main);
             vertical-align: top;
@@ -305,7 +274,7 @@
         .sub-info-text {
             font-size: 13px;
             color: var(--text-muted);
-            margin: 6px 0;
+            margin: 6px 0 !important;
             line-height: 1.6;
         }
 
@@ -343,6 +312,163 @@
             .main-container {
                 margin-top: 24px;
             }
+
+            /* Ultra compactação de tabelas e fontes em telas menores */
+            table tbody tr td {
+                padding: 6px 8px !important;
+                font-size: 13px !important;
+            }
+
+            details summary {
+                padding: 10px 16px !important;
+                /* Altura esmagada no mobile */
+            }
+
+            .content-block p.sub-info-text {
+                margin: 4px 0 !important;
+                font-size: 13px !important;
+            }
+        }
+
+        /* ESTRUTURA VERTICAL INTELIGENTE COM SETA INTEGRADA NA LINHA DO TEXTO */
+        details summary {
+            display: flex !important;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+            padding: 12px 20px;
+            /* Reduzido para deixar o card baixo e elegante */
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 14px;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        /* Container flex interno para alinhar o texto e a seta na mesma linha de fluxo */
+        details summary .summary-text-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            color: var(--text-main);
+        }
+
+        /* Ícone indicador dinâmico no final da linha de texto */
+        details summary .summary-text-row::after {
+            content: "▼";
+            font-size: 11px;
+            color: var(--text-muted);
+            transition: transform 0.2s ease;
+        }
+
+        details[open] summary .summary-text-row::after {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        /* A listra agora ocupa 100% da largura do bloco */
+        .summary-belt-line {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            display: block;
+        }
+
+        /* Matrizes de Cores Oficiais */
+        .sb-branca {
+            background-color: #ffffff;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
+            border: 1px solid #333;
+        }
+
+        .sb-amarela {
+            background-color: #ffcc00;
+            box-shadow: 0 0 8px rgba(255, 204, 0, 0.2);
+        }
+
+        .sb-amarela-verde {
+            background: linear-gradient(to right, #009933 0%, #009933 12%, #ffcc00 20%, #ffcc00 80%, #009933 88%, #009933 100%);
+        }
+
+        .sb-verde {
+            background-color: #009933;
+        }
+
+        .sb-verde-azul {
+            background: linear-gradient(to right, #0066cc 0%, #0066cc 12%, #009933 20%, #009933 80%, #0066cc 88%, #0066cc 100%);
+        }
+
+        .sb-azul {
+            background-color: #0066cc;
+        }
+
+        .sb-azul-vermelha {
+            background: linear-gradient(to right, #cc0000 0%, #cc0000 12%, #0066cc 20%, #0066cc 80%, #cc0000 88%, #cc0000 100%);
+        }
+
+        .sb-vermelha {
+            background-color: #cc0000;
+        }
+
+        .sb-vermelha-preta {
+            background: linear-gradient(to right, #000000 0%, #000000 12%, #cc0000 20%, #cc0000 80%, #000000 88%, #000000 100%);
+        }
+
+        .sb-preta {
+            background-color: #222222;
+            border: 1px solid #444;
+        }
+
+        /* Correção de cor do contorno (border) ao passar o mouse ou abrir */
+        #branca:hover,
+        #branca[open] {
+            border-color: #ffffff;
+        }
+
+        #amarela:hover,
+        #amarela[open] {
+            border-color: #ffcc00;
+        }
+
+        #amarela-pvt:hover,
+        #amarela-pvt[open] {
+            border-color: #ffcc00;
+        }
+
+        #verde:hover,
+        #verde[open] {
+            border-color: #009933;
+        }
+
+        #verde-pt-azul:hover,
+        #verde-pt-azul[open] {
+            border-color: #009933;
+        }
+
+        #azul:hover,
+        #azul[open] {
+            border-color: #0066cc;
+        }
+
+        #azul-pt-vermelha:hover,
+        #azul-pt-vermelha[open] {
+            border-color: #0066cc;
+        }
+
+        #vermelha:hover,
+        #vermelha[open] {
+            border-color: #cc0000;
+        }
+
+        #vermelha-pt-preta:hover,
+        #vermelha-pt-preta[open] {
+            border-color: #cc0000;
         }
     </style>
 </head>
@@ -369,11 +495,15 @@
     <div class="main-container">
         <div class="page-title">
             <h2>Currículo Técnico Oficial</h2>
-            <p>Grade de exigências e ensinamentos marciais divididos por graduações (GUB e DAN)</p>
+            <p>Grade de exigências e ensinamentos marciais divididos por graduações (10º ao 1º GUB)</p>
         </div>
 
         <details id="branca">
-            <summary>⚪ REQUISITOS: Faixa Branca (Para Faixa Amarela - 9º GUB)</summary>
+            <summary>
+                <span class="summary-belt-line sb-branca"></span>
+
+                <div class="summary-text-row">REQUISITOS: Faixa Branca (Para Faixa Amarela - 10º e 9º GUB)</div>
+            </summary>
             <div class="content-block">
                 <h3>🥋 1. Kibon Poom-se — Técnicas Básicas</h3>
                 <div class="table-container">
@@ -387,6 +517,14 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <tr>
+                                <td>-</td>
+                                <td>Juntchumso Jumok Jirugui<br><span class="phonetic">Djun-tchúm-sô Djú-môc
+                                        Djí-ru-guí</span></td>
+                                <td><span class="trigger-text">🧘‍♂️👊 "SOCO EM BASE DO CAVALEIRO!"</span></td>
+                                <td>Postado estritamente em Base Agachada/Cavalo com joelhos flexionados para fora,
+                                    disparando socos diretos e alternados na linha média do tronco.</td>
+                            </tr>
                             <tr>
                                 <td>a</td>
                                 <td>Ap Kubi Pakat Palmok Are Maki<span class="phonetic">Áp Cu-bí Pa-gát Pál-môc Á-ré
@@ -412,7 +550,7 @@
                             <tr>
                                 <td>d</td>
                                 <td>Ap Kubi Pande Jumok Momtong Jireugi<span class="phonetic">Áp Cu-bí Pán-dé Djú-môc
-                                        Môm-tóng Djí-rugwí</span></td>
+                                        Môm-tóng Djí-ru-guí</span></td>
                                 <td><span class="trigger-text">🦵👊 "MESMA PERNA, MESMO SOCO!"</span></td>
                                 <td>Soco frontal direto no tronco com o mesmo braço da perna que avançou.</td>
                             </tr>
@@ -449,13 +587,13 @@
                             <tr>
                                 <td><span class="badge-form">Saju Dirugui</span><span class="phonetic">Sá-djú
                                         Djí-ru-gwí</span></td>
-                                <td><a href="https://youtu.be/SB6nKpm-Yus?si=keXizyUHwi0pHGS1" target="_blank"
+                                <td><a href="https://youtu.be/SB6nKpm-Yus" target="_blank"
                                         class="video-link"><span>📺</span> Ver Poom-se</a></td>
                             </tr>
                             <tr>
                                 <td><span class="badge-form">Tchon-Ji Hian</span><span class="phonetic">Tchôn-Djí
                                         Rí-án</span></td>
-                                <td><a href="https://youtu.be/pRbmNys1tKI?si=gOIfGnbHTJTPDxtb" target="_blank"
+                                <td><a href="https://youtu.be/pRbmNys1tKI" target="_blank"
                                         class="video-link"><span>📺</span> Ver Tull</a></td>
                             </tr>
                         </tbody>
@@ -476,52 +614,61 @@
                                 <td><span class="badge-kick">Ap-tcha Oligui</span><span class="phonetic">Áp-tchá
                                         Ô-li-guí</span></td>
                                 <td>Elevação de perna completamente reta para cima para testar a flexibilidade
-                                    articular.</td>
+                                    articular. (Valendo 10 Pontos)</td>
                             </tr>
                             <tr>
                                 <td><span class="badge-kick">Ap-tchagui</span><span class="phonetic">Áp-tcha-guí</span>
                                 </td>
                                 <td>Chute frontal chicoteado atingindo com o metatarso, exigindo flexão rápida de
-                                    joelho.</td>
+                                    joelho. (Valendo 10 Pontos)</td>
                             </tr>
                             <tr>
                                 <td><span class="badge-kick">Bacat-Tchagui</span><span
                                         class="phonetic">Ba-gát-Tcha-guí</span></td>
                                 <td>Chute semicircular de dentro para fora, limpando a linha de ataque com o dorso do
-                                    pé.</td>
+                                    pé. (Valendo 10 Pontos)</td>
                             </tr>
                             <tr>
                                 <td><span class="badge-kick">Antchagui</span><span class="phonetic">Án-tcha-guí</span>
                                 </td>
-                                <td>Chute semicircular de fora para dentro atingindo com a sola do pé.</td>
+                                <td>Chute semicircular de fora para dentro atingindo com a sola do pé. (Valendo 10
+                                    Pontos)</td>
                             </tr>
                             <tr>
                                 <td><span class="badge-kick">Ap-Dolio-Tchagui</span><span
                                         class="phonetic">Áp-Dô-lió-Tcha-guí</span></td>
-                                <td>Chute circular na linha média com rotação obrigatória do calcanhar de apoio.</td>
+                                <td>Chute circular na linha média com rotação obrigatória do calcanhar de apoio.
+                                    (Valendo 10 Pontos)</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <h3>⚔️ 4. Requisitos de Combate & Extras</h3>
-                <p class="sub-info-text">• <b>Jaiu Kyorugui (Djai-ú Qui-ô-ru-guí):</b> Luta livre demonstrando postura
-                    defensiva e movimentação básica de combate.</p>
-                <p class="sub-info-text">• <b>Coordenação Motora:</b> Teste geral de aptidão física exigido na planilha
-                    oficial de notas da academia.</p>
+                <h3>⚔️ 4. Fundamentos Estáticos &amp; Requisitos de Exame</h3>
+                <p class="sub-info-text">• <b>Juntchumso Jumok:</b> Soco na postura estática de cavaleiro avaliando
+                    torque e centralização de tronco. (Valendo 5 Pontos)</p>
+                <p class="sub-info-text">• <b>Kibon Poom-se:</b> Avaliação das bases dinâmicas básicas e defesas
+                    lineares acumuladas. (Valendo 5 Pontos)</p>
+                <p class="sub-info-text">• <b>Jaiu Kyorugui (Djai-ú Qui-ô-ru-guí):</b> Luta livre regulamentada
+                    demonstrando postura defensiva estável e movimentação básica de combate. (Valendo 10 Pontos)</p>
+                <p class="sub-info-text">• <b>Coordenação Motora:</b> Teste geral de aptidão e reações motoras exigido
+                    pela planilha da banca. (Valendo 10 Pontos)</p>
             </div>
         </details>
 
         <details id="amarela">
-            <summary>🟡 REQUISITOS: Faixa Amarela (Para Amarela Ponta Verde - 8º GUB)</summary>
+            <summary>
+                <span class="summary-belt-line sb-amarela"></span>
+                <div class="summary-text-row">REQUISITOS: Faixa Amarela (Para Faixa Amarela Ponta Verde - 8º GUB)</div>
+            </summary>
             <div class="content-block">
-                <h3>🥋 1. Kibon Poom-se — Técnicas Básicas</h3>
+                <h3>🥋 1. Kibon Poom-se (Qui-bôn Púm-sé) - Técnicas Básicas</h3>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
                                 <th style="width: 5%">Item</th>
-                                <th style="width: 35%">Nome Técnico (KR) / Fonética</th>
+                                <th style="width: 35%">Nome Técnico (KR) com Fonética</th>
                                 <th style="width: 30%">Comando de GATILHO</th>
                                 <th style="width: 30%">Mecânica Corporal</th>
                             </tr>
@@ -529,55 +676,55 @@
                         <tbody>
                             <tr>
                                 <td>a</td>
-                                <td>Ap Kubi An Palmok Momtong Pakat Maki<span class="phonetic">Áp Cu-bí Án Pál-môc
-                                        Môm-tóng Pa-gát Ma-quí</span></td>
+                                <td>Ap Kubi An Palmok Momtong Pakat Maki<br><span class="phonetic">(<b>Áp Cu-bí Án
+                                            Pál-môc Môm-tóng Pa-gát Ma-quí</b>)</span></td>
                                 <td><span class="trigger-text">👍🚪 "ESCUDO DO DEDÃO!"</span></td>
                                 <td>Defesa média para fora com o lado interno do antebraço (lado do dedão) em base
                                     longa.</td>
                             </tr>
                             <tr>
                                 <td>b</td>
-                                <td>Ap Kubi Pakat Palmok Momtong Pakat Maki<span class="phonetic">Áp Cu-bí Pa-gát
-                                        Pál-môc Môm-tóng Pa-gát Ma-quí</span></td>
+                                <td>Ap Kubi Pakat Palmok Momtong Pakat Maki<br><span class="phonetic">(<b>Áp Cu-bí
+                                            Pa-gát Pál-môc Môm-tóng Pa-gát Ma-quí</b>)</span></td>
                                 <td><span class="trigger-text">💥🚪 "ESCUDO DO DEDINHO!"</span></td>
                                 <td>Defesa média para fora com o lado externo do antebraço (lado do mindinho) em base
                                     longa.</td>
                             </tr>
                             <tr>
                                 <td>c</td>
-                                <td>Tit Kubi Son Nal Opuo Mok Pakat Tchigui<span class="phonetic">Dít Cu-bí Sôn Nál
-                                        Ô-pu-ó Môc Pa-gát Tchi-guí</span></td>
+                                <td>Tit Kubi Son Nal Opuo Mok Pakat Tchigui<br><span class="phonetic">(<b>Dít Cu-bí Sôn
+                                            Nál Ô-pu-ó Môc Pa-gát Tchi-guí</b>)</span></td>
                                 <td><span class="trigger-text">📐🪵 "CORTE DA ESPADA EM L!"</span></td>
                                 <td>Mão aberta cortando lateralmente em direção ao pescoço (palma para baixo) em base L.
                                 </td>
                             </tr>
                             <tr>
                                 <td>d</td>
-                                <td>Tit Kubi Ran Son Nal Momtong Pakat Maki<span class="phonetic">Dít Cu-bí Rán Sôn Nál
-                                        Môm-tóng Pa-gát Ma-quí</span></td>
+                                <td>Tit Kubi Ran Son Nal Momtong Pakat Maki<br><span class="phonetic">(<b>Dít Cu-bí Rán
+                                            Sôn Nál Môm-tóng Pa-gát Ma-quí</b>)</span></td>
                                 <td><span class="trigger-text">📐✋ "UMA ESPADA SÓ!"</span></td>
                                 <td>Defesa média para fora em base em L utilizando apenas uma das mãos abertas.</td>
                             </tr>
                             <tr>
                                 <td>e</td>
-                                <td>Tit Kubi Son Nal Koduro Momtong Pakat Maki<span class="phonetic">Dít Cu-bí Sôn Nál
-                                        Cô-du-ró Môm-tóng Pa-gát Ma-quí</span></td>
+                                <td>Tit Kubi Son Nal Koduro Momtong Pakat Maki<br><span class="phonetic">(<b>Dít Cu-bí
+                                            Sôn Nál Cô-du-ró Môm-tóng Pa-gát Ma-quí</b>)</span></td>
                                 <td><span class="trigger-text">📐🛡️ "ESPADA E ESCUDO!"</span></td>
                                 <td>Guarda dupla de mãos abertas em base L com a mão traseira espalmada servindo de
                                     suporte no peito.</td>
                             </tr>
                             <tr>
                                 <td>f</td>
-                                <td>Tit Kubi San Palmok Yop Maki<span class="phonetic">Dít Cu-bí Sán Pál-môc Yóp
-                                        Ma-quí</span></td>
+                                <td>Tit Kubi San Palmok Yop Maki<br><span class="phonetic">(<b>Dít Cu-bí Sán Pál-môc Yóp
+                                            Ma-quí</b>)</span></td>
                                 <td><span class="trigger-text">📐🏯 "DEFENDE TUDO!"</span></td>
                                 <td>Bloqueio duplo lateral síncrono (um antebraço cobre o topo da cabeça e o outro a
                                     linha do tronco) em L.</td>
                             </tr>
                             <tr>
                                 <td>g</td>
-                                <td>Ap Sogui Baro Jumok Momtong Jireugi<span class="phonetic">Áp Sô-guí Bá-ró Djú-môc
-                                        Môm-tóng Djí-ru-gwí</span></td>
+                                <td>Ap Sogui Baro Jumok Momtong Jireugi<br><span class="phonetic">(<b>Áp Sô-guí Bá-ró
+                                            Djú-môc Môm-tóng Djí-ru-gwí</b>)</span></td>
                                 <td><span class="trigger-text">🚶‍♂️👊 "SOCO DE TRÁS EM CAMINHADA"</span></td>
                                 <td>Avanço em base curta de caminhada normal desferindo soco reverso potente (mão oposta
                                     à perna guia).</td>
@@ -591,83 +738,97 @@
                     <table>
                         <thead>
                             <tr>
-                                <th style="width: 50%">Nome da Forma / Fonética</th>
-                                <th style="width: 50%">Vídeo Aula Passo a Passo</th>
+                                <th style="width: 40%">Nome da Forma com Fonética</th>
+                                <th style="width: 60%">Vídeo Aula Passo a Passo</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><span class="badge-form">Dangum Hian</span><span class="phonetic">Dán-gúm
-                                        Rí-án</span></td>
-                                <td><a href="https://youtu.be/GoZFgtc9kHQ?si=GoZFgtc9kHQ" target="_blank"
+                                <td><span class="badge-form">Dangum Hian</span><br><span class="phonetic">(<b>Dán-gúm
+                                            Rí-án</b>)</span></td>
+                                <td><a href="https://youtu.be/GoZFgtc9kHQ" target="_blank"
                                         class="video-link"><span>📺</span> Ver Tull</a></td>
                             </tr>
                             <tr>
-                                <td><span class="badge-form">Teguk Il Jang</span><span class="phonetic">Té-gúc Íl
-                                        Djáng</span></td>
-                                <td><a href="https://youtu.be/X1DvJsm5Kg8?si=X1DvJsm5Kg8" target="_blank"
+                                <td><span class="badge-form">Teguk Il Jang</span><br><span class="phonetic">(<b>Té-gúc
+                                            Íl Djáng</b>)</span></td>
+                                <td><a href="https://youtu.be/X1DvJsm5Kg8" target="_blank"
                                         class="video-link"><span>📺</span> Ver Poom-se</a></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <h3>🔥 3. Tchagui (Tchá-guí) — Chutes Estáticos</h3>
+                <h3>🔥 3. Tchagui (Tchá-guí) - Técnicas de Chute Estático</h3>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
-                                <th style="width: 40%">Nome do Chute / Fonética</th>
+                                <th style="width: 40%">Nome do Chute com Fonética</th>
                                 <th style="width: 60%">Mecânica e Critério Técnico de Avaliação</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><span class="badge-kick">Ap-miro Tchagui</span><span class="phonetic">Áp-mí-ró
-                                        Tchá-guí</span></td>
+                                <td><span class="badge-kick">Ap-miro Tchagui</span><br><span
+                                        class="phonetic">(<b>Áp-mí-ró Tchá-guí</b>)</span></td>
                                 <td>Chute frontal de empurrão retilíneo utilizando a planta total do pé para afastar o
-                                    alvo.</td>
+                                    alvo. (Valendo 10 Pontos)</td>
                             </tr>
                             <tr>
-                                <td><span class="badge-kick">Tigô-tchagui</span><span
-                                        class="phonetic">Tí-gô-tchá-guí</span></td>
+                                <td><span class="badge-kick">Tigô-tchagui</span><br><span
+                                        class="phonetic">(<b>Tí-gô-tchá-guí</b>)</span></td>
                                 <td>Chute martelo, elevando a perna esticada e descarregando o calcanhar verticalmente.
-                                </td>
+                                    (Valendo 10 Pontos)</td>
                             </tr>
                             <tr>
-                                <td><span class="badge-kick">Yop-Tchagui</span><span
-                                        class="phonetic">Yóp-Tchá-guí</span></td>
+                                <td><span class="badge-kick">Yop-Tchagui</span><br><span
+                                        class="phonetic">(<b>Yóp-Tcha-guí</b>)</span></td>
                                 <td>Chute lateral estocado perfurando com a faca externa do pé, exigindo rotação
-                                    completa do pivô.</td>
+                                    completa do pivô. (Valendo 10 Pontos)</td>
                             </tr>
                             <tr>
-                                <td><span class="badge-kick">Tuit-tchagui</span><span
-                                        class="phonetic">Tuít-tchá-guí</span></td>
+                                <td><span class="badge-kick">Tuit-tchagui</span><br><span
+                                        class="phonetic">(<b>Tuít-tchá-guí</b>)</span></td>
                                 <td>Chute em linha reta para trás pelas costas (coice de calcanhar), mantendo os joelhos
-                                    alinhados na rotação.</td>
+                                    alinhados na rotação. (Valendo 10 Pontos)</td>
                             </tr>
                             <tr>
-                                <td><span class="badge-kick">Dolio-Tchagui</span><span
-                                        class="phonetic">Dô-lió-Tcha-guí</span></td>
+                                <td><span class="badge-kick">Dolio-Tchagui</span><br><span
+                                        class="phonetic">(<b>Dô-lió-Tcha-guí</b>)</span></td>
                                 <td>Chute circular penetrante visando a linha alta ou média com giro total do quadril.
-                                </td>
+                                    (Valendo 10 Pontos)</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <h3>⚔️ 4. Requisitos de Exame</h3>
-                <p class="sub-info-text">• <b>Matcho Kyorugui (Ma-tchó Qui-ô-ru-guí):</b> Luta combinada de passos fixos
-                    avaliando controle de distância de contra-ataques.</p>
-                <p class="sub-info-text">• <b>Jaiu Kyorugui (Djai-ú Qui-ô-ru-guí):</b> Luta livre aplicando os novos
-                    chutes retos e potentes (Yop e Tuit).</p>
-                <p class="sub-info-text">• <b>Iron (Í-rôn):</b> Avaliação conceitual escrita e teórica exigida na
-                    planilha oficial da escola.</p>
+                <h3>👊 4. Kibon Donjak (Qui-bôn Dôn-djác) - Técnicas de Base Estática</h3>
+                <p style="font-size: 13.5px; color: #aeaeb2; margin: 4px 0;">
+                    • <b>Kibon Donjak II:</b> Execução precisa e estática das defesas, ataques e socos intermediários na
+                    base de prontidão conforme a planilha de notas da graduação. (Valendo 5 Pontos)
+                </p>
+                <p style="font-size: 13.5px; color: #aeaeb2; margin: 4px 0;">
+                    • <b>Kibon Poom-se:</b> Domínio e alinhamento básico de bases lineares. (Valendo 5 Pontos)
+                </p>
+
+                <h3>⚔️ 5. Requisitos de Exame</h3>
+                <p style="font-size: 13.5px; color: #aeaeb2; margin: 4px 0;">
+                    • <b>Matcho Kyorugui <span class="phonetic">(Ma-tchó Qui-ô-ru-guí)</span>:</b> Luta combinada de
+                    passos fixos avaliando controle de distância de contra-ataques. (Valendo 10 Pontos)<br>
+                    • <b>Jaiu Kyorugui <span class="phonetic">(Djai-ú Qui-ô-ru-guí)</span>:</b> Luta livre regulamentada
+                    aplicando os novos chutes retos e potentes (<i>Yop</i> e <i>Tuit</i>). (Valendo 5 Pontos)<br>
+                    • <b>Iron <span class="phonetic">(Í-rôn)</span>:</b> Avaliação conceitual escrita e teórica exigida
+                    na planilha oficial da escola. (Valendo 5 Pontos)
+                </p>
             </div>
         </details>
 
         <details id="amarela-pvt">
-            <summary>🟡🟢 REQUISITOS: Faixa Amarela Ponta Verde (Para Faixa Verde - 7º GUB)</summary>
+            <summary>
+                <span class="summary-belt-line sb-amarela-verde"></span>
+                <div class="summary-text-row">REQUISITOS: Faixa Amarela Ponta Verde (Para Faixa Verde - 7º GUB)</div>
+            </summary>
             <div class="content-block">
                 <h3>🥋 1. Kibon Poom-se — Técnicas Básicas</h3>
                 <div class="table-container">
@@ -710,7 +871,7 @@
                                 <td>Ap Kubi Dung Jumok Olgul Ap Tchigui<span class="phonetic">Áp Cu-bí Dúng Djú-môc
                                         Ôl-gúl Áp Tchi-guí</span></td>
                                 <td><span class="trigger-text">🔨👃 "MARTELO DE FRENTE!"</span></td>
-                                <td>Golpe frontal descendente em linha reta utilizando as costas do punho cerrado na
+                                <td>Golpe frontal descendente in linha reta utilizando as costas do punho cerrado na
                                     altura do nariz.</td>
                             </tr>
                             <tr>
@@ -732,7 +893,7 @@
                             <tr>
                                 <td>g</td>
                                 <td>Kojum So Son Nal Opuo Mok Yop Tchigui<span class="phonetic">CÔ-djúm Sô Sôn Nál
-                                        Ô-pu-ó Môc Yóp Tchi-guí</span></td>
+                                        O-pu-ó Môc Yóp Tchi-guí</span></td>
                                 <td><span class="trigger-text">🦀🪵 "CORTE NO PESCOÇO!"</span></td>
                                 <td>Base agachada de cavalo (passo de lado) desferindo corte lateral de mão aberta
                                     (palma para baixo) no pescoço.</td>
@@ -754,26 +915,26 @@
                             <tr>
                                 <td><span class="badge-form">Dosan Hian</span><span class="phonetic">Dô-sán Rí-án</span>
                                 </td>
-                                <td><a href="https://youtu.be/WqUy-MeFSJs?si=WqUy-MeFSJs" target="_blank"
+                                <td><a href="https://youtu.be/WqUy-MeFSJs" target="_blank"
                                         class="video-link"><span>📺</span> Ver Tull</a></td>
                             </tr>
                             <tr>
                                 <td><span class="badge-form">Teguk I Jang</span><span class="phonetic">Té-gúc Í
                                         Djáng</span></td>
-                                <td><a href="https://youtu.be/jYVqfdVO7XI?si=jYVqfdVO7XI" target="_blank"
+                                <td><a href="https://youtu.be/jYVqfdVO7XI" target="_blank"
                                         class="video-link"><span>📺</span> Ver Poom-se</a></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <h3>🔥 3. Taguet Tchagui (Tá-guét Tchá-guí) — Chutes em Raquete / Salto</h3>
+                <h3>🔥 3. Tchagui (Tchá-guí) — Técnicas de Chute de Exame</h3>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
                                 <th style="width: 40%">Nome do Chute / Fonética</th>
-                                <th style="width: 60%">Mecânica, Dinâmica de Salto e Aplicação no Alvo</th>
+                                <th style="width: 60%">Mecânica, Dinâmica de Salto e Critério de Avaliação</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -781,40 +942,60 @@
                                 <td><span class="badge-kick">Timio Ap Bal Ap Dolio Tchagui</span><span
                                         class="phonetic">Tí-mió Áp Bál Áp Dô-lió Tchá-guí</span></td>
                                 <td>Impulso curto saltando para frente, desferindo o chute circular no ar diretamente
-                                    com a perna dianteira (guia).</td>
+                                    com a perna dianteira guia. (Valendo 10 Pontos)</td>
                             </tr>
                             <tr>
                                 <td><span class="badge-kick">Tuit Bal Rurio-Tchagui</span><span class="phonetic">Tuít
                                         Bál Ru-rió-Tchá-guí</span></td>
                                 <td>Chute gancho/chicote horizontal executado com a perna traseira cruzando a linha do
-                                    alvo com impacto de calcanhar.</td>
+                                    alvo com impacto de calcanhar. (Valendo 10 Pontos)</td>
                             </tr>
                             <tr>
                                 <td><span class="badge-kick">Ap Bal Rurio-Tchagui</span><span class="phonetic">Áp Bál
                                         Ru-rió-Tchá-guí</span></td>
                                 <td>Chute gancho rápido açoitado de velocidade desferido diretamente com a perna
-                                    dianteira na linha alta.</td>
+                                    dianteira na linha alta. (Valendo 10 Pontos)</td>
                             </tr>
                             <tr>
                                 <td><span class="badge-kick">Mondolio Rurio-Tchagui</span><span
                                         class="phonetic">Môn-dô-lió Ru-rió-Tchá-guí</span></td>
                                 <td>Giro técnico completo pelas costas (360 graus de pivô) varrendo o aparador de forma
-                                    perfeitamente horizontal.</td>
+                                    perfeitamente horizontal. (Valendo 10 Pontos)</td>
                             </tr>
                             <tr>
                                 <td><span class="badge-kick">Timio Tui Tchagui</span><span class="phonetic">Tí-mió Tuí
                                         Tchá-guí</span></td>
                                 <td>Salto completo girando de costas no ar, estendendo o coice retilíneo com máxima
-                                    potência.</td>
+                                    potência de calcanhar. (Valendo 10 Pontos)</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+
+                <h3>👊 4. Kibon Donjak (Qui-bôn Dôn-djác) - Técnicas de Base Estática</h3>
+                <p style="font-size: 13.5px; color: #aeaeb2; margin: 4px 0;">
+                    • <b>Kibon Donjak II e I:</b> Revisão e controle absoluto das defesas e ataques na base de prontidão
+                    conforme a planilha de avaliação (Valendo 5 Pontos).
+                </p>
+                <p style="font-size: 13.5px; color: #aeaeb2; margin: 4px 0;">
+                    • <b>Kibon Poom-se:</b> Domínio de deslocamentos e bases lineares. (Valendo 5 Pontos).
+                </p>
+
+                <h3>⚔️ 5. Requisitos de Exame</h3>
+                <p class="sub-info-text">• <b>Matcho Kyorugui:</b> Luta combinada de passos aplicando defesas complexas
+                    com contra-ataques rápidos (Valendo 10 Pontos).</p>
+                <p class="sub-info-text">• <b>Jaiu Kyorugui:</b> Luta livre regulamentada demonstrando transições com os
+                    novos chutes dinâmicos de gancho e giros (Valendo 10 Pontos).</p>
+                <p class="sub-info-text">• <b>Iron (Í-rôn):</b> Avaliação teórica conceitual e terminologia técnica em
+                    coreano conforme a planilha oficial (Valendo 5 Pontos).</p>
             </div>
         </details>
 
         <details id="verde">
-            <summary>🟢 REQUISITOS: Faixa Verde (Para Verde Ponta Azul - 6º GUB)</summary>
+            <summary>
+                <span class="summary-belt-line sb-verde"></span>
+                <div class="summary-text-row">REQUISITOS: Faixa Verde (Para Verde Ponta Azul - 6º GUB)</div>
+            </summary>
             <div class="content-block">
                 <h3>🥋 1. Kibon Poom-se — Técnicas Básicas</h3>
                 <div class="table-container">
@@ -830,62 +1011,64 @@
                         <tbody>
                             <tr>
                                 <td>a</td>
-                                <td>Ap Kubi An Palmok Pituro Are Pakat Maki<span class="phonetic">Áp Cu-bí Án Pál-môc
-                                        Pí-tu-ró Á-ré Pa-gát Ma-quí</span></td>
+                                <td>Ap kubi an palmok pituro are (pakat) maki<br><span class="phonetic">Áp Cu-bí Án
+                                        Pál-môc Pí-tu-ró Á-ré Pa-gát Ma-quí</span></td>
                                 <td><span class="trigger-text">🩲🌪️ "PASSO LONGO, DEFESA TORCIDA!"</span></td>
                                 <td>Avança na Base Longa, realiza uma forte torção com o tronco e defende o golpe baixo
                                     usando o antebraço interno do braço oposto à perna da frente.</td>
                             </tr>
                             <tr>
                                 <td>b</td>
-                                <td>Ap Kubi Baro Palkub Olio Tchigui<span class="phonetic">Áp Cu-bí Bá-ró Pál-cúb Ô-lió
-                                        Tchi-guí</span></td>
-                                <td><span class="trigger-text">📐💪Subindo "UPPER DE COTOVELO!"</span></td>
+                                <td>Ap kubi baro palkub olio tchigui<br><span class="phonetic">Áp Cu-bí Bá-ró Pál-cúb
+                                        Ô-lió Tchi-guí</span></td>
+                                <td><span class="trigger-text">📐💪 Subindo "UPPER DE COTOVELO!"</span></td>
                                 <td>Avança em Base Longa e utiliza o cotovelo do braço traseiro para desferir um golpe
                                     ascendente sob o queixo.</td>
                             </tr>
                             <tr>
                                 <td>c</td>
-                                <td>Ap Kubi Baro Palkub Olgul Dolio Tchigui<span class="phonetic">Áp Cu-bí Bá-ró Pál-cúb
-                                        Ôl-gúl Dô-lió Tchi-guí</span></td>
-                                <td><span class="trigger-text">📐💪Giro "COTOVELADA RODADA!"</span></td>
+                                <td>Ap kubi baro palkub olgul dolio tchigui<br><span class="phonetic">Áp Cu-bí Bá-ró
+                                        Pál-cúb Ôl-gúl Dô-lió Tchi-guí</span></td>
+                                <td><span class="trigger-text">📐💪 Giro "COTOVELADA RODADA!"</span></td>
                                 <td>Avança em Base Longa e, com o cotovelo traseiro, aplica um golpe circular horizontal
-                                    na altura da têmpora.</td>
+                                    na altura da têmpora do oponente.</td>
                             </tr>
                             <tr>
                                 <td>d</td>
-                                <td>Tit Kubi Son Nal An Uro Mok Tchigui<span class="phonetic">Dít Cu-bí Sôn Nál Án Ú-ró
-                                        Môc Tchi-guí</span></td>
-                                <td><span class="trigger-text">📐🫳"SEGURA E CORTA!"</span></td>
-                                <td>Avança em Base em L. A mão da frente simula puxar a nuca do adversário, enquanto a
-                                    traseira entra cortando com a faca da mão.</td>
+                                <td>Tit kubi son nal an uro mok tchigui<br><span class="phonetic">Dít Cu-bí Sôn Nál Án
+                                        Ú-ró Môc Tchi-guí</span></td>
+                                <td><span class="trigger-text">📐🫳 "SEGURA E CORTA NO PESCOÇO!"</span></td>
+                                <td>Avança em Base em L. A mão da frente simula puxar/segurar a cabeça do adversário,
+                                    enquanto a traseira entra cortando com a faca da mão (palma para cima).</td>
                             </tr>
                             <tr>
                                 <td>e</td>
-                                <td>Yop Tchago Mejumok, Tit Kubi Son Nal Koduro Momtong Pakat Maki<span
+                                <td>Yop tchago mejumok, tit kubi son nal koduro montom pakat maki<br><span
                                         class="phonetic">Yóp Tcha-gó Mé-dju-môc, Dít Cu-bí Sôn Nál Cô-du-ró Môm-tóng
                                         Pa-gát Ma-quí</span></td>
-                                <td><span class="trigger-text">🦵🔨🛡️ "CHUTE DE LADO E MARTELO!"</span></td>
-                                <td>Executa simultaneamente um chute lateral e um soco martelo. Ao cair, recua o peso na
-                                    Base em L com guarda dupla de mãos abertas.</td>
+                                <td><span class="trigger-text">🦵🔨🛡️ "CHUTE DE LADO, MARTELO E GUARDA!"</span></td>
+                                <td>Executa simultaneamente um chute lateral e um soco martelo lateral do punho. Ao
+                                    cair, recua o peso na Base em L com guarda dupla de mãos abertas apoiada no peito.
+                                </td>
                             </tr>
                             <tr>
                                 <td>f</td>
-                                <td>Ap Tchago, Ap Sogui, Pakat Palmok Are Makgi Baro Jumok Momtong Jireugi<span
-                                        class="phonetic">Áp Tcha-gó, Áp Sô-guí, Pa-gát Pál-môc Á-ré Ma-guí Bá-ró Djú-môc
-                                        Môm-tóng Djí-ru-gwí</span></td>
-                                <td><span class="trigger-text">🚀🩲👊 "CHUTA, PASSO CURTO E SOCA!"</span></td>
-                                <td>Desfere chute frontal, cai à frente na Base de Caminhada defendendo a linha baixa e
-                                    emenda soco invertido traseiro no peito.</td>
+                                <td>Ap tchago, ap sogui, pakat palmok are mako baro jumok montom dirugui<br><span
+                                        class="phonetic">Áp Tcha-gó, Áp Sô-guí, Pa-gát Pál-môc Á-ré Ma-quó Bá-ró Djú-môc
+                                        Môm-tóng Di-ru-guí</span></td>
+                                <td><span class="trigger-text">🚀🩲👊 "CHUTA front, LIMPA BAIXO E SOCA!"</span></td>
+                                <td>Desfere chute frontal, cai à frente na Base de Caminhada defendendo a linha baixa
+                                    com a parte externa do braço e emenda soco direto com o punho contrário.</td>
                             </tr>
                             <tr>
                                 <td>g</td>
-                                <td>Tit Kubi Son Nal Koduro Momtong Makgi Jejari Ap Kubi Baro Jumok Momtong Jireugi<span
-                                        class="phonetic">Dít Cu-bí Sôn Nál Cô-du-ró Môm-tóng Ma-guí Dje-dja-rí Áp Cu-bí
-                                        Bá-ró Djú-môc Môm-tóng Djí-ru-gwí</span></td>
+                                <td>Tit kubi son nal koduro montom mako jejari ap kubi baro jumok montom
+                                    dirugui<br><span class="phonetic">Dít Cu-bí Sôn Nál Cô-du-ró Môm-tóng Ma-quó
+                                        Dje-dja-rí Áp Cu-bí Bá-ró Djú-môc Môm-tóng Di-ru-guí</span></td>
                                 <td><span class="trigger-text">📐🛡️🔄👊 "DEFENDE EM L, GIRA E SOCA"</span></td>
-                                <td>Avança em Base L com guarda dupla de mãos abertas. Sem mover os pés do lugar, gira o
-                                    quadril estendendo para a Base Longa e descarrega um soco reverso.</td>
+                                <td>Avança em Base L realizando defesa de tronco com as mãos abertas (mão auxiliar
+                                    apoiada no peito). Sem mover os pés do lugar, gira o quadril estendendo para a Base
+                                    Longa e descarrega um soco reverso.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -902,14 +1085,14 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><span class="badge-form">Won-Hyo Hian</span><span class="phonetic">Uôn-Rí-ó
+                                <td><span class="badge-form">Won Yo Hian</span><br><span class="phonetic">Uôn Yó
                                         Rí-án</span></td>
                                 <td><a href="https://youtu.be/UIldWDhfddM" target="_blank"
                                         class="video-link"><span>📺</span> Ver Tull</a></td>
                             </tr>
                             <tr>
-                                <td><span class="badge-form">Teguk Sam Jang</span><span class="phonetic">Té-gúc Sám
-                                        Djáng</span></td>
+                                <td><span class="badge-form">Teguk Sam Jang Hian</span><br><span class="phonetic">Té-gúc
+                                        Sám Djáng Rí-án</span></td>
                                 <td><a href="https://youtu.be/VLRDkWl0Sr0" target="_blank"
                                         class="video-link"><span>📺</span> Ver Poom-se</a></td>
                             </tr>
@@ -917,101 +1100,62 @@
                     </table>
                 </div>
 
-                <h3>🔥 3. Tchagui (Tchá-guí) — Currículo de Exame</h3>
-                <p style="font-size: 13px; color: #ff9f0a; margin-bottom: 8px; font-weight: bold;">Bases: Narani Retchio
-                    are maki jumbi / Kyonumse</p>
+                <h3>🔥 3. Tchagui (Tchá-guí) — Currículo de Exame em Raquete</h3>
+                <p style="font-size: 13px; color: #ff9f0a; margin-bottom: 8px; font-weight: bold;">Base: Kyorugui Jasé
+                    Jumbi (Avaliação de Potência no Aparador)</p>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
                                 <th style="width: 8%">Nº</th>
                                 <th style="width: 42%">Nome Técnico / Fonética</th>
-                                <th style="width: 50%">Mecânica, Sequência e Aplicação</th>
+                                <th style="width: 50%">Mecânica, Sequência e Critério de Avaliação</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>1</td>
-                                <td>Godup Ap Tchagui<span class="phonetic">Gô-dúp Áp Tcha-guí</span></td>
-                                <td>Dois chutes frontais consecutivos executados no lugar com a mesma perna, sem apoiar
-                                    o pé no chão.</td>
+                                <td>Tchagui 1 Jejari (no lugar)<span class="phonetic">Tchá-guí Dje-dja-rí</span></td>
+                                <td>Avaliação estática em raquete focado na precisão, extensão correta e velocidade de
+                                    impacto no alvo sem deslocamento linear. (Valendo 15 Pontos)</td>
                             </tr>
                             <tr>
                                 <td>2</td>
-                                <td>An Tchagô, Bacat Tchagô, Rurio Tchagui<span class="phonetic">Án Tcha-gó, Ba-gát
-                                        Tcha-gó, Ru-rió Tchá-guí</span></td>
-                                <td>Sequência no lugar: de fora para dentro, de dentro para fora e finaliza com o chute
-                                    gancho.</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Ap, Yop, Rurio, Dolio Tchagô e Tit Tchagui<span class="phonetic">Áp, Yóp, Ru-rió,
-                                        Dô-lió Tcha-gó é Dít Tchá-guí</span></td>
-                                <td>Combo completo estático de 5 chutes contínuos: frontal, lateral, gancho, circular e
-                                    chute de costas.</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>Godup Yop Tchagui<span class="phonetic">Gô-dúp Yóp Tchá-guí</span></td>
-                                <td>Dois chutes laterais consecutivos estocados no lugar com a faca do pé sem baixar a
-                                    perna.</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>Timio Tit Bal Ap Tchagui<span class="phonetic">Dí-mió Dít Bál Áp Tcha-guí</span>
-                                </td>
-                                <td>Chute voador: salto executando o chute frontal diretamente com a perna de trás.</td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td>Timio Tit Bal Tigô Tchagui<span class="phonetic">Dí-mió Dít Bál Tí-gô
-                                        Tchá-guí</span></td>
-                                <td>Chute martelo saltando: elevação em salto aplicando a descida do calcanhar com a
-                                    perna traseira.</td>
-                            </tr>
-                            <tr>
-                                <td>7</td>
-                                <td>Timio Ap Bal Rurio Tchagui<span class="phonetic">Dí-mió Áp Bál Ru-rió
-                                        Tchá-guí</span></td>
-                                <td>Chute gancho saltando em velocidade, desferido diretamente com a perna da frente.
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>8</td>
-                                <td>Timio Tit Bal Yop Mirô Tchagui<span class="phonetic">Dí-mió Dít Bál Yóp Mí-ró
-                                        Tchá-guí</span></td>
-                                <td>Salto impulsionando a perna traseira em um chute lateral de empurrão para quebrar o
-                                    alvo.</td>
-                            </tr>
-                            <tr>
-                                <td>9</td>
-                                <td>Timio Tit Bal Dolio Tchagui<span class="phonetic">Dí-mió Dít Bál Dô-lió
-                                        Tchá-guí</span></td>
-                                <td>Chute circular voador executado no ar trazendo a perna traseira com forte torque.
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>10</td>
-                                <td>Timio Mondolio Rurio Tchagui<span class="phonetic">Dí-mió Môn-dô-lió Ru-rió
-                                        Tchá-guí</span></td>
-                                <td>Salto com giro completo de 360 graus pelas costas, desferindo o gancho no ar.</td>
+                                <td>Thagui 2 Timio (saltando)<span class="phonetic">Tchá-guí Dí-mió</span></td>
+                                <td>Avaliação dinâmica e aérea com foco em técnicas de chutes saltados impactando o
+                                    aparador móvel com impulsão e potência. (Valendo 15 Pontos)</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <h3>⚔️ 4. Requisitos de Exame</h3>
-                <p class="sub-info-text">• <b>Matcho Kyorugui:</b> Luta combinada de passos curtos e médios exigindo
-                    bloqueios e contra-ataques precisos.</p>
-                <p class="sub-info-text">• <b>Jaiu Kyorugui:</b> Combate livre em ritmo de competição com exigência de
-                    fintas corporais.</p>
-                <p class="sub-info-text">• <b>Iron (Í-rôn):</b> Avaliação teórica conceitual sobre os princípios do 6º
-                    GUB.</p>
+                <h3>👊 4. Kibon Donjak (Qui-bôn Dôn-djác) - Técnicas de Base Estática</h3>
+                <p style="font-size: 13.5px; color: #aeaeb2; margin: 4px 0;">
+                    • <b>Kibon Donjak IL, I e Sam:</b> Avaliação estática na base de prontidão das técnicas acumuladas
+                    da branca até o presente nível conforme planilha oficial. (Valendo 5 Pontos)
+                </p>
+                <p style="font-size: 13.5px; color: #aeaeb2; margin: 4px 0;">
+                    • <b>Kibon Poom-se:</b> Sequências básicas de deslocamento linear. (Valendo 5 Pontos)
+                </p>
+
+                <h3>⚔️ 5. Requisitos de Exame</h3>
+                <p class="sub-info-text">• <b>Sorteio:</b> Avaliação surpresa instantânea executada sob ordens diretas
+                    de comandos marciais da banca examinadora.</p>
+                <p class="sub-info-text">• <b>Matcho Kyorugui:</b> Luta combinada de passos exigindo perfeito controle
+                    de distância e fintas rápidas (Valendo 10 Pontos).</p>
+                <p class="sub-info-text">• <b>Kyorugui (Combate Livre):</b> Combate livre real com protetores oficiais
+                    avaliando combinatórias e agressividade marcial tática (Valendo 15 Pontos).</p>
+                <p class="sub-info-text">• <b>Kyok-Pa Sull (son-nal):</b> Teste estrito de impacto real e potência
+                    destrutiva através do quebramento de tábua de madeira com a faca lateral da mão espalmada (Valendo
+                    15 Pontos).</p>
             </div>
         </details>
 
         <details id="verde-pt-azul">
-            <summary>🟢🔵 REQUISITOS: Faixa Verde Ponta Azul (Para Faixa Azul - 5º GUB)</summary>
+            <summary>
+                <span class="summary-belt-line sb-verde-azul"></span>
+                <div class="summary-text-row">REQUISITOS: Faixa Verde Ponta Azul (Para Faixa Azul - 5º GUB)</div>
+            </summary>
             <div class="content-block">
                 <h3>🥋 1. Kibon Poom-se — Técnicas Básicas</h3>
                 <div class="table-container">
@@ -1035,10 +1179,10 @@
                             </tr>
                             <tr>
                                 <td>b</td>
-                                <td>Ap Kubi Batan Son Neri O Koll Tcho Makgi<span class="phonetic">Áp Cu-bí Ba-tán Sôn
-                                        Né-rí Ô Cól Tchó Ma-guí</span></td>
+                                <td>Ap Kubi Batan Son neri o koll tcho maki<span class="phonetic">Áp Cu-bí Ba-tán Sôn
+                                        Né-rí Ô Cól Tchó Ma-quí</span></td>
                                 <td><span class="trigger-text">🖐️⬇️ "PALMA PARA BAIXO!"</span></td>
-                                <td>Avança em Base Longa desferindo um bloqueio esmagador com la palma de cima para
+                                <td>Avança em Base Longa desferindo um bloqueio esmagador com a palma de cima para
                                     baixo.</td>
                             </tr>
                             <tr>
@@ -1082,7 +1226,7 @@
                             </tr>
                             <tr>
                                 <td>h</td>
-                                <td>Tit Coá Sogui Dung Jumok Yop Tchigui<span class="phonetic">Dít Cuá Sô-guí Dúng
+                                <td>Tit coá sogui dung jumok yop tchigui<span class="phonetic">Dít Cuá Sô-guí Dúng
                                         Djú-môc Yóp Tchi-guí</span></td>
                                 <td><span class="trigger-text">❌🦶🔨 "PASSO CRUZADO, MARTELO!"</span></td>
                                 <td>Desloca-se cruzando um pé por trás do outro e desfere um soco de costas de punho
@@ -1103,14 +1247,14 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><span class="badge-form">Yulgok Hian</span><span class="phonetic">Yúl-gôc
+                                <td><span class="badge-form">Iul Gok Hian</span><span class="phonetic">Iúl Góc
                                         Rí-án</span></td>
                                 <td><a href="https://youtu.be/IYjaMnn8IsM" target="_blank"
                                         class="video-link"><span>📺</span> Ver Tull</a></td>
                             </tr>
                             <tr>
-                                <td><span class="badge-form">Teguk Sa Jang</span><span class="phonetic">Té-gúc Sá
-                                        Djáng</span></td>
+                                <td><span class="badge-form">Teguk Sa Jang Hian</span><span class="phonetic">Té-gúc Sá
+                                        Djáng Rí-án</span></td>
                                 <td><a href="https://youtu.be/QPK2RMshkJk" target="_blank"
                                         class="video-link"><span>📺</span> Ver Poom-se</a></td>
                             </tr>
@@ -1134,7 +1278,8 @@
                             <tr>
                                 <td>1</td>
                                 <td>Narê Tchagui<span class="phonetic">Na-ré Tchá-guí</span></td>
-                                <td>Chutes circulares rápidos e alternados no lugar focados no ganho de velocidade.</td>
+                                <td>Chutes circulares rápidos e alternados no lugar focados no ganho de velocidade.
+                                    (Tchagui 1 Jejari - 15 Pontos)</td>
                             </tr>
                             <tr>
                                 <td>2</td>
@@ -1159,10 +1304,10 @@
                             </tr>
                             <tr>
                                 <td>5</td>
-                                <td>Orun Ap Dolio Tchago, Step Orun Dolio Tchagui<span class="phonetic">Ô-rún Áp Dô-lió
+                                <td>Orun Ap Dolio Tchago, Step Orun Dolio Tchagui<span class="phonetic">O-rún Áp Dô-lió
                                         Tcha-gó, Es-tép Ô-rún Dô-lió Tchá-guí</span></td>
                                 <td>Avançando: circular de direita, finta de passo veloz para a frente e repete circular
-                                    com a direita.</td>
+                                    com a direita. (Thagui 2 Apuro - 15 Pontos)</td>
                             </tr>
                             <tr>
                                 <td>6</td>
@@ -1202,11 +1347,32 @@
                         </tbody>
                     </table>
                 </div>
+
+                <h3>👊 4. Kibon Donjak (Qui-bôn Dôn-djác) - Técnicas de Base Estática</h3>
+                <p class="sub-info-text">• <b>Kibon Donjak IL, I, Sam, Sa:</b> Execução estática isolada com perfeição
+                    milimétrica das posturas, defesas e socos acumulados. (Valendo 5 Pontos)</p>
+                <p class="sub-info-text">• <b>Kibon Poom-se:</b> Sequências básicas de movimentação linear combinada.
+                    (Valendo 5 Pontos)</p>
+
+                <h3>⚔️ 5. Requisitos de Exame</h3>
+                <p class="sub-info-text">• <b>Sorteio de Formas Anteriores:</b> Avaliação surpresa e instantânea de
+                    formas executada sob comando direto. (Item obrigatório na planilha de notas)</p>
+                <p class="sub-info-text">• <b>Matcho Kyorugui:</b> Luta combinada de passos aplicando contra-ataques
+                    programados com rigor posicional. (Valendo 10 Pontos)</p>
+                <p class="sub-info-text">• <b>Kyorugui (Combate Livre):</b> Luta regulamentada avaliando postura
+                    competitiva e fintas. (Valendo 15 Pontos)</p>
+                <p class="sub-info-text">• <b>Kyok-Pa Sull (son-nal):</b> Teste estrito de quebramento de tábua com a
+                    faca da mão lateral. (Valendo 5 Pontos)</p>
+                <p class="sub-info-text">• <b>Pal Kub (madeira):</b> Teste de impacto para quebramento utilizando a
+                    ponta do cotovelo em curso descendente ou horizontal. (Valendo 5 Pontos)</p>
             </div>
         </details>
 
         <details id="azul">
-            <summary>🔵 REQUISITOS: Faixa Azul (Para Azul Ponta Vermelha - 4º GUB)</summary>
+            <summary>
+                <span class="summary-belt-line sb-azul"></span>
+                <div class="summary-text-row">REQUISITOS: Faixa Azul (Para Faixa Azul Ponta Vermelha - 4º GUB)</div>
+            </summary>
             <div class="content-block">
                 <h3>🥋 1. Kibon Poom-se — Técnicas Básicas</h3>
                 <div class="table-container">
@@ -1222,81 +1388,80 @@
                         <tbody>
                             <tr>
                                 <td>a</td>
-                                <td>Tit Kubi (Bom Sogui) Batan Son Olio Makgi<span class="phonetic">Dít Cu-bí / Bôm
-                                        Sô-guí Ba-tán Sôn Ô-lió Ma-guí</span></td>
+                                <td>Tit kubi (bom sogui) batam son olio maki<span class="phonetic">Dít cu-bí / Bôm
+                                        sô-guí ba-tán sôn ô-lió ma-guí</span></td>
                                 <td><span class="trigger-text">🐆🖐️⬆️ "PALMA PARA CIMA!"</span></td>
                                 <td>Avança na Base em L ou Leopardo, subindo a palma da mão aberta de baixo para cima
                                     para desviar golpes.</td>
                             </tr>
                             <tr>
                                 <td>b</td>
-                                <td>Tit Kubi Son Nal Dung Pakat Makgi<span class="phonetic">Dít Cu-bí Sôn Nál Dúng
-                                        Pa-gát Ma-guí</span></td>
+                                <td>Tit kubi son nal dung pakat maki<span class="phonetic">Dít cu-bí sôn nál dúng pa-gát
+                                        ma-guí</span></td>
                                 <td><span class="trigger-text">📐🫱 "FACA INTERNA!"</span></td>
                                 <td>Em Base em L, defende o tronco de dentro para fora utilizando o lado interno da mão
                                     aberta (lado do polegar).</td>
                             </tr>
                             <tr>
                                 <td>c</td>
-                                <td>Tit Kubi Son Nal Koduro Momtong Makgi Jejari Ap Kubi Baro Palkub Olio Tchigui<span
-                                        class="phonetic">Dít Cu-bí Sôn Nál Cô-du-ró Môm-tóng Ma-guí Dje-dja-rí Áp Cu-bí
-                                        Bá-ró Pál-cúb Ô-lió Tchi-guí</span></td>
+                                <td>Tit kubi son nal koduro montom mako jejari ap kubi baro palkub olio tchigui<span
+                                        class="phonetic">Dít cu-bí sôn nál cô-du-ró môm-tóng ma-guí dje-dja-rí áp cu-bí
+                                        bá-ró pál-cúb ô-lió tchi-guí</span></td>
                                 <td><span class="trigger-text">📐🛡️🔄💪 "DEFENDE L, UPPER COTOVELO!"</span></td>
                                 <td>Guarda dupla aberta em L. Sem mover os pés, projeta para base longa desferindo
                                     cotovelada vertical ascendente.</td>
                             </tr>
                             <tr>
                                 <td>d</td>
-                                <td>Tit Kubi Koduro Pakat Palmok Momtong Pakat Makgi<span class="phonetic">Dít Cu-bí
-                                        Cô-du-ró Pa-gát Pál-môc Môm-tóng Pa-gát Ma-guí</span></td>
+                                <td>Tit kubi koduro pakat palmok montom pakat maki<span class="phonetic">Dít cu-bí
+                                        cô-du-ró pa-gát pál-môc môm-tóng pa-gát ma-guí</span></td>
                                 <td><span class="trigger-text">📐🛡️👊 "GUARDA DUPLA FECHADA"</span></td>
                                 <td>Avança em Base L com defesa média externa, mantendo o punho traseiro fechado colado
                                     ao peito de reforço.</td>
                             </tr>
                             <tr>
                                 <td>e</td>
-                                <td>Ap Kubi Baro Jumok Jetchio Momtong Jireugi<span class="phonetic">Áp Cu-bí Bá-ró
-                                        Djú-môc Djé-tchió Môm-tóng Djí-ru-gwí</span></td>
+                                <td>Ap kubi baro jumok jetchio montom dirugui<span class="phonetic">Áp cu-bí bá-ró
+                                        djú-môc djé-tchió môm-tóng djí-ru-gwí</span></td>
                                 <td><span class="trigger-text">📐🔄👊 "SOCO INVERTIDO!"</span></td>
                                 <td>Avança na Base Longa soltando soco traseiro com o punho invertido (palma para cima)
                                     na linha abdominal.</td>
                             </tr>
                             <tr>
                                 <td>f</td>
-                                <td>Ap Kubi Du Jumok Jetchio Momtong Jireugi<span class="phonetic">Áp Cu-bí Dú Djú-môc
-                                        Djé-tchió Môm-tóng Djí-ru-gwí</span></td>
+                                <td>Ap kubi du jumok jetchio montom dirugui<span class="phonetic">Áp cu-bí dú djú-môc
+                                        djé-tchió môm-tóng djí-ru-gwí</span></td>
                                 <td><span class="trigger-text">📐🚀👊 "SOCO DUPLO INVERTIDO!"</span></td>
                                 <td>Avança em Base Longa e dispara dois socos paralelos simultâneos nas costelas com as
                                     palmas para cima.</td>
                             </tr>
                             <tr>
                                 <td>g</td>
-                                <td>Ap Kubi Batan Son Caui Ap Makgi<span class="phonetic">(Áp Cu-bí Ba-tán Sôn Cá-uí Áp
-                                        Ma-guí)</span></td>
-                                <td><span class="trigger-text">✂️🖐 "TESOURA DE PALMA!"</span></td>
+                                <td>Ap kubi batam son caui ap maki<span class="phonetic">Áp cu-bí ba-tán sôn cá-uí áp
+                                        ma-guí</span></td>
+                                <td><span class="trigger-text">✂️🖐️ "TESOURA DE PALMA!"</span></td>
                                 <td>Avança em Base Longa aplicando um bloqueio duplo síncrono em tesoura usando as
-                                    palmas abertas.</td>
+                                    palmas das mãos abertas.</td>
                             </tr>
                             <tr>
                                 <td>h</td>
-                                <td>Ap Kubi Baro Jumok Momtong Dolio Jireugi<span class="phonetic">Áp Cu-bí Bá-ró
-                                        Djú-môc Môm-tóng Dô-lió Djí-ru-gwí</span></td>
+                                <td>Ap kubi baro jumok montom dolio dirugui<span class="phonetic">Áp cu-bí bá-ró djú-môc
+                                        môm-tóng dô-lió di-ru-guí</span></td>
                                 <td><span class="trigger-text">📐🏹👊 "SOCO EM GANCHO!"</span></td>
                                 <td>Avança em Base Longa. O braço traseiro desfere um soco circular horizontal de fora
                                     para dentro no tronco.</td>
                             </tr>
                             <tr>
                                 <td>i</td>
-                                <td>Kojum So Jumok Tit Jireugi<span class="phonetic">CÔ-djúm Sô Djú-môc Dít
-                                        Djí-ru-gwí</span></td>
+                                <td>Kojum so jumok tit dirugui<span class="phonetic">Có-djúm sô djú-môc dít
+                                        di-ru-guí</span></td>
                                 <td><span class="trigger-text">🦀🔙👊 "SOCO PARA TRÁS!"</span></td>
                                 <td>Base de Cavalo. Olha por cima do ombro e executa um soco direto para as suas costas
                                     cruzando o braço.</td>
                             </tr>
                             <tr>
                                 <td>j</td>
-                                <td>Kojum So Mondun I Makgi<span class="phonetic">CÔ-djúm Sô Môn-dún Í Ma-guí</span>
-                                </td>
+                                <td>Kojum so mondun i maki<span class="phonetic">Có-djúm sô môn-dún í ma-guí</span></td>
                                 <td><span class="trigger-text">🦀🪝 "DEFESA EM C!"</span></td>
                                 <td>Na Base de Cavalo, defende formando a letra "C" com as mãos em garra (uma alta,
                                     outra baixa).</td>
@@ -1331,94 +1496,112 @@
                     </table>
                 </div>
 
-                <h3>🔥 3. Tchagui (Tchá-guí) — Currículo de 10 Chutes de Exame</h3>
+                <h3>🔥 3. Item 5 – TCHAGUI (azul p/ azul com vermelha)</h3>
                 <p style="font-size: 13px; color: #ff9f0a; margin-bottom: 8px; font-weight: bold;">Base: Kyorugui Jasé
-                    Jumbi</p>
+                    Jumbi | Sequências: Jejari (c/ fingimento) e Jejari</p>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
                                 <th style="width: 8%">Nº</th>
                                 <th style="width: 42%">Nome Técnico / Fonética</th>
-                                <th style="width: 50%">Mecânica, Sequência e Aplicação</th>
+                                <th style="width: 50%">Mecânica, Sequência e Aplicação no Alvo</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>1</td>
-                                <td>Godup Dolio Tchagui<span class="phonetic">Gô-dúp Dô-lió Tchá-guí</span></td>
-                                <td>Dois chutes circulares frontais consecutivos na raquete com a mesma perna, sem
-                                    apoiar o pé no chão.</td>
+                                <td>Godup dolio tchagui<span class="phonetic">Gô-dúp dô-lió tchá-guí</span></td>
+                                <td>Dois chutes circulares consecutivos desferidos no lugar com finta/fingimento de
+                                    quadril com a mesma perna. (Valendo 15 Pontos)</td>
                             </tr>
                             <tr>
                                 <td>2</td>
-                                <td>Godup Yop Tchagui<span class="phonetic">Gô-dúp Yóp Tchá-guí</span></td>
-                                <td>Dois chutes laterais estocados consecutivos com a faca do pé sem baixar a perna de
-                                    ataque.</td>
+                                <td>Godup yop tchagui<span class="phonetic">Gô-dúp yóp tchá-guí</span></td>
+                                <td>Dois chutes laterais estocados em sequência reta no lugar sem apoiar o pé de ataque
+                                    no chão. (Valendo 15 Pontos)</td>
                             </tr>
                             <tr>
                                 <td>3</td>
-                                <td>Godup Mondolio Rurio Tchagui<span class="phonetic">Gô-dúp Môn-dô-lió Ru-rió
-                                        Tchá-guí</span></td>
-                                <td>Dois chutes em gancho rodados completos pelas costas (360 graus) consecutivos, sem
-                                    quebra de base.</td>
+                                <td>Godup mondolio rurio tchagui<span class="phonetic">Gô-dúp môn-dô-lió ru-rió
+                                        tchá-guí</span></td>
+                                <td>Dois chutes ganchos rodados consecutivos por trás (360 graus de pivô) executados com
+                                    finta no mesmo lugar.</td>
                             </tr>
                             <tr>
                                 <td>4</td>
-                                <td>Olgul Narê Tchagui<span class="phonetic">O-rún Dô-lió Tcha-g</span></td>
-                                <td>Chutes circulares alternados rápidos (em chicote) disparados estritamente na linha
-                                    alta.</td>
+                                <td>Olgul narê tchagui<span class="phonetic">Ôl-gúl na-ré tchá-guí</span></td>
+                                <td>Chutes circulares alternados rápidos em chicote disparados estritamente na linha
+                                    alta/rosto.</td>
                             </tr>
                             <tr>
                                 <td>5</td>
-                                <td>Ap Dolio Tchago Godup Mondolio Rurio Tchagui<span class="phonetic">Áp Dô-lió Tchá-gó
-                                        Gô-dúp Môn-dô-lió Ru-rió Tchá-guí</span></td>
-                                <td>Circular de perna dianteira e emenda na hora dois chutes ganchos rodados sem pôr o
-                                    pé no chão.</td>
+                                <td>Ap dolio tchago godup mondolio rurio tchagui<span class="phonetic">Áp dô-lió tcha-gó
+                                        gô-dúp môn-dô-lió ru-rió tchá-guí</span></td>
+                                <td>Circular de perna dianteira seguido imediatamente de dois ganchos rodados contínuos
+                                    sem quebrar o eixo.</td>
                             </tr>
                             <tr>
                                 <td>6</td>
-                                <td>Sebon Narê Tchago (d) Tit Tchagui (d)<span class="phonetic">Sé-bôn Na-ré Tchá-gó -
-                                        Dít Tchá-guí</span></td>
-                                <td>Três chutes alternados rápidos em finta seguidos por um chute de costas de calcanhar
-                                    com a direita.</td>
+                                <td>Sebon narê tchago (d) tit tchagui (d)<span class="phonetic">Sé-bôn na-ré tcha-gó -
+                                        Dít tchá-guí</span></td>
+                                <td>Três chutes rápidos em finta alternados emendando um coice linear reto para trás com
+                                    a perna direita.</td>
                             </tr>
                             <tr>
                                 <td>7</td>
-                                <td>Sebon Narê Tchago (d) Mondolio Rurio Tchagui (d)<span class="phonetic">Sé-bôn Na-ré
-                                        Tchá-gó - Môn-dô-lió Ru-rió Tchá-guí</span></td>
-                                <td>Três chutes alternados rápidos emendando no final um chute em gancho rodado de 360
-                                    graus com a direita.</td>
+                                <td>Sebon narê tchago (d) mondolio rurio tchagui (d)<span class="phonetic">Sé-bôn na-ré
+                                        tcha-gó - Môn-dô-lió ru-rió tchá-guí</span></td>
+                                <td>Três chutes rápidos alternados conectando na finalização o gancho rodado completo
+                                    com a direita.</td>
                             </tr>
                             <tr>
                                 <td>8</td>
-                                <td>Sebon Narê Tchago (d) Dolke Tchagui (e) (Idan)<span class="phonetic">Sé-bôn Na-ré
-                                        Tchá-gó - Dôl-ké Tchá-guí - Í-dán</span></td>
-                                <td>Três chutes rápidos em finta conectando na finalização o chute furacão saltando de
+                                <td>Sebon narê tchago (d) dolke tchagui (e) (idan)<span class="phonetic">Sé-bôn na-ré
+                                        tcha-gó - Dôl-ké tchá-guí - Í-dán</span></td>
+                                <td>Combo rápido finalizando em salto com o chute furacão aéreo rotacional de perna
                                     esquerda.</td>
                             </tr>
                             <tr>
                                 <td>9</td>
-                                <td>Apuro Dasôt-bon Bal Tchagui<span class="phonetic">A-pú-ró Dá-sôt-bôn Bál
-                                        Tchá-guí</span></td>
-                                <td>Execução avançando: sequência de 5 chutes contínuos em progressão explosiva de
-                                    avanço.</td>
+                                <td>Apuro dasôt-bon bal tchagui<span class="phonetic">A-pú-ró dá-sôt-bôn bál
+                                        tchá-guí</span></td>
+                                <td>Execução caminhando: progressão frontal contínua desferindo 5 chutes em deslocamento
+                                    explosivo para frente.</td>
                             </tr>
                             <tr>
                                 <td>10</td>
-                                <td>Jejari Dasôt-bon Bal Tchagui<span class="phonetic">Dje-dja-rí Dá-sôt-bôn Bál
-                                        Tchá-guí</span></td>
-                                <td>Disparos rápidos de 5 chutes dinâmicos sequenciais sem deslocamento, cobrando eixo
-                                    central fixo.</td>
+                                <td>Jejari dasôt-bon bal tchagui<span class="phonetic">Dje-dja-rí dá-sôt-bôn bál
+                                        tchá-guí</span></td>
+                                <td>Metralhadora estática: 5 chutes rápidos sequenciais disparados no lugar sem perder a
+                                    centralização da base. (Precisão - 5 Pts)</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+
+                <h3>👊 4. Kibon Donjak & Bal-Ki-Sull</h3>
+                <p class="sub-info-text">• <b>Kibon Poom-se:</b> Avaliação rigorosa da postura dinâmica e das defesas
+                    acumuladas do nível a até j. (Valendo 5 Pontos)</p>
+                <p class="sub-info-text">• <b>Bal-Ki-sull II:</b> Movimentações e combinações específicas de combate de
+                    pernas homologadas na planilha. (Valendo 5 Pontos)</p>
+
+                <h3>⚔️ 5. Requisitos de Exame</h3>
+                <p class="sub-info-text">• <b>Sorteio:</b> Execução imediata de técnicas combinadas e formas sorteadas
+                    na hora pela banca examinadora. (Valendo 10 Pontos)</p>
+                <p class="sub-info-text">• <b>Matcho Kyorugui:</b> Luta combinada de passos fixos avaliando
+                    rigorosamente o controle de distância. (Valendo 5 Pontos)</p>
+                <p class="sub-info-text">• <b>Kyok-Pa Sull (Quebramento):</b> Teste estrito de impacto real com
+                    quebramento de madeira usando as técnicas de <b>Ju-mok</b> (madeira solta - 2.5 pontos) e
+                    <b>Son-nal-dung</b> (madeira - 2.5 pontos). (Valendo 5 Pontos)</p>
             </div>
         </details>
 
         <details id="azul-pt-vermelha">
-            <summary>🔵🔴 REQUISITOS: Faixa Azul Ponta Vermelha (Para Faixa Vermelha - 3º GUB)</summary>
+            <summary>
+                <span class="summary-belt-line sb-azul-vermelha"></span>
+                <div class="summary-text-row">REQUISITOS: Faixa Azul Ponta Vermelha (Para Faixa Vermelha - 3º GUB)</div>
+            </summary>
             <div class="content-block">
                 <h3>🥋 1. Kibon Poom-se — Técnicas Básicas</h3>
                 <div class="table-container">
@@ -1434,82 +1617,82 @@
                         <tbody>
                             <tr>
                                 <td>a</td>
-                                <td>Ap Kubi Ran Son Nal Pituro Momtong Pakat Makgi<span class="phonetic">Áp Cu-bí Rán
-                                        Sôn Nál Pí-tu-ró Môm-tóng Pa-gát Ma-guí</span></td>
-                                <td><span class="trigger-text">📐🌪️🫱 "UMA FACA TORCIDA!"</span></td>
-                                <td>Base longa com forte torção; defesa média para fora com uma mão em faca do braço
-                                    oposto à perna avançada.</td>
+                                <td>Ap kubi ran son nal pituro montom pakat maki<span class="phonetic">Áp cu-bí rán sôn
+                                        nál pi-tu-ró môm-tóng pa-gát ma-quí</span></td>
+                                <td><span class="trigger-text">RUNNER MÃO ABERTA "TORÇÃO DE FACA!"</span></td>
+                                <td>Avança em Base Longa executando um bloqueio de dentro para fora com a faca de uma
+                                    das mãos, rotacionando o tronco inversamente (torção).</td>
                             </tr>
                             <tr>
                                 <td>b</td>
-                                <td>Ap Kubi Dan Guio Batan Son Jetchio Are Tchigui<span class="phonetic">Áp Cu-bí Dán
-                                        Guió Ba-tán Sôn Djé-tchió Á-ré Tchi-guí</span></td>
-                                <td><span class="trigger-text">Resgate 🎣🖐️⬇️ "PUXA E PALMA INVERTIDA!"</span></td>
-                                <td>Avança em base longa; uma mão puxa o oponente e a outra atinge baixo com a palma
-                                    para cima.</td>
+                                <td>Ap kubi dan guio batan son jetcho are tchigui<span class="phonetic">Áp cu-bí dán
+                                        guió bá-tán sôn djé-tchó á-ré tchi-guí</span></td>
+                                <td><span class="trigger-text">🫱🎣💥 "PUXA E GOLEIA!"</span></td>
+                                <td>Avança em Base Longa, simula puxar o oponente com a mão de apoio e desfere um golpe
+                                    baixo com a palma da outra mão voltada para cima.</td>
                             </tr>
                             <tr>
                                 <td>c</td>
-                                <td>Ap Kubi Jumok Dan Guio Tok Jireugi<span class="phonetic">Áp Cu-bí Djú-môc Dán Guió
-                                        Tóc Djí-ru-gwí</span></td>
-                                <td><span class="trigger-text">🎣👊 ⬆️ "PUXA E UPPER!"</span></td>
-                                <td>Puxada firme de retenção com a mão guia e uppercut curto de punho diretamente contra
-                                    o queixo.</td>
+                                <td>Ap kubi jumok dan guio tok dirugui<span class="phonetic">Áp cu-bí djú-môc dán guió
+                                        tôc di-ru-guí</span></td>
+                                <td><span class="trigger-text">✊🎣🆙 "UP-CUT NO QUEIXO COM APOIO!"</span></td>
+                                <td>Base Longa à frente, puxando o braço de apoio enquanto projeta um soco ascendente
+                                    curto e seco direcionado ao queixo do adversário.</td>
                             </tr>
                             <tr>
                                 <td>d</td>
-                                <td>Ap Kubi Gun Kang Jumok Ap Jireugi<span class="phonetic">Áp Cu-bí Gún Cáng Djú-môc Áp
-                                        Djí-ru-gwí</span></td>
-                                <td><span class="trigger-text">📐⚔️👊 "SOCO E MONTANHA LONGA"</span></td>
-                                <td>Postura em base longa; soco frontal com o braço da frente e defesa alta síncrona com
-                                    o braço traseiro.</td>
+                                <td>Ap kubi gun gan jumok ap dirugui<span class="phonetic">Áp cu-bí gún gán djú-môc áp
+                                        di-ru-guí</span></td>
+                                <td><span class="trigger-text">🛡️👊⚔️ "MOVIMENTO DIAMANTE"</span></td>
+                                <td>Executa simultaneamente em Base Longa um soco frontal na linha do tronco e uma
+                                    defesa alta com o braço oposto protegendo a cabeça.</td>
                             </tr>
                             <tr>
                                 <td>e</td>
-                                <td>Kojum So Palkub Tit Tchigui<span class="phonetic">CÔ-djúm Sô Pál-cúb Dít
-                                        Tchi-guí</span></td>
-                                <td><span class="trigger-text">🦀🔙💪 "COTOVELADA PARA TRÁS!"</span></td>
-                                <td>Deslocamento lateral em base de cavalo desferindo cotovelada reta para trás com o
-                                    braço traseiro.</td>
+                                <td>Kojum so palkub tit tchigui<span class="phonetic">Có-djúm sô pál-cub dít
+                                        tchi-guí</span></td>
+                                <td><span class="trigger-text">🧘\u200d♂️🔙💥 "COTOVELADA PARA TRÁS!"</span></td>
+                                <td>Em Base Agachada (Kojum Sogui), desfere um golpe de cotovelo reto e violento para
+                                    trás, olhando em direção ao alvo nas costas.</td>
                             </tr>
                             <tr>
                                 <td>f</td>
-                                <td>Kojum So San Tul Makgi<span class="phonetic">CÔ-djúm Sô Sán Túl Ma-guí</span></td>
-                                <td><span class="trigger-text">🦀⛰️👊 "DEFESA DA MONTANHA FECHADA"</span></td>
-                                <td>Base de cavalo; os dois braços defendem dobrados em ângulos retos de 90 graus
-                                    (formato de montanha).</td>
+                                <td>Kojum so san tul maki<span class="phonetic">Có-djúm sô sán túl ma-quí</span></td>
+                                <td><span class="trigger-text">🧘\u200d♂️⛰️🛡️ "DEFESA DA MONTANHA!"</span></td>
+                                <td>Em Base Agachada, abre ambos os braços em ângulo reto para cima e para as laterais,
+                                    bloqueando dois ataques simultâneos na linha alta.</td>
                             </tr>
                             <tr>
                                 <td>g</td>
-                                <td>Tit Kubi Ie San Tul Makgi<span class="phonetic">Dít Cu-bí Í-é Sán Túl Ma-guí</span>
+                                <td>Tit kubi ie san tul maki<span class="phonetic">Dít cu-bí ié sán túl ma-quí</span>
                                 </td>
-                                <td><span class="trigger-text">📐⛰️↕️ "MONTANHA ASSIMÉTRICA"</span></td>
-                                <td>Base L; defesa alta executada com o braço traseiro e defesa baixa com o braço
-                                    dianteiro (punhos fechados).</td>
+                                <td><span class="trigger-text">📐🙅\u200dDos "MONTANHA QUEBRADA EM L"</span></td>
+                                <td>Em postura em L, realiza bloqueio duplo com os punhos fechados: um antebraço defende
+                                    o alto de lado e o outro faz defesa baixa.</td>
                             </tr>
                             <tr>
                                 <td>h</td>
-                                <td>Tit Kubi Son Nare San Tul Makgi<span class="phonetic">Dít Cu-bí Sôn Ná-ré Sán Túl
-                                        Ma-guí</span></td>
-                                <td><span class="trigger-text">📐⛰️🫱 "MONTANHA ABERTA"</span></td>
-                                <td>Mesma estrutura de bloqueio duplo assimétrico (alto/baixo) em L, mas executada de
-                                    mãos abertas em facas.</td>
+                                <td>Tit kubi son nare san tul maki<span class="phonetic">Dít cu-bí sôn ná-ré sán túl
+                                        ma-quí</span></td>
+                                <td><span class="trigger-text">📐🖐️⛰️ "MONTANHA DE MÃO ABERTA EM L"</span></td>
+                                <td>Idêntico ao bloco anterior, porém executado com as duas mãos completamente abertas
+                                    em faca em postura em L (Tit Kubi).</td>
                             </tr>
                             <tr>
                                 <td>i</td>
-                                <td>Tit Kubi Jumok Tchet Da Ri Jireugi<span class="phonetic">Dít Cu-bí Djú-môc Tché Dá
-                                        Rí Djí-ru-gwí</span></td>
-                                <td><span class="trigger-text">📐🚀👊 "SOCO DUPLO EM U"</span></td>
-                                <td>Base L; dois socos paralelos e simultâneos disparados na direção do ombro dianteiro
-                                    (alto e médio).</td>
+                                <td>Tit kubi jumok tchet da ri dirugui<span class="phonetic">Dít cu-bí djú-môc tchét dá
+                                        rí di-ru-guí</span></td>
+                                <td><span class="trigger-text">📐👊⚡ "SOCO DUPLO PARALELO LATERAL"</span></td>
+                                <td>Em postura em L, projeta ambos os punhos fechados juntos e sobrepostos em direção à
+                                    lateral do avanço, alinhando o ataque.</td>
                             </tr>
                             <tr>
                                 <td>j</td>
-                                <td>Tit Kubi Jumok Gun Kang Yop Jireugi<span class="phonetic">Dít Cu-bí Djú-môc Gún Cáng
-                                        Yóp Djí-ru-gwí</span></td>
-                                <td><span class="trigger-text">📐🏯🏹 "SOCO LATERAL COM COBERTURA"</span></td>
-                                <td>Base L; soco lateral reto com o braço dianteiro e defesa alta síncrona cobrindo a
-                                    cabeça com o traseiro.</td>
+                                <td>Tit kubi jumok gun gang yop dirugui<span class="phonetic">Dít cu-bí djú-môc gún gáng
+                                        yóp di-ru-guí</span></td>
+                                <td><span class="trigger-text">📐🛡️👊 "SOCO DA MONTANHA LATERAL EM L!"</span></td>
+                                <td>Em postura em L, executa uma defesa alta com um braço enquanto desfere um soco
+                                    lateral potente com o outro na linha média.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1526,22 +1709,20 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><span class="badge-form">Toi-Gye Hian</span><span class="phonetic">Tói-Guê
+                                <td><span class="badge-form">Toi Gae Hian</span><span class="phonetic">Tói Gué
                                         Rí-án</span></td>
-                                <td><a href="https://youtu.be/dXySPEHjwW0" target="_blank"
-                                        class="video-link"><span>📺</span> Ver Tull</a></td>
+                                <td><a href="#" target="_blank" class="video-link"><span>📺</span> Ver Tull</a></td>
                             </tr>
                             <tr>
-                                <td><span class="badge-form">Teguk Yuk Jang</span><span class="phonetic">Té-gúc Iúc
+                                <td><span class="badge-form">Teguk Iuk Jang</span><span class="phonetic">Té-gúc Iúc
                                         Djáng</span></td>
-                                <td><a href="https://youtu.be/iPsdZmbaJl4" target="_blank"
-                                        class="video-link"><span>📺</span> Ver Poom-se</a></td>
+                                <td><a href="#" target="_blank" class="video-link"><span>📺</span> Ver Poom-se</a></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <h3>🔥 3. Tchagui (Tchá-guí) — Currículo de 10 Chutes de Exame</h3>
+                <h3>🔥 3. Item 5 — TCHAGUI (azul com vermelha p/ vermelha)</h3>
                 <p style="font-size: 13px; color: #ff9f0a; margin-bottom: 8px; font-weight: bold;">Base: Kyorugui Jasé
                     Jumbi</p>
                 <div class="table-container">
@@ -1550,84 +1731,108 @@
                             <tr>
                                 <th style="width: 8%">Nº</th>
                                 <th style="width: 42%">Nome Técnico / Fonética</th>
-                                <th style="width: 50%">Mecânica, Sequência e Aplicação</th>
+                                <th style="width: 50%">Mecânica, Sequência e Aplicação no Alvo</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>1</td>
-                                <td>Ap Bal Yop Tchagui<span class="phonetic">Áp Bál Yóp Tchá-guí</span></td>
-                                <td>Chute lateral reto desferido com finta rápida utilizando a perna dianteira a partir
-                                    do lugar.</td>
+                                <td>Ap bal yop tchagui<span class="phonetic">Áp bál yóp tchá-guí</span></td>
+                                <td>Sequência Jejari: Chute lateral retilíneo disparado diretamente com a perna da
+                                    frente (guia) focado em antecipação. (Valendo 10 Pontos)</td>
                             </tr>
                             <tr>
                                 <td>2</td>
-                                <td>Ap Bal Tigô Tchagui<span class="phonetic">Áp Bál Tí-gô Tchá-guí</span></td>
-                                <td>Chute martelo açoitado de cima para baixo executado diretamente com a perna
-                                    dianteira.</td>
+                                <td>Ap bal tigo tchagui<span class="phonetic">Áp bál tí-gô tchá-guí</span></td>
+                                <td>Sequência Jejari: Chute descendente (martelo) desferido de forma rápida direto com a
+                                    perna dianteira na linha alta.</td>
                             </tr>
                             <tr>
                                 <td>3</td>
-                                <td>Ap Bal Pacat Tchagui<span class="phonetic">Áp Bál Ba-gát Tchá-guí</span></td>
-                                <td>Chute semicircular de dentro para fora desferido com velocidade máxima utilizando a
-                                    perna dianteira.</td>
+                                <td>Ap bal pacat tchagui<span class="phonetic">Áp bál pa-gát tchá-guí</span></td>
+                                <td>Sequência Jejari: Chute em arco de dentro para fora desferido com a perna dianteira
+                                    para limpar a guarda do oponente.</td>
                             </tr>
                             <tr>
                                 <td>4</td>
-                                <td>Ap Bal Dolio Tchagui<span class="phonetic">Áp Bál Dô-lió Tchá-guí</span></td>
-                                <td>Chute circular rápido em finta tática de chicote, batendo na linha alta/média
-                                    diretamente com o pé da frente.</td>
+                                <td>Ap bal dolio tchagui<span class="phonetic">Áp bál dô-lió tchá-guí</span></td>
+                                <td>Sequência Jejari: Chute circular rápido na linha média desferido com chicote direto
+                                    da perna dianteira guia.</td>
                             </tr>
                             <tr>
                                 <td>5</td>
-                                <td>Apuro Timio Tuit Tchagui<span class="phonetic">A-pú-ró Dí-mió Dít Tchá-guí</span>
+                                <td>Apuro timio tit tchagui<span class="phonetic">A-pú-ró dí-mió dít tchá-guí</span>
                                 </td>
-                                <td>Avançando em deslocamento: salto completo girando de costas no ar e cravando o coice
-                                    reto.</td>
+                                <td>Sequência Apuro (Avançando): Salto em progressão frontal realizando o giro dorsal e
+                                    descarregando o coice retilíneo com o calcanhar. (Valendo 20 Pontos)</td>
                             </tr>
                             <tr>
                                 <td>6</td>
-                                <td>Apuro Timio Mondolio Rurio Tchagui<span class="phonetic">A-pú-ró Dí-mió Môn-dô-lió
-                                        Ru-rió Tchá-guí</span></td>
-                                <td>Avançando em deslocamento: decola do solo girando 360 graus pelas costas e solta o
-                                    gancho no ar.</td>
+                                <td>Apuro timio mondolio rurio tchagui<span class="phonetic">A-pú-ró dí-mió môn-dô-lió
+                                        ru-rió tchá-guí</span></td>
+                                <td>Sequência Apuro (Avançando): Salto projetando o corpo para a frente enquanto executa
+                                    o giro completo de 360 graus em gancho horizontal.</td>
                             </tr>
                             <tr>
                                 <td>7</td>
-                                <td>Mondolio (fingir), Dolke Tchagui (Idan)<span class="phonetic">Môn-dô-lió - Dôl-ké
-                                        Tchá-guí - Í-dán</span></td>
-                                <td>Combinação avançada: finta o giro de costas para enganar e emenda o chute tornado
-                                    saltando.</td>
+                                <td>Mondolio (fingir), dolke tchagui (idan)<span class="phonetic">Môn-dô-lió, dôl-ké
+                                        tchá-guí (í-dán)</span></td>
+                                <td>Sequência Apuro (Avançando): Finta completa simulando o giro dorsal e emenda no ar o
+                                    chute furacão saltando com troca de perna.</td>
                             </tr>
                             <tr>
                                 <td>8</td>
-                                <td>Apuro Orun Bal Dasot-bon Tchagui<span class="phonetic">A-pú-ró Ô-rún Bál Dá-sôt-bôn
-                                        Tchá-guí</span></td>
-                                <td>Progressão avançando: dispara uma sequência contínua de 5 chutes utilizando apenas a
-                                    perna direita.</td>
+                                <td>Apuro orun bal dasot-bon tchagui<span class="phonetic">A-pú-ró ô-rún bál dá-sôt-bôn
+                                        tchá-guí</span></td>
+                                <td>Sequência Apuro (Avançando): Combo de ataque em progressão linear contendo 5 chutes
+                                    seguidos executados estritamente com a perna direita.</td>
                             </tr>
                             <tr>
                                 <td>9</td>
-                                <td>Apuro Uen Bal Dasot-bon Tchagui<span class="phonetic">A-pú-ró Uén Bál Dá-sôt-bôn
-                                        Tchá-guí</span></td>
-                                <td>Progressão avançando: dispara uma sequência contínua de 5 chutes utilizando apenas a
-                                    perna esquerda.</td>
+                                <td>Apuro uen bal dasot-bon tchagui<span class="phonetic">A-pú-ró uén bál dá-sôt-bôn
+                                        tchá-guí</span></td>
+                                <td>Sequência Apuro (Avançando): Combo de ataque em progressão linear contendo 5 chutes
+                                    seguidos executados estritamente com a perna esquerda.</td>
                             </tr>
                             <tr>
                                 <td>10</td>
-                                <td>Apuro Dasot Bon Timio Tchagui<span class="phonetic">A-pú-ró Dá-sôt Bôn Dí-mió
-                                        Tchá-guí</span></td>
-                                <td>Sequência máxima: 5 chutes aéreos contínuos executados com a combinação de saltos e
-                                    steps.</td>
+                                <td>Apuro dasot bon timio tchagui<span class="phonetic">A-pú-ró dá-sôt bôn dí-mió
+                                        tchá-guí</span></td>
+                                <td>Sequência Apuro (Avançando): Ataque explosivo sequencial disparando 5 chutes
+                                    voadores contínuos combinando passos, saltos e steps.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+
+                <h3>👊 4. Kibon Poom-se & Bal-Ki-Sull</h3>
+                <p class="sub-info-text">• <b>Kibon Poom-se:</b> Execução precisa e impecável das sequências básicas
+                    dinâmicas acumuladas do nível a até j. (Valendo 5 Pontos)</p>
+                <p class="sub-info-text">• <b>Bal-Ki-Sull I e II:</b> Técnicas de combate focadas no uso combativo,
+                    fintas e agilidade de pernas. (Valendo 5 Pontos)</p>
+
+                <h3>⚔️ 5. Requisitos de Exame</h3>
+                <p class="sub-info-text">• <b>Sorteio de Formas Anteriores (1 e 2):</b> Reação imediata executando duas
+                    formas surpresa sorteadas pela banca examinadora. (Valendo 10 Pontos — 5 pontos cada)</p>
+                <p class="sub-info-text">• <b>Matcho Kyorugui:</b> Luta combinada avançada demonstrando contra-ataques
+                    cirúrgicos e controle de distância. (Valendo 5 Pontos)</p>
+                <p class="sub-info-text">• <b>Jaiu Kyorugui (Combate):</b> Combate livre contínuo com protetores
+                    oficiais — avaliação de cenários 1x1 e simulação em desvantagem 1x2. (Valendo 15 Pontos — 10 para
+                    1x1 e 5 para 1x2)</p>
+                <p class="sub-info-text">• <b>Kyok-Pa Sull (Quebramento):</b> Teste oficial de potência com <b>Timio Yop
+                        Tchagui</b> (Chute Lateral Voador) superando uma barreira humana de 3 pessoas. (Valendo 5
+                    Pontos)</p>
+                <p class="sub-info-text">• <b>Técnica Livre:</b> Demonstração individual de habilidades marciais
+                    específicas escolhidas pelo aluno. (Valendo 5 Pontos)</p>
             </div>
         </details>
 
         <details id="vermelha">
-            <summary>🔴 REQUISITOS: Faixa Vermelha (Para Vermelha Ponta Preta - 2º GUB)</summary>
+            <summary>
+                <span class="summary-belt-line sb-vermelha"></span>
+                <div class="summary-text-row">REQUISITOS: Faixa Vermelha (Para Faixa Vermelha Ponta Preta - 2º GUB)
+                </div>
+            </summary>
             <div class="content-block">
                 <h3>🥋 1. Kibon Poom-se — Técnicas Básicas</h3>
                 <div class="table-container">
@@ -1643,60 +1848,61 @@
                         <tbody>
                             <tr>
                                 <td>a</td>
-                                <td>Bom Sogui Batan Son Momtong An Makgi<span class="phonetic">Bôm Sô-guí Ba-tán Sôn
-                                        Môm-tóng Án Ma-guí</span></td>
-                                <td><span class="trigger-text">🐆🖐️🚪 "LEOPARDO COM PALMA!"</span></td>
-                                <td>Avança na Base do Leopardo travando peso atrás. Defesa média de fora para dentro com
-                                    a palma.</td>
+                                <td>Bom sogui batan son montom an maki<span class="phonetic">Bôm Sô-guí Ba-tán Sôn
+                                        Môm-tóng Án Ma-quí</span></td>
+                                <td><span class="trigger-text">🐆🫱 "PALMA DO LEOPARDO PARA DENTRO!"</span></td>
+                                <td>Postado em Base Leopardo (Bom Sogui), realiza um bloqueio firme na linha do tronco
+                                    trazendo a palma da mão aberta de fora para dentro.</td>
                             </tr>
                             <tr>
                                 <td>b</td>
-                                <td>Bom Sogui Pakat Palmok Momtong An Makgi<span class="phonetic">Bôm Sô-guí Pa-gát
-                                        Pál-môc Môm-tóng Án Ma-guí</span></td>
-                                <td><span class="trigger-text">🐆👊🚪 "LEOPARDO COM ESCUDO!"</span></td>
-                                <td>Base do Leopardo; realiza a defesa média de fora para dentro com antebraço externo
-                                    (punho fechado).</td>
+                                <td>Bom sogui pakat palmok montom an maki<span class="phonetic">Bôm Sô-guí Pa-gát
+                                        Pál-môc Môm-tóng Án Ma-quí</span></td>
+                                <td><span class="trigger-text">🐆👊 "ESCUDO DO LEOPARDO PARA DENTRO!"</span></td>
+                                <td>Postado em Base Leopardo, executa defesa média na linha do peito utilizando a face
+                                    externa do antebraço com o punho fechado.</td>
                             </tr>
                             <tr>
                                 <td>c</td>
-                                <td>Bom Sogui Dan Guio Batan Son Momtong An Mako Dung Jumok Ap Tchigui<span
-                                        class="phonetic">Bôm Sô-guí Dán Guió Ba-tán Sôn Môm-tóng Án Ma-gó Dúng Djú-môc
+                                <td>Bom sogui dan guio batan son monton an mako dung jumok ap tchigui<span
+                                        class="phonetic">Bôm Sô-guí Dán Guió Bá-tán Sôn Môm-tóng Án Ma-quó Dúng Djú-môc
                                         Áp Tchi-guí</span></td>
-                                <td><span class="trigger-text">🎣🐆🔨 "DEFESA PALMA E MARTELO"</span></td>
-                                <td>Base do Leopardo; puxada de retenção com a palma síncrona a um contra-ataque de
-                                    dorso de punho.</td>
+                                <td><span class="trigger-text">🐆🎣🔄👊 "CONTROLA COM PALMA, CHICOTE DE FRENTE!"</span>
+                                </td>
+                                <td>Em Base Leopardo, realiza a puxada/defesa de palma com apoio e emenda imediatamente
+                                    um golpe frontal com as costas do punho no rosto.</td>
                             </tr>
                             <tr>
                                 <td>d</td>
-                                <td>Tit Coá Sogui Du Jumok Jetchio Ap Jireugi<span class="phonetic">Dít Cuá Sô-guí Dú
-                                        Djú-môc Djé-tchió Áp Djí-ru-gwí</span></td>
-                                <td><span class="trigger-text">❌🦶🚀 "PASSO CRUZADO E DUPLO INVERTED"</span></td>
-                                <td>Avança cruzando os pés por trás na Base Cruzada e dispara dois socos frontais curtos
-                                    de palmas para cima.</td>
+                                <td>Tit coá sogui du jumok jetchio ap dirugui<span class="phonetic">Dít Co-á Sô-guí Dú
+                                        Djú-môc Djé-tchió Áp Di-ru-guí</span></td>
+                                <td><span class="trigger-text">❌👣👐 "SOCO DUPLO INVERTIDO CRUZADO!"</span></td>
+                                <td>Cruza os pés por trás mantendo a base firme e dispara simultaneamente dois socos
+                                    frontais na linha do tronco com os punhos virados para cima.</td>
                             </tr>
                             <tr>
                                 <td>e</td>
-                                <td>Ap Kubi Palkub Pyo Jok Tchigui<span class="phonetic">Áp Cu-bí Pál-cúb Pió Djóc
+                                <td>Ap kubi palkub pyo jok tchigui<span class="phonetic">Áp Cu-bí Pál-cúb Pió Djóc
                                         Tchi-guí</span></td>
-                                <td><span class="trigger-text">📐🎯💪 "COTOVELO NO ALVO"</span></td>
-                                <td>Avança em Base Longa; a mão dianteira abre um alvo espalmado para receber o impacto
-                                    do cotovelo traseiro.</td>
+                                <td><span class="trigger-text">RUNNER 🎯💪 "ALVO DE PALMA, COTOVELADA!"</span></td>
+                                <td>Avança em Base Longa abrindo a palma da mão da perna guia para formar o alvo,
+                                    desferindo uma cotovelada lateral violenta de encontro à palma.</td>
                             </tr>
                             <tr>
                                 <td>f</td>
-                                <td>Ap Kubi (Godup) Du Palmok Caui Makgi<span class="phonetic">Áp Cu-bí Cô-dúp Dú
-                                        Pál-môc Cá-uí Ma-guí</span></td>
-                                <td><span class="trigger-text">📐🔄✂️ "FINTA E TESOURA!"</span></td>
-                                <td>Avança em Base Longa; movimento em dois tempos fechando em bloqueio tesoura de
-                                    punhos fechados.</td>
+                                <td>Ap kubi (godup) du palmok caui maki<span class="phonetic">Áp Cu-bí Gô-dúp Dú Pál-môc
+                                        Cá-uí Ma-quí</span></td>
+                                <td><span class="trigger-text">RUNNER 👊✂️ "FINTA E TESOURA FECHADA!"</span></td>
+                                <td>Avança em Base Longa, realiza um fingimento/preparação do movimento e executa a
+                                    defesa em tesoura com os dois punhos cerrados (alta e baixa).</td>
                             </tr>
                             <tr>
                                 <td>g</td>
-                                <td>Ap Sogui Son Nal Nerio Tchigui<span class="phonetic">Áp Sô-guí Sôn Nál Né-rió
+                                <td>Ap sogui son nal nerio tchigui<span class="phonetic">Áp Sô-guí Sôn Nál Né-rió
                                         Tchi-guí</span></td>
-                                <td><span class="trigger-text">🚶‍♂️🪓 "CORTE DE MACHADO DE FACA"</span></td>
-                                <td>Avança na Base Curta de caminhada desferindo um golpe vertical de cima para baixo
-                                    com a faca da mão.</td>
+                                <td><span class="trigger-text">🚶‍♂️🪓 "CORTE DE FACA DE CIMA PARA BAIXO!"</span></td>
+                                <td>Avança em Base Curta de caminhada normal e desfere um golpe descendente cortante com
+                                    a faca da mão aberta.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1715,104 +1921,137 @@
                             <tr>
                                 <td><span class="badge-form">Hwa-Rang Hian</span><span class="phonetic">Ruá-Ráng
                                         Rí-án</span></td>
-                                <td><a href="https://youtu.be/1oZjONeEBkQ" target="_blank"
+                                <td><a href="https://youtu.be/vOf9Z9B69-o" target="_blank"
                                         class="video-link"><span>📺</span> Ver Tull</a></td>
                             </tr>
                             <tr>
-                                <td><span class="badge-form">Teguk Chil Jang</span><span class="phonetic">Té-gúc Tcl
+                                <td><span class="badge-form">Teguk Tchil Jang</span><span class="phonetic">Té-gúc Tcl
                                         Djáng</span></td>
-                                <td><a href="https://youtu.be/mO7JPSxjP4g" target="_blank"
+                                <td><a href="https://youtu.be/O_f66Zbe4_E" target="_blank"
                                         class="video-link"><span>📺</span> Ver Poom-se</a></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <h3>🔥 3. Taguet Tchagui (Tá-guét Tchá-guí) — Chutes em Raquete</h3>
+                <h3>🔥 3. Item 5 — TCHAGUI (vermelha p/ vermelha com preta)</h3>
                 <p style="font-size: 13px; color: #ff9f0a; margin-bottom: 8px; font-weight: bold;">Bases: Kyorugui Jasé
-                    Jumbi / Taguet Jumbi</p>
+                    Jumbi | Taguet Tchagui (Chute em Raquete)</p>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
                                 <th style="width: 8%">Nº</th>
                                 <th style="width: 42%">Nome Técnico / Fonética</th>
-                                <th style="width: 50%">Mecânica, Sequência e Aplicação na Raquete</th>
+                                <th style="width: 50%">Mecânica, Sequência e Aplicação no Alvo</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>1</td>
-                                <td>Ap Dolio, Yop Tchagui<span class="phonetic">Áp Dô-lió, Yóp Tchá-guí</span></td>
-                                <td>Sequência Jejari: dispara chute circular na raquete e, sem baixar a perna, rotaciona
-                                    e chuta lateral.</td>
+                                <td>Ap dolio, yop tchagui<span class="phonetic">Áp dôn-lió, Yóp Tchá-guí</span></td>
+                                <td>Sequência Jejari: Executa chute circular na linha média seguido de chute lateral
+                                    estocado sem baixar a perna. (Valendo 15 Pontos)</td>
                             </tr>
                             <tr>
                                 <td>2</td>
-                                <td>Tigo, Yop Tchagui<span class="phonetic">Tí-gô, Yóp Tchá-guí</span></td>
-                                <td>Sequência Jejari: aplica o chute martelo e conecta imediatamente a extensão lateral
-                                    sem apoiar o pé.</td>
+                                <td>Tigo, yop tchagui<span class="phonetic">Tí-gô, Yóp Tchá-guí</span></td>
+                                <td>Sequência Jejari: Desfere o chute martelo de cima para baixo e conecta a estocada
+                                    lateral mantendo o equilíbrio.</td>
                             </tr>
                             <tr>
                                 <td>3</td>
-                                <td>An, Yop Tchagui<span class="phonetic">Án, Yóp Tchá-guí</span></td>
-                                <td>Sequência Jejari: chute em arco de fora para dentro limpando o alvo e emenda
-                                    estocada lateral rápida.</td>
+                                <td>An, yop tchagui<span class="phonetic">Án, Yóp Tchá-guí</span></td>
+                                <td>Sequência Jejari: Chute semicircular de fora para dentro com a sola e emenda o chute
+                                    lateral com a mesma perna.</td>
                             </tr>
                             <tr>
                                 <td>4</td>
-                                <td>Dolio, Yop Tchagui<span class="phonetic">Dô-lió, Yóp Tchá-guí</span></td>
-                                <td>Sequência Jejari: circular penetrante na raquete com recolhimento rápido e imediata
-                                    extensão lateral.</td>
+                                <td>Dolio, yop tchagui<span class="phonetic">Dô-lió, Yóp Tchá-guí</span></td>
+                                <td>Sequência Jejari: Chute circular penetrante com giro do calcanhar de apoio seguido
+                                    do chute lateral na raquete.</td>
                             </tr>
                             <tr>
                                 <td>5</td>
-                                <td>Timio Aptchago Pitro Tchagui<span class="phonetic">Dí-mió Áp-tcha-gó Pí-tró
+                                <td>Timio aptchago pitro tchagui<span class="phonetic">Dí-mió Áp-tcha-gó Pí-tró
                                         Tchá-guí</span></td>
-                                <td>Sequência com salto: chute frontal no ar e, antes de pousar, torce batendo o
-                                    circular invertido.</td>
+                                <td>Sequência Timio (Saltando): Elevação em salto com chute frontal e torção dinâmica no
+                                    ar para o chute torcido. (Valendo 15 Pontos)</td>
                             </tr>
                             <tr>
                                 <td>6</td>
-                                <td>Timio Dubon Ap Tchagui<span class="phonetic">Dí-mió Du-bôn Áp Tcha-guí</span></td>
-                                <td>Sequência com salto: salto de impulsão frontal aplicando dois chutes frontais
-                                    rápidos alternados no ar.</td>
+                                <td>Timio dubon apt chagui<span class="phonetic">Dí-mió Dú-bôn Áp Tchá-guí</span></td>
+                                <td>Sequência Timio (Saltando): Salto vertical desferindo dois chutes frontais rápidos e
+                                    alternados de forma explosiva no ar.</td>
                             </tr>
                             <tr>
                                 <td>7</td>
-                                <td>Timio Sebum Ap Tchagui (1, 2 e 3)<span class="phonetic">Dí-mió Sé-búm Áp
-                                        Tcha-guí</span></td>
-                                <td>Sequência com salto: decola desferindo três chutes frontais aéreos alternados em
-                                    subida.</td>
+                                <td>Timio sebum ap tchagui (1,2 e 3)<span class="phonetic">Dí-mió Sé-bûn Áp
+                                        Tchá-guí</span></td>
+                                <td>Sequência Timio (Saltando): Impulsão contínua desferindo três impactos frontais
+                                    sucessivos no ar antes da queda.</td>
                             </tr>
                             <tr>
                                 <td>8</td>
-                                <td>Timio Sebum Aptchago Tigo Tchagui<span class="phonetic">Dí-mió Sé-búm Áp-tcha-gó
+                                <td>Timio sebum aptchago tigo tchagui<span class="phonetic">Dí-mió Sé-bûn Áp-tcha-gó
                                         Tí-gô Tchá-guí</span></td>
-                                <td>Sequência com salto: três disparos frontais aéreos seguidos no ar por um chute
-                                    martelo descendente.</td>
+                                <td>Sequência Timio (Saltando): Três chutes frontais rápidos seguidos pelo chute martelo
+                                    descendente no topo do alvo.</td>
                             </tr>
                             <tr>
                                 <td>9</td>
-                                <td>Timio Dubal Ap Tchagui<span class="phonetic">Dí-mió Dú-bál Áp Tcha-guí</span></td>
-                                <td>Sequência com salto: salto voador projetando o impacto simultâneo com ambos os
-                                    calcanhares unidos.</td>
+                                <td>Timio dubal ap tchagui<span class="phonetic">Dí-mió Dú-bál Áp Tchá-guí</span></td>
+                                <td>Sequência Timio (Saltando): Salto de ataque estendendo e projetando as duas pernas
+                                    juntas em impacto frontal paralelo síncrono.</td>
                             </tr>
                             <tr>
                                 <td>10</td>
-                                <td>Timio Sambal Ap Tchagui<span class="phonetic">Dí-mió Sám-bál Áp Tcha-guí</span></td>
-                                <td>Sequência com salto: salto de impulsão máxima aplicando três chutes frontais
-                                    alternados suspensos.</td>
+                                <td>Timio Sambal ap tchagui<span class="phonetic">Dí-mió Sám-bál Áp Tchá-guí</span></td>
+                                <td>Sequência Timio (Saltando): Máxima elevação realizando um triplo ataque frontal
+                                    estendido síncrono no ar.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+
+                <h3>👊 4. Kibon Poom-se & Bal-Ki-Sull</h3>
+                <p class="sub-info-text">• <b>Kibon Poom-se:</b> Execução precisa e impecável das sequências básicas
+                    dinâmicas acumuladas do nível a até g. (Valendo 5 Pontos)</p>
+                <p class="sub-info-text">• <b>Bal-Ki-Sull I, II e San:</b> Deslocamentos lineares e combinatórias
+                    complexas em movimentação real de combate. (Valendo 5 Pontos)</p>
+
+                <h3>⚔️ 5. Requisitos de Exame</h3>
+                <p class="sub-info-text">• <b>Sorteio de Formas Anteriores (1 e 2):</b> Reação imediata sob ordem de
+                    comando executando duas formas sorteadas surpresa pela banca. (Valendo 10 Pontos — 5 pontos cada)
+                </p>
+                <p class="sub-info-text">• <b>Ho-Shin-Sull:</b> Aplicação técnica de defesa pessoal marcial (saídas de
+                    estrangulamento, chaves articulares e projeções de contra-ataque). (Valendo 5 Pontos)</p>
+                <p class="sub-info-text">• <b>Jaiu Kyorugui (Combate Livre):</b> Avaliação tática e combate contínuo
+                    dividido sob pressão de cenários: 1 vs 1, 1 vs 2 e 1 vs 3. (Valendo 20 Pontos — 10 para 1x1, 5 para
+                    1x2 e 5 para 1x3)</p>
+                <p class="sub-info-text">• <b>Kyok-Pa Sull (Quebramento):</b> Demonstração balística e teste de impacto
+                    avançado com <b>Timio Yop Tchagui</b> saltando sobre obstáculo humano de 3 pessoas para partir a
+                    madeira. (Valendo 5 Pontos)</p>
+                <p class="sub-info-text">• <b>Técnica Livre:</b> Apresentação individual e criativa de combinações
+                    livres de alto rendimento estético ou combativo. (Valendo 5 Pontos)</p>
             </div>
         </details>
 
         <details id="vermelha-pt-preta">
-            <summary>🔴⚫ REQUISITOS: Faixa Vermelha Ponta Preta (Para Faixa Preta 1º DAN - 1º GUB)</summary>
+            <summary>
+                <span class="summary-belt-line sb-vermelha-preta"></span>
+                <div class="summary-text-row">EXAME DE GRADUAÇÃO: Candidato a Faixa Preta (1º Dan)</div>
+            </summary>
             <div class="content-block">
+                <div class="p-preta-objectives">
+                    <h3>📝 Objetivos de Requerimento Oficial</h3>
+                    <p class="sub-info-text">• <b>Objetivo pretendido, à princípio, ao alcançar a faixa preta:</b>
+                        Definição clara della filosofia marcial e metas de liderança dentro da organização.</p>
+                    <p class="sub-info-text">• <b>Ao conseguir a graduação, pretende:</b> Parar ( ) | Seguir adiante ( )
+                        | Especializar-se em algo ( ). <i>(Exige justificativa e explicação detalhada por escrito ao
+                            Presidente da Banca)</i>.</p>
+                </div>
+
                 <h3>🥋 1. Kibon Poom-se — Técnicas Básicas</h3>
                 <div class="table-container">
                     <table>
@@ -1826,66 +2065,69 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>0</td>
-                                <td>Revisão Completa da Branca à Vermelha</td>
-                                <td><span class="trigger-text">🔄🥋 "REVISÃO TOTAL"</span></td>
-                                <td>O examinador realizará um sorteio aberto de quaisquer técnicas do currículo
-                                    histórico do aluno.</td>
-                            </tr>
-                            <tr>
                                 <td>a</td>
-                                <td>Tit Ap Kubi Ie San Tul Makgi<span class="phonetic">Dít Áp Cu-bí Í-é Sán Túl
-                                        Ma-guí</span></td>
-                                <td><span class="trigger-text">🔄📐⛰ "MONTANHA INVERTIDA"</span></td>
-                                <td>Avança na Base Longa fazendo rotação reversa do quadril e tronco. Bloqueio duplo
-                                    assimétrico fechado.</td>
+                                <td>Diversos / Movimentos Acumulados<span class="phonetic">Di-vér-sos</span></td>
+                                <td><span class="trigger-text">⚔️🔄 "REVISÃO TOTAL DE GUBS!"</span></td>
+                                <td>Execução e domínio completo de todas as bases, defesas, socos e combinações
+                                    estudadas da Faixa Branca até a Vermelha.</td>
                             </tr>
                             <tr>
                                 <td>b</td>
-                                <td>Ap Kubi Son Nal Dung Dan Guio Olgul Tchigui<span class="phonetic">Áp Cu-bí Sôn Nál
-                                        Dúng Dán Guió Ôl-gúl Tchi-guí</span></td>
-                                <td><span class="trigger-text">Resgate 🎣🫱💥 "PUXA AND FACA INTERNA"</span></td>
-                                <td>Avança em Base Longa. Mão dianteira traciona o oponente e o braço traseiro golpeia o
-                                    rosto com faca interna.</td>
+                                <td>Tit Ap Kubi Ie San Tul Maki<span class="phonetic">Dít Áp Cu-bí Ié Sán Túl
+                                        Ma-quí</span></td>
+                                <td><span class="trigger-text">📐🙅‍♂️🛡️ "MONTANHA QUEBRADA INVERTIDA!"</span></td>
+                                <td>Avança em uma Base Longa Invertida executando defesa dupla simultânea com os dois
+                                    punhos cerrados (alta lateral e baixa frontal).</td>
                             </tr>
                             <tr>
                                 <td>c</td>
-                                <td>Ap Kubi Du Batan Son Olio Makgi<span class="phonetic">Áp Cu-bí Dú Ba-tán Sôn Ô-lió
-                                        Ma-guí</span></td>
-                                <td><span class="trigger-text">📐👐⬆️ "DUPLA PALMA SUBINDO"</span></td>
-                                <td>Avança em Base Longa e projeta um bloqueio ascendente síncrono unindo as duas palmas
-                                    de baixo para cima.</td>
+                                <td>Ap Kubi Son Nal Dung Dan Guio Olgul Tchigui<span class="phonetic">Áp Cu-bí Sôn Nál
+                                        Dúng Dán Guió Ôl-gúl Tchi-guí</span></td>
+                                <td><span class="trigger-text">🏃‍♂️🖐️🎣 "PUXA E GOLPEIA COM FACA INTERNA!"</span></td>
+                                <td>Avança em Base Longa, estende o braço de apoio para puxar o alvo imaginário enquanto
+                                    aplica um golpe forte com a faca interna da mão no rosto.</td>
                             </tr>
                             <tr>
                                 <td>d</td>
-                                <td>Ap Kubi Pakat Palmok Dan Guio An Makgi<span class="phonetic">Áp Cu-bí Pa-gát Pál-môc
-                                        Dán Guió Án Ma-guí</span></td>
-                                <td><span class="trigger-text">🎣👊🚪 "PUXA E TRAZ PARA DENTRO"</span></td>
-                                <td>Avança em Base Longa. Puxada tática com braço dianteiro e bloqueio médio interno com
-                                    antebraço traseiro.</td>
+                                <td>Ap Kubi Du Batan Son Olio Maki<span class="phonetic">Áp Cu-bí Dú Bá-tán Sôn Ô-lió
+                                        Ma-quí</span></td>
+                                <td><span class="trigger-text">🏃‍♂️👐🚀 "DEFESA DUPLA ASCENDENTE DE PALMAS!"</span>
+                                </td>
+                                <td>Avança em Base Longa subindo os dois braços cruzados com as palmas das mãos abertas
+                                    para bloquear impactos frontais altos.</td>
                             </tr>
                             <tr>
                                 <td>e</td>
-                                <td>Tit Kubi Dung Son Okoro Momtong Makgi<span class="phonetic">Dít Cu-bí Dúng Sôn
-                                        Ô-cô-ró Môm-tóng Ma-guí</span></td>
-                                <td><span class="trigger-text">📐❌🤚 "X DE MÃO ABERTA NO PEITO"</span></td>
-                                <td>Na Base em L, defende o centro do peito criando um "X" com os antebraços e
-                                    impactando com o dorso das mãos.</td>
+                                <td>Ap Kubi Pakat Palmok Dan Guio An Maki<span class="phonetic">Áp Cu-bí Pa-gát Pál-môc
+                                        Dán Guió Án Ma-quí</span></td>
+                                <td><span class="trigger-text">🏃‍♂️👊🛡️ "DEFESA DE FORA PARA DENTRO APOIADA!"</span>
+                                </td>
+                                <td>Em Base Longa, realiza bloqueio potente de fora para dentro usando o antebraço
+                                    externo com o punho oposto dando suporte de puxada.</td>
                             </tr>
                             <tr>
                                 <td>f</td>
-                                <td>Kojum So Jumok Pyo Jok Yop Jireugi<span class="phonetic">CÔ-djúm Sô Djú-môc Pió Djóc
-                                        Yóp Djí-ru-gwí</span></td>
-                                <td><span class="trigger-text">🦀🎯👊 "SOCO LATERAL NO ALVO"</span></td>
-                                <td>Base de Cavalo. Mão dianteira abre alvo estático e o punho oposto choca-se de lado
-                                    em soco reto contra ela.</td>
+                                <td>Tit Kubi Dung Son Okoro Momtong Maki<span class="phonetic">Dít Cu-bí Dúng Sôn
+                                        Ô-co-ró Môm-tóng Ma-quí</span></td>
+                                <td><span class="trigger-text">📐🖐️🙅‍♂️ "CRUZA MÃOS ABERTAS NO PEITO!"</span></td>
+                                <td>Em Base em L (Tit Kubi), cruza as duas mãos abertas à frente do tronco, utilizando a
+                                    parte externa das mãos como superfície de defesa.</td>
                             </tr>
                             <tr>
                                 <td>g</td>
-                                <td>Bom Sogui Te San Mirgui<span class="phonetic">Bôm Sô-guí Té Sán Mír-guí</span></td>
-                                <td><span class="trigger-text">Resgate 🐆💥👐 "PROJEÇÃO DA MONTANHA"</span></td>
-                                <td>Base do Leopardo. Une e projeta empurrão duplo de palmas síncrono (uma mão alta e
-                                    uma baixa).</td>
+                                <td>Kojum So Jumok Pyo Jok Yop Dirugui<span class="phonetic">Có-djúm Sô Djú-môc Pió Djóc
+                                        Yóp Di-ru-guí</span></td>
+                                <td><span class="trigger-text">🧘‍♂️🫱🎯 "ALVO ABERTO, SOCO LATERAL NA PALMA!"</span>
+                                </td>
+                                <td>Em Base Cavaleiro, abre a palma da mão à frente da perna que avança servindo de
+                                    alvo, batendo nela com o soco lateral do punho oposto.</td>
+                            </tr>
+                            <tr>
+                                <td>h</td>
+                                <td>Bom Sogui Te San Mirgui<span class="phonetic">Bôm Sô-guí Té Sán Mir-guí</span></td>
+                                <td><span class="trigger-text">🐆🫱💥 "EMPURRÃO DA MONTANHA DO LEOPARDO!"</span></td>
+                                <td>Adota a Base do Leopardo (Bom Sogui) e executa um empurrão simultâneo girando as
+                                    mãos com as palmas abertas para a frente (uma alta e uma baixa).</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1902,123 +2144,149 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><span class="badge-form">Choong-Moo Hian</span><span class="phonetic">Tchúng-Mú
+                                <td><span class="badge-form">Chung-Mu Hian</span><span class="phonetic">Tchúng-Mú
                                         Rí-án</span></td>
-                                <td><a href="https://youtu.be/ivdVFnOXu3A" target="_blank"
-                                        class="video-link"><span>📺</span> Ver Tull</a></td>
+                                <td><a href="#" target="_blank" class="video-link"><span>📺</span> Ver Tull</a></td>
                             </tr>
                             <tr>
                                 <td><span class="badge-form">Teguk Pal Jang</span><span class="phonetic">Té-gúc Pál
                                         Djáng</span></td>
-                                <td><a href="https://youtu.be/toRYOQCttWQ" target="_blank"
-                                        class="video-link"><span>📺</span> Ver Poom-se</a></td>
+                                <td><a href="#" target="_blank" class="video-link"><span>📺</span> Ver Poom-se</a></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <h3>🔥 3. Tchagui — Currículo Oficial de 12 Chutes de Faixa Preta</h3>
-                <p style="font-size: 13px; color: #ff9f0a; margin-bottom: 8px; font-weight: bold;">Base: Kyorugui Jasé
-                    Jumbi</p>
+                <h3>🔥 3. Sorteio de Formas (Múltiplo)</h3>
+                <p class="sub-info-text">• <b>Sorteio 1, 2 e 3:</b> Avaliação surpresa e instantânea de três formas
+                    anteriores (Hians ou Teguks) selecionadas aleatoriamente pela banca examinadora.</p>
+
+                <h3>👊 4. Bal-Ki-Sull & Currículo Oficial de 12 Chutes de Exame</h3>
+                <p style="font-size: 13px; color: #ff9f0a; margin-bottom: 8px; font-weight: bold;">Bases: Kyorugui Jasé
+                    Jumbi (Sequências: Jejari e Taguet Tchagui)</p>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
                                 <th style="width: 8%">Nº</th>
                                 <th style="width: 42%">Nome Técnico / Fonética</th>
-                                <th style="width: 50%">Mecânica, Sequência e Aplicação na Raquete</th>
+                                <th style="width: 50%">Mecânica, Sequência e Aplicação no Alvo</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>1</td>
-                                <td>Sebon Olgul Naré Tchagui (D)<span class="phonetic">Sé-bôn Ôl-gúl Na-ré
+                                <td>Sebon Olgul Narê Tchagui (D)<span class="phonetic">Sé-bôn Ôl-gúl Na-ré
                                         Tchá-guí</span></td>
-                                <td>Sequência Jejari: três chutes circulares alternados rápidos em explosão com foco na
-                                    linha alta.</td>
+                                <td>Sequência Jejari: Três chutes circulares rápidos alternados em chicote direcionados
+                                    estritamente à linha alta com a direita terminando.</td>
                             </tr>
                             <tr>
                                 <td>2</td>
-                                <td>Timio Yop Tchago (D), Timio Tit Tchagui (E)<span class="phonetic">Dí-mió Yóp Tcha-gó
-                                        - Dí-mió Dít Tchá-guí</span></td>
-                                <td>Combo voador: decola em lateral com a direita e, no ar, gira desferindo coice com a
-                                    esquerda.</td>
+                                <td>Timio Yop Tchago (D) Timio Tit Tchagui (E)<span class="phonetic">Dí-mió Yóp Tcha-gó
+                                        (D) Dí-mió Dít Tchá-guí (E)</span></td>
+                                <td>Sequência Jejari: Chute lateral saltado com a direita e emenda imediatamente no ar o
+                                    chute de costas (coice) com a esquerda.</td>
                             </tr>
                             <tr>
                                 <td>3</td>
-                                <td>Timio Ap Bal Yop Tchago (E), Tit Tchagui (D)<span class="phonetic">Dí-mió Áp Bál Yóp
-                                        Tcha-gó - Dít Tchá-guí</span></td>
-                                <td>Salto desferindo chute lateral com perna dianteira esquerda e crava no rebote o
-                                    coice de direita.</td>
+                                <td>Timio Ap Bal Yop Tchago (E) Tit Tchagui (D)<span class="phonetic">Dí-mió Áp Bál Yóp
+                                        Tcha-gó (E) Dít Tchá-guí (D)</span></td>
+                                <td>Sequência Jejari: Salta desferindo o chute lateral com a perna esquerda da frente e
+                                    conecta o chute de costas com a direita.</td>
                             </tr>
                             <tr>
                                 <td>4</td>
-                                <td>Timio Ap Bal Apdolio Tchago (E), Tit Tchagui (D)<span class="phonetic">Dí-mió Áp Bál
-                                        Áp-dô-lió Tcha-gó - Dít Tchá-guí</span></td>
-                                <td>Salto aplicando circular veloz com perna dianteira esquerda e conecta coice reto de
-                                    direita.</td>
+                                <td>Timio Ap Bal Apdolio Tchago (E) Tit Tchagui (D)<span class="phonetic">Dí-mió Áp Bál
+                                        Áp-dô-lió Tcha-gó (E) Dít Tchá-guí (D)</span></td>
+                                <td>Sequência Jejari: Chute circular saltado com a perna esquerda dianteira e conversão
+                                    rápida em chute de costas com a direita.</td>
                             </tr>
                             <tr>
                                 <td>5</td>
-                                <td>Timio Ap Bal Apdolio Tchago (E), Mondolio Rurio Tchagui (D)<span
-                                        class="phonetic">Dí-mió Áp Bál Áp-dô-lió Tcha-gó - Môn-dô-lió Ru-rió
-                                        Tchá-guí</span></td>
-                                <td>Salto com circular de perna dianteira esquerda, emendando no ar gancho rodado de
-                                    direita.</td>
+                                <td>Timio Ap Bal Apdolio Tchago (E) Mondolio Rurio Tchagui (D)<span
+                                        class="phonetic">Dí-mió Áp Bál Áp-dô-lió Tcha-gó (E) Môn-dô-lió Ru-rió Tchá-guí
+                                        (D)</span></td>
+                                <td>Sequência Jejari: Circular aéreo com a perna esquerda da frente seguido pelo chute
+                                    gancho rodado de 360 graus com a direita.</td>
                             </tr>
                             <tr>
                                 <td>6</td>
-                                <td>Timio Ap Tchago Tit Tchagui (Mesma Perna)<span class="phonetic">Dí-mió Áp Tcha-gó
+                                <td>Timio Ap Tchago Tit Tchagui (Mesma Perma)<span class="phonetic">Dí-mió Áp Tcha-gó
                                         Dít Tchá-guí</span></td>
-                                <td>Decola desferindo o frontal e, no mesmo salto (com a mesma perna), gira e estoca
-                                    coice para trás.</td>
+                                <td>Sequência Jejari: Salto desferindo o chute frontal e, sem tocar o pé no chão, gira
+                                    completando com o chute de costas com a mesma perna.</td>
                             </tr>
                             <tr>
                                 <td>7</td>
                                 <td>Timio Yop Tchagui (Para o lado)<span class="phonetic">Dí-mió Yóp Tchá-guí</span>
                                 </td>
-                                <td>Chute voador lateral clássico de arremesso, projetando o corpo horizontalmente no
-                                    ar.</td>
+                                <td>Sequência Taguet Tchagui: Deslocamento e impulsão aérea estendendo o chute lateral
+                                    estocado com potência máxima na raquete lateral.</td>
                             </tr>
                             <tr>
                                 <td>8</td>
-                                <td>Timio Sebum Yop Tchagui (I, II e III)<span class="phonetic">Dí-mió signatures Sé-búm
-                                        Yóp Tchá-guí</span></td>
-                                <td>Três chutes laterais estocados de forma consecutiva e progressiva sem tocar o solo
-                                    no ar.</td>
+                                <td>Timio Sebon Yop Tchagui (I, II e III)<span class="phonetic">Dí-mió Sé-bôn Yóp
+                                        Tchá-guí</span></td>
+                                <td>Sequência Taguet Tchagui: Triplo chute lateral desferido sequencialmente no ar de
+                                    forma explosiva durante o mesmo salto.</td>
                             </tr>
                             <tr>
                                 <td>9</td>
                                 <td>Timio Gaui Tchagui<span class="phonetic">Dí-mió Gá-uí Tchá-guí</span></td>
-                                <td>Chute tesoura voador: uma perna simula fustigar médio e a outra decola aplicando
-                                    lateral real alta.</td>
+                                <td>Sequência Taguet Tchagui: Chute tesoura voador, realizando finta com uma perna
+                                    enquanto a outra estoca o alvo no ar.</td>
                             </tr>
                             <tr>
                                 <td>10</td>
-                                <td>Timio Dobon Yop Tchagui (Mesma Perna)<span class="phonetic">Dí-mió Dô-bôn Yóp
+                                <td>Timio Dobon Yop Tchagui (Mesma Perna)<span class="phonetic">Dí-mió Dú-bôn Yóp
                                         Tchá-guí</span></td>
-                                <td>Salto desferindo dois chutes laterais estocados sequenciais com o mesmo pé no ar
-                                    antes da queda.</td>
+                                <td>Sequência Taguet Tchagui: Dois chutes laterais consecutivos aplicados de forma
+                                    ascendente e violenta no ar com a mesma perna.</td>
                             </tr>
                             <tr>
                                 <td>11</td>
                                 <td>Timio Yop Tchamyo Tchunkwon<span class="phonetic">Dí-mió Yóp Tcl-mió
                                         Tchún-cuôn</span></td>
-                                <td>Aplicação marcial síncrona: realiza lateral voador executando ao mesmo tempo soco
-                                    direto aéreo.</td>
+                                <td>Sequência Taguet Tchagui: Aplicação marcial simultânea — desfere o chute lateral
+                                    voador aplicando soco direto paralelo no ar.</td>
                             </tr>
                             <tr>
                                 <td>12</td>
                                 <td>Timio Gaui Tchago Dolio Tchagui<span class="phonetic">Dí-mió Gá-uí Tcha-gó Dô-lió
                                         Tchá-guí</span></td>
-                                <td>Combo complexo no ar: inicia com mecânica saltada da tesoura e converte em circular
-                                    antes de cair.</td>
+                                <td>Sequência Taguet Tchagui: Combo aéreo complexo — inicia com a mecânica da tesoura e
+                                    converte em chute circular antes da queda.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+
+                <h3>👊 5. Bal-Ki-Sull & Requisitos Especiais de Combate (Derion)</h3>
+                <p class="sub-info-text">• <b>Kibon Poom-se & Bal-Ki-Sull:</b> Avaliação das bases dinâmicas e da
+                    unificação dos blocos de pernas acumulados.</p>
+                <p class="sub-info-text">• <b>Ho-Shin-Sull:</b> Aplicação técnica de defesa pessoal real contra armas e
+                    agressões múltiplas com chaves e projeções contundentes.</p>
+                <p class="sub-info-text">• <b>Jaiu Kyorugui / Derion (Maratona de Combates):</b> Teste físico-tático
+                    contínuo de simulação de combate dividido em 4 cenários progressivos:</p>
+                <div class="kyorugui-grid" style="margin-left: 20px; margin-bottom: 15px;">
+                    <p class="sub-info-text" style="margin: 4px 0;">👉 <b>1 VS 1:</b> Luta livre regulamentada padrão
+                        contra oponente de alto rendimento.</p>
+                    <p class="sub-info-text" style="margin: 4px 0;">👉 <b>1 VS 2:</b> Gerenciamento de espaço e combate
+                        sob desvantagem dupla.</p>
+                    <p class="sub-info-text" style="margin: 4px 0;">👉 <b>1 VS 3:</b> Movimentação evasiva e contenção
+                        em cenário de cerco triplo.</p>
+                    <p class="sub-info-text" style="margin: 4px 0;">👉 <b>1 VS 4:</b> Resistência limite e aplicação
+                        tática sob fadiga extrema.</p>
+                </div>
+                <p class="sub-info-text">• <b>Kyok-Pa Sull (Quebramento Oficial de Potência):</b> Teste balístico real
+                    utilizando <b>Timio Yop Tchagui</b> (Chute Lateral Voador) ultrapassando com folga uma barreira
+                    humana composta por <b>5 pessoas</b> antes de partir as tábuas de madeira na altura regulamentar.
+                </p>
             </div>
         </details>
+
+
     </div>
 
     <footer>
