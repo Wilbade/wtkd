@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dicionário Técnico — Wil Taekwondo</title>
+    <style>
+        :root {
+            --primary: #ff1a1a;
+            --primary-glow: rgba(255, 26, 26, 0.15);
+            --dark-bg: #0a0a0a;
+            --card-bg: #141414;
+            --card-border: #262626;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --term-color: #30d158;
+            --phonetic-color: #ff9f0a;
+        }
+
+        body {
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Topo Premium Compartilhado */
+        header {
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 24px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .brand h1 span {
+            color: var(--primary);
+        }
+
+        .brand .subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 2px;
+            font-weight: 600;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 28px;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s, text-shadow 0.2s;
+        }
+
+        nav a:hover, nav .active {
+            color: var(--text-main);
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        /* Container de Conteúdo */
+        .main-container {
+            max-width: 900px;
+            margin: 40px auto 80px auto;
+            padding: 0 24px;
+        }
+
+        .page-title {
+            margin-bottom: 32px;
+            border-left: 4px solid var(--primary);
+            padding-left: 16px;
+        }
+
+        .page-title h2 {
+            margin: 0;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .page-title p {
+            margin: 4px 0 0 0;
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Cartão de Fundo do Dicionário */
+        .dictionary-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .section-title {
+            color: var(--phonetic-color);
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin: 40px 0 16px 0;
+            padding-left: 10px;
+            border-left: 3px solid var(--phonetic-color);
+        }
+
+        .section-title:first-of-type {
+            margin-top: 10px;
+        }
+
+        /* Tabelas Termos */
+        .table-container {
+            overflow-x: auto;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            background-color: #0d0d0d;
+            margin-bottom: 24px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--card-border);
+            vertical-align: top;
+            line-height: 1.5;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.01);
+        }
+
+        .term-col {
+            width: 30%;
+            font-weight: 700;
+            color: var(--term-color);
+        }
+
+        .phonetic-col {
+            width: 30%;
+            color: var(--phonetic-color);
+            font-weight: 600;
+        }
+
+        .meaning-col {
+            width: 40%;
+            color: var(--text-main);
+        }
+
+        /* Rodapé Fino */
+        footer {
+            background-color: rgba(0,0,0,0.5);
+            padding: 32px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--card-border);
+        }
+        footer p { margin: 4px 0; }
+        footer span { color: var(--text-main); font-weight: 500; }
+        footer .highlight { color: var(--primary); }
+
+        @media (max-width: 900px) {
+            header { padding: 15px 24px; flex-direction: column; gap: 15px; text-align: center; }
+            .main-container { margin-top: 24px; }
+            .dictionary-card { padding: 20px; }
+            .term-col, .phonetic-col, .meaning-col { width: auto; display: block; padding: 4px 0; }
+            tr { display: block; padding: 12px 8px; }
+            td { padding: 0; border: none; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="brand">
+        <h1>WIL <span>TKD</span></h1>
+        <div class="subtitle">Team Marchesini</div>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="index.html">Início</a></li>
+            <li><a href="curriculo.html">Currículo</a></li>
+            <li><a href="exame.html">Exame</a></li>
+            <li><a href="formas.html">Formas</a></li>
+            <li><a href="dicionario.html" class="active">Dicionário</a></li>
+            <li><a href="historia.html">História</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="main-container">
+    <div class="page-title">
+        <h2>Dicionário Técnico</h2>
+        <p>Significado de termos em coreano comumente usados no Taekwondo, acompanhados da fonética para pronúncia correta nas aulas.</p>
+    </div>
+
+    <div class="dictionary-card">
+        <div class="section-title">Termos Técnicos e Comandos</div>
+        <div class="table-container">
+            <table>
+                <tbody>
+                    <tr><td class="term-col">Ap</td><td class="phonetic-col">(Áp)</td><td class="meaning-col">Frente / Frontal (ex: chute frontal)</td></tr>
+                    <tr><td class="term-col">Andja</td><td class="phonetic-col">(Án-djá)</td><td class="meaning-col">Sentar / Sentado</td></tr>
+                    <tr><td class="term-col">Andja Kyorugui</td><td class="phonetic-col">(Án-djá Qui-ô-ru-guí)</td><td class="meaning-col">Luta de solo / Sentado</td></tr>
+                    <tr><td class="term-col">Arae</td><td class="phonetic-col">(Á-ré)</td><td class="meaning-col">Região baixa (abaixo da faixa)</td></tr>
+                    <tr><td class="term-col">Bal</td><td class="phonetic-col">(Bál)</td><td class="meaning-col">Pé</td></tr>
+                    <tr><td class="term-col">Chagi (Tchagui)</td><td class="phonetic-col">(Tchá-guí)</td><td class="meaning-col">Chute</td></tr>
+                    <tr><td class="term-col">Charyut (Tchariot)</td><td class="phonetic-col">(Tchá-riót)</td><td class="meaning-col">Atenção / Sentido</td></tr>
+                    <tr><td class="term-col">Chirugi (Tchirugui)</td><td class="phonetic-col">(Tchí-ru-gwí)</td><td class="meaning-col">Golpe penetrante, estocada ou soco</td></tr>
+                    <tr><td class="term-col">Chungmaneyo</td><td class="phonetic-col">(Tchúng-ma-né-yó)</td><td class="meaning-col">De nada / Não há de quê</td></tr>
+                    <tr><td class="term-col">Dobok</td><td class="phonetic-col">(Dô-bóc)</td><td class="meaning-col">Uniforme oficial do Taekwondo</td></tr>
+                    <tr><td class="term-col">Dojang</td><td class="phonetic-col">(Dô-djáng)</td><td class="meaning-col">Local de treino / Sala de artes marciais</td></tr>
+                    <tr><td class="term-col">Dollyo (Dolio)</td><td class="phonetic-col">(Dô-lió)</td><td class="meaning-col">Circular / Semicircular</td></tr>
+                    <tr><td class="term-col">Dwi (Tui)</td><td class="phonetic-col">(Tuí)</td><td class="meaning-col">Trás / Traseiro (ex: chute de costas)</td></tr>
+                    <tr><td class="term-col">Dwiro Dora</td><td class="phonetic-col">(Tu-í-ró Dô-rá)</td><td class="meaning-col">Meia volta / Virar para trás</td></tr>
+                    <tr><td class="term-col">Dali</td><td class="phonetic-col">(Táh-lí)</td><td class="meaning-col">Perna</td></tr>
+                    <tr><td class="term-col">Kyorugui</td><td class="phonetic-col">(Qui-ô-ru-guí)</td><td class="meaning-col">Luta / Combate livre</td></tr>
+                    <tr><td class="term-col">Gyepi</td><td class="phonetic-col">(Gui-é-pí)</td><td class="meaning-col">Canela</td></tr>
+                    <tr><td class="term-col">Gyeokpa</td><td class="phonetic-col">(Gui-óc-pá)</td><td class="meaning-col">Técnica de quebramento de materiais</td></tr>
+                    <tr><td class="term-col">Hogu</td><td class="phonetic-col">(Ô-gú)</td><td class="meaning-col">Protetor de tórax</td></tr>
+                    <tr><td class="term-col">Hoojin (Rudjin)</td><td class="phonetic-col">(Rú-djín)</td><td class="meaning-col">Recuar / Deslocamento para trás</td></tr>
+                    <tr><td class="term-col">Hoshin Kyorugui</td><td class="phonetic-col">(Rô-shín Qui-ô-ru-guí)</td><td class="meaning-col">Combate focado em defesa pessoal</td></tr>
+                    <tr><td class="term-col">Hong</td><td class="phonetic-col">(Róng)</td><td class="meaning-col">Vermelho (Lado competidor)</td></tr>
+                    <tr><td class="term-col">Ilbo-Hoojin</td><td class="phonetic-col">(Íl-bô Rú-djín)</td><td class="meaning-col">Um passo recuando com troca de base</td></tr>
+                    <tr><td class="term-col">Ilbo-Jeonjin</td><td class="phonetic-col">(Íl-bô Dji-ôn-djín)</td><td class="meaning-col">Um passo avançando com troca de base</td></tr>
+                    <tr><td class="term-col">Iaksok Kyorugui</td><td class="phonetic-col">(Iác-sóc Qui-ô-ru-guí)</td><td class="meaning-col">Luta combinada ou treino de sombra</td></tr>
+                    <tr><td class="term-col">Il De Kyorugui</td><td class="phonetic-col">(Íl Dé Qui-ô-ru-guí)</td><td class="meaning-col">Combate de dois contra um</td></tr>
+                    <tr><td class="term-col">Jeonjin (Djondjin)</td><td class="phonetic-col">(Dji-ôn-djín)</td><td class="meaning-col">Avançar / Deslocamento para a frente</td></tr>
+                    <tr><td class="term-col">Joon Bi (Djumpbi)</td><td class="phonetic-col">(Djum-bí)</td><td class="meaning-col">Preparar / Posição de prontidão</td></tr>
+                    <tr><td class="term-col">Jungani Bohode</td><td class="phonetic-col">(Djun-gá-ní Bô-ô-dé)</td><td class="meaning-col">Protetor de canela</td></tr>
+                    <tr><td class="term-col">Jokyo-Nim</td><td class="phonetic-col">(Djô-qui-ô-ním)</td><td class="meaning-col">Instrutor auxiliar</td></tr>
+                    <tr><td class="term-col">Kaesok</td><td class="phonetic-col">(Quê-sóc)</td><td class="meaning-col">Continuar / Continuem a luta</td></tr>
+                    <tr><td class="term-col">Kalyo</td><td class="phonetic-col">(Cál-yó)</td><td class="meaning-col">Separar / Parar a ação temporariamente</td></tr>
+                    <tr><td class="term-col">Kamsahmda (Kamsahamnida)</td><td class="phonetic-col">(Cám-sá-am-ní-dá)</td><td class="meaning-col">Muito obrigado</td></tr>
+                    <tr><td class="term-col">Kihap</td><td class="phonetic-col">(Quí-ráp)</td><td class="meaning-col">Grito síncrono de explosão de energia</td></tr>
+                    <tr><td class="term-col">Kuman</td><td class="phonetic-col">(Cú-mán)</td><td class="meaning-col">Parar o combate / Encerrar</td></tr>
+                    <tr><td class="term-col">Kwanjang-Nim</td><td class="phonetic-col">(Quán-djáng-ním)</td><td class="meaning-col">Grão-Mestre (Diretor da escola)</td></tr>
+                    <tr><td class="term-col">Kyobu-Nim</td><td class="phonetic-col">(Qui-ô-bú-ním)</td><td class="meaning-col">Professor titular</td></tr>
+                    <tr><td class="term-col">Kyungnet (Quiungné)</td><td class="phonetic-col">(Qui-úng-né)</td><td class="meaning-col">Saudação / Cumprimentar</td></tr>
+                    <tr><td class="term-col">Makgi</td><td class="phonetic-col">(Má-guí)</td><td class="meaning-col">Defesa / Bloqueio</td></tr>
+                    <tr><td class="term-col">Momtong</td><td class="phonetic-col">(Môm-tóng)</td><td class="meaning-col">Região média corporal (tronco)</td></tr>
+                    <tr><td class="term-col">Muleup</td><td class="phonetic-col">(Mu-lúp)</td><td class="meaning-col">Joelho</td></tr>
+                    <tr><td class="term-col">Nê</td><td class="phonetic-col">(Nê)</td><td class="meaning-col">Sim / Compreendido</td></tr>
+                    <tr><td class="term-col">Olgul</td><td class="phonetic-col">(Ôl-gúl)</td><td class="meaning-col">Região alta corporal (cabeça/rosto)</td></tr>
+                    <tr><td class="term-col">Orun</td><td class="phonetic-col">(Ô-rún)</td><td class="meaning-col">Lado direito / Direita</td></tr>
+                    <tr><td class="term-col">Poomsae / Tull</td><td class="phonetic-col">(Púm-sé / Túl)</td><td class="meaning-col">Forma, diagrama ou coreografia marcial</td></tr>
+                    <tr><td class="term-col">Pitro</td><td class="phonetic-col">(Pí-tró)</td><td class="meaning-col">Diagonal / Torcido para fora</td></tr>
+                    <tr><td class="term-col">Palmok Bohode</td><td class="phonetic-col">(Pál-môc Bô-ô-dé)</td><td class="meaning-col">Protetor de antebraço</td></tr>
+                    <tr><td class="term-col">Pal</td><td class="phonetic-col">(Pál)</td><td class="meaning-col">Braço</td></tr>
+                    <tr><td class="term-col">Sabom-Nim</td><td class="phonetic-col">(Sá-bôm-ním)</td><td class="meaning-col">Mestre (Instrutor faixa preta sênior)</td></tr>
+                    <tr><td class="term-col">Seogi (Sogui)</td><td class="phonetic-col">(Sô-guí)</td><td class="meaning-col">Base / Postura dos pés</td></tr>
+                    <tr><td class="term-col">Shijak (Tchijak)</td><td class="phonetic-col">(Tchí-djác)</td><td class="meaning-col">Começar / Iniciar o round ou exercício</td></tr>
+                    <tr><td class="term-col">Saju</td><td class="phonetic-col">(Sá-djú)</td><td class="meaning-col">Quatro direções fundamentais</td></tr>
+                    <tr><td class="term-col">Son</td><td class="phonetic-col">(Sôn)</td><td class="meaning-col">Mão</td></tr>
+                    <tr><td class="term-col">Taekwondo</td><td class="phonetic-col">(Thé-quón-dó)</td><td class="meaning-col">O caminho dos pés, das mãos e do espírito</td></tr>
+                    <tr><td class="term-col">Chung</td><td class="phonetic-col">(Tchúng)</td><td class="meaning-col">Azul (Lado competidor)</td></tr>
+                    <tr><td class="term-col">Tii</td><td class="phonetic-col">(Tí)</td><td class="meaning-col">Faixa gradativa de graduação</td></tr>
+                    <tr><td class="term-col">Um</td><td class="phonetic-col">(Úm)</td><td class="meaning-col">Yin (Princípio passivo/receptivo)</td></tr>
+                    <tr><td class="term-col">Uen</td><td class="phonetic-col">(Uén)</td><td class="meaning-col">Lado esquerdo / Esquerda</td></tr>
+                    <tr><td class="term-col">Yeop (Yop)</td><td class="phonetic-col">(Yóp)</td><td class="meaning-col">Lateral / De lado</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section-title">Sistema de Contagem e Números</div>
+        <div class="table-container">
+            <table>
+                <tbody>
+                    <tr><td class="term-col">Hana</td><td class="phonetic-col">(Rá-ná)</td><td class="meaning-col">Um (1)</td></tr>
+                    <tr><td class="term-col">Dool</td><td class="phonetic-col">(Dúl)</td><td class="meaning-col">Dois (2)</td></tr>
+                    <tr><td class="term-col">Set</td><td class="phonetic-col">(Sét)</td><td class="meaning-col">Três (3)</td></tr>
+                    <tr><td class="term-col">Net</td><td class="phonetic-col">(Nét)</td><td class="meaning-col">Quatro (4)</td></tr>
+                    <tr><td class="term-col">Da-sut</td><td class="phonetic-col">(Tá-sút)</td><td class="meaning-col">Cinco (5)</td></tr>
+                    <tr><td class="term-col">Yeo-sut</td><td class="phonetic-col">(Ió-sút)</td><td class="meaning-col">Seis (6)</td></tr>
+                    <tr><td class="term-col">Il-gop</td><td class="phonetic-col">(Íl-góp)</td><td class="meaning-col">Sete (7)</td></tr>
+                    <tr><td class="term-col">Yeodol</td><td class="phonetic-col">(Ió-dól)</td><td class="meaning-col">Oito (8)</td></tr>
+                    <tr><td class="term-col">Ahop</td><td class="phonetic-col">(Á-róp)</td><td class="meaning-col">Nove (9)</td></tr>
+                    <tr><td class="term-col">Yeol</td><td class="phonetic-col">(Iól)</td><td class="meaning-col">Dez (10)</td></tr>
+                    <tr><td class="term-col">Seu-mul</td><td class="phonetic-col">(Sú-múl)</td><td class="meaning-col">Vinte (20)</td></tr>
+                    <tr><td class="term-col">Seo-reun</td><td class="phonetic-col">(Sór-<b>ún</b>)</td><td class="meaning-col">Trinta (30)</td></tr>
+                    <tr><td class="term-col">Ma-heun</td><td class="phonetic-col">(Má-<b>ún</b>)</td><td class="meaning-col">Quarenta (40)</td></tr>
+                    <tr><td class="term-col">Swin</td><td class="phonetic-col">(Suín)</td><td class="meaning-col">Cinquenta (50)</td></tr>
+                    <tr><td class="term-col">Ye-sun</td><td class="phonetic-col">(Ié-sún)</td><td class="meaning-col">Sessenta (60)</td></tr>
+                    <tr><td class="term-col">I-reun</td><td class="phonetic-col">(Í-rún)</td><td class="meaning-col">Setenta (70)</td></tr>
+                    <tr><td class="term-col">Yeo-deun</td><td class="phonetic-col">(Ió-dún)</td><td class="meaning-col">Oitenta (80)</td></tr>
+                    <tr><td class="term-col">A-heun</td><td class="phonetic-col">(Á-ún)</td><td class="meaning-col">Noventa (90)</td></tr>
+                    <tr><td class="term-col">Beck</td><td class="phonetic-col">(Béc)</td><td class="meaning-col">Cem (100)</td></tr>
+                    <tr><td class="term-col">Tchon</td><td class="phonetic-col">(Tchôn)</td><td class="meaning-col">Mil (1000)</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section-title">Anatomia e Partes do Corpo</div>
+        <div class="table-container">
+            <table>
+                <tbody>
+                    <tr><td class="term-col">Balmog</td><td class="phonetic-col">(Bál-môc)</td><td class="meaning-col">Tornozelo</td></tr>
+                    <tr><td class="term-col">Bal Nal</td><td class="phonetic-col">(Bál Nál)</td><td class="meaning-col">Faca externa do pé / Borda externa</td></tr>
+                    <tr><td class="term-col">Bal Kut</td><td class="phonetic-col">(Bál Cút)</td><td class="meaning-col">Extremidade / Ponta dos dedos do pé</td></tr>
+                    <tr><td class="term-col">Eokkae</td><td class="phonetic-col">(Ó-quê)</td><td class="meaning-col">Ombro</td></tr>
+                    <tr><td class="term-col">Gwi</td><td class="phonetic-col">(Guí)</td><td class="meaning-col">Orelha</td></tr>
+                    <tr><td class="term-col">Ko</td><td class="phonetic-col">(Có)</td><td class="meaning-col">Nariz</td></tr>
+                    <tr><td class="term-col">Ima</td><td class="phonetic-col">(Í-má)</td><td class="meaning-col">Testa</td></tr>
+                    <tr><td class="term-col">Palmok</td><td class="phonetic-col">(Pál-môc)</td><td class="meaning-col">Região do antebraço</td></tr>
+                    <tr><td class="term-col">Palkkumchi</td><td class="phonetic-col">(Pál-cún-tchí)</td><td class="meaning-col">Ponta do cotovelo</td></tr>
+                    <tr><td class="term-col">Mori</td><td class="phonetic-col">(Mô-rí)</td><td class="meaning-col">Cabeça</td></tr>
+                    <tr><td class="term-col">Mogdeolmi</td><td class="phonetic-col">(Móc-tôl-mí)</td><td class="meaning-col">Nuca / Região posterior do pescoço</td></tr>
+                    <tr><td class="term-col">Mog</td><td class="phonetic-col">(Móc)</td><td class="meaning-col">Pescoço / Garganta</td></tr>
+                    <tr><td class="term-col">Neolbjeog Dali</td><td class="phonetic-col">(Nól-bchóc Tahl-lí)</td><td class="meaning-col">Coxa</td></tr>
+                    <tr><td class="term-col">Nun</td><td class="phonetic-col">(Nún)</td><td class="meaning-col">Olho</td></tr>
+                    <tr><td class="term-col">Sat</td><td class="phonetic-col">(Sát)</td><td class="meaning-col">Virilha / Região inguinal</td></tr>
+                    <tr><td class="term-col">Sonmogi</td><td class="phonetic-col">(Sôn-mô-guí)</td><td class="meaning-col">Articulação do pulso</td></tr>
+                    <tr><td class="term-col">Songalag</td><td class="phonetic-col">(Sôn-gá-lác)</td><td class="meaning-col">Dedos da mão</td></tr>
+                    <tr><td class="term-col">Song-aji</td><td class="phonetic-col">(Sông-á-djí)</td><td class="meaning-col">Panturrilha / Batata da perna</td></tr>
+                    <tr><td class="term-col">Teogi</td><td class="phonetic-col">(Tô-guí)</td><td class="meaning-col">Queixo / Mandíbula</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>© Todos os direitos reservados: <span>Wil Taekwondo — <span class="highlight">Team Marchesini</span></span></p>
+    <p>Desenvolvido por Wiliam Longo</p>
+</footer>
+
+</body>
+</html>

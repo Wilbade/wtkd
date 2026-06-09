@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>História e Tradição — Wil Taekwondo</title>
+    <style>
+        :root {
+            --primary: #ff1a1a;
+            --primary-glow: rgba(255, 26, 26, 0.15);
+            --dark-bg: #0a0a0a;
+            --card-bg: #141414;
+            --card-border: #262626;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --highlight-box: #1f1f1f;
+        }
+
+        body {
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Topo Premium Compartilhado */
+        header {
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 24px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .brand h1 span {
+            color: var(--primary);
+        }
+
+        .brand .subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 2px;
+            font-weight: 600;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 28px;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav a:hover,
+        nav .active {
+            color: var(--text-main);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Container Principal */
+        .main-container {
+            max-width: 1000px;
+            margin: 40px auto 80px auto;
+            padding: 0 24px;
+        }
+
+        .page-title {
+            margin-bottom: 32px;
+            border-left: 4px solid var(--primary);
+            padding-left: 16px;
+        }
+
+        .page-title h2 {
+            margin: 0;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Mecânica Estrutural de Abas em CSS Puro */
+        .tabs-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tab-input {
+            display: none;
+        }
+
+        .tabs-nav {
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--card-border);
+            margin-bottom: 24px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab-label {
+            padding: 14px 20px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: color 0.2s, border-color 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-label:hover {
+            color: var(--text-main);
+        }
+
+        .tab-content {
+            display: none;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            line-height: 1.7;
+            font-size: 15.5px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Ativação das Abas Dinâmicas via CSS */
+        #tab1:checked~.tabs-nav [for="tab1"],
+        #tab2:checked~.tabs-nav [for="tab2"],
+        #tab3:checked~.tabs-nav [for="tab3"],
+        #tab4:checked~.tabs-nav [for="tab4"] {
+            color: var(--text-main);
+            border-color: var(--primary);
+        }
+
+        #tab1:checked~.content-box #content1,
+        #tab2:checked~.content-box #content2,
+        #tab3:checked~.content-box #content3,
+        #tab4:checked~.content-box #content4 {
+            display: block;
+        }
+
+        p {
+            margin: 0 0 20px 0;
+        }
+
+        p:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .highlight-text {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Estilo para Juramento e Princípios */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .info-mini-card {
+            background-color: var(--highlight-box);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .info-mini-card strong {
+            display: block;
+            color: var(--primary);
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+
+        .info-mini-card span {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Grid de Imagens (Compartilhado para Galeria e Doboks) */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin: 32px 0;
+        }
+
+        .visual-card {
+            background-color: #0d0d0d;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .visual-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+            background-color: #1a1a1a;
+            border: 1px solid var(--card-border);
+            border-radius: 4px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .visual-card img:hover {
+            transform: scale(1.02);
+            border-color: var(--primary);
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 180px;
+            background-color: #1a1a1a;
+            border: 1px dashed var(--card-border);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .visual-card h4 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .visual-card span {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* MECÂNICA DO LIGHTBOX (ZOOM DE IMAGEM EM TELA CHEIA) */
+        .image-zoom-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            cursor: zoom-out;
+        }
+
+        .image-zoom-overlay img {
+            max-width: 90%;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            animation: zoomAnimation 0.2s ease-out;
+        }
+
+        @keyframes zoomAnimation {
+            from {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .source-box {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--card-border);
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .source-box ul {
+            padding-left: 20px;
+            margin: 8px 0 0 0;
+        }
+
+        footer {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 32px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--card-border);
+        }
+
+        footer p {
+            margin: 4px 0;
+        }
+
+        footer span {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        footer .highlight {
+            color: var(--primary);
+        }
+
+        @media (max-width: 900px) {
+            header {
+                padding: 15px 24px;
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .tab-content {
+                padding: 24px;
+            }
+
+            .image-zoom-overlay img {
+                max-width: 95%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="brand">
+            <h1>WIL <span>TKD</span></h1>
+            <div class="subtitle">Team Marchesini</div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Início</a></li>
+                <li><a href="curriculo.html">Currículo</a></li>
+                <li><a href="exame.html">Exame</a></li>
+                <li><a href="formas.html">Formas</a></li>
+                <li><a href="dicionario.html">Dicionário</a></li>
+                <li><a href="historia.html" class="active">História</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        <div class="page-title">
+            <h2>História & Tradição</h2>
+            <p>Conheça as raízes marciais, a filosofia e a trajetória da nossa arte da Coreia ao Brasil.</p>
+        </div>
+
+        <div class="tabs-wrapper">
+            <input type="radio" id="tab1" name="history-tabs" class="tab-input" checked>
+            <input type="radio" id="tab2" name="history-tabs" class="tab-input">
+            <input type="radio" id="tab3" name="history-tabs" class="tab-input">
+            <input type="radio" id="tab4" name="history-tabs" class="tab-input">
+
+            <div class="tabs-nav">
+                <label for="tab1" class="tab-label">🇰🇷 Origem na Coreia</label>
+                <label for="tab2" class="tab-label">📜 Filosofia & Princípios</label>
+                <label for="tab3" class="tab-label">🎓 O Dobok</label>
+                <label for="tab4" class="tab-label">🇧🇷 Chegada ao Brasil</label>
+            </div>
+
+            <div class="content-box">
+
+                <div class="tab-content" id="content1">
+                    <p>Ao contrário do que muitos pensam, o <span class="highlight-text">Taekwondo é uma arte marcial
+                            recente</span>, que começou a ser desenvolvida a partir dos anos 40 após a retirada das
+                        tropas de invasão japonesas na Coreia. No entanto, suas raízes estão intimamente ligadas aos
+                        mais de 2000 anos de história das artes marciais coreanas tradicionais, como o
+                        <em>Taekkyeon</em>, o <em>Subak</em> e o <em>Gwonbeop</em>, além de incorporar elementos
+                        técnicos do Karate de Okinawa e do Kung Fu chinês.</p>
+                    <p>Em 1945, logo após o fim da ocupação da Coreia pelo Japão Imperial, novas escolas de artes
+                        marciais, chamadas <strong>Kwans</strong>, foram abertas em Seul por mestres que haviam estudado
+                        no exterior. Durante os anos 40 e 50, cada Kwan praticava seu próprio estilo e linhagem técnica.
+                        A popularidade da arte cresceu rapidamente quando ela foi adotada para o treinamento das forças
+                        militares sul-coreanas.</p>
+                    <p>Em 1952, após testemunhar uma demonstração militar de alto impacto, o presidente sul-coreano
+                        Syngman Rhee exigiu a fusão dos estilos dos Kwans. A partir de 1955, os leaders unificaram a
+                        arte nacional sob o nome inicial de <em>Tae Soo Do</em> (Tae: pisar/pé; Su: mão; Do: caminho).
+                        Posteriormente, o General Choi Hong Hi defendeu com sucesso a substituição do termo <em>Su</em>
+                        por <strong>Kwon</strong> (punho), oficializando o nome <strong>Taekwondo</strong> em 1965 junto
+                        à <em>Korea Taekwondo Association (KTA)</em>.</p>
+                    <p>A Guerra Fria dividiu os rumos políticos da modalidade. Em 1966, o General Choi fundou a
+                        <strong>Federação Internacional de Taekwondo (ITF)</strong>. Contudo, devido a aproximações
+                        políticas do General com a Coreia do Norte, o governo da Coreia do Sul retirou o apoio à ITF em
+                        1973. Em resposta, o Ministério da Cultura sul-coreano estabeleceu o <strong>Kukkiwon</strong>
+                        como a academia mundial oficial e chancelou a criação da <strong>Federação Mundial de Taekwondo
+                            (WT)</strong> para promover a modalidade como esporte olímpico. Desde o ano 2000 (Jogos de
+                        Sydney), o Taekwondo figura como esporte oficial das Olimpíadas, integrando hoje mais de 30
+                        milhões de praticantes em 156 países.</p>
+                </div>
+
+                <div class="tab-content" id="content2">
+                    <p>Como uma arte marcial autêntica, o praticante de Taekwondo deve pautar sua conduta diária e
+                        técnica por diretrizes éticas rígidas, estruturadas sob um juramento solene e cinco princípios
+                        fundamentais que devem ser levados para a vida fora do Dojang.</p>
+
+                    <h3
+                        style="color: var(--primary); text-transform: uppercase; font-size: 16px; margin-top: 30px; border-bottom: 1px solid var(--card-border); padding-bottom: 8px;">
+                        O Juramento do Praticante</h3>
+                    <ul style="padding-left: 20px; margin-bottom: 30px;">
+                        <li>Observar as regras do Taekwondo;</li>
+                        <li>Respeitar mestres e meus superiores;</li>
+                        <li>Nunca fazer mau uso do Taekwondo;</li>
+                        <li>Ser campeão da liberdade e justiça;</li>
+                        <li>Construir um mundo mais pacífico.</li>
+                    </ul>
+
+                    <h3
+                        style="color: var(--primary); text-transform: uppercase; font-size: 16px; border-bottom: 1px solid var(--card-border); padding-bottom: 8px;">
+                        Os 5 Princípios Fundamentais</h3>
+                    <div class="grid-cards">
+                        <div class="info-mini-card"><strong>Cortesia</strong><span>Ye-ui / 예의</span></div>
+                        <div class="info-mini-card"><strong>Integridade</strong><span>Yeom-chi / 염치</span></div>
+                        <div class="info-mini-card"><strong>Perseverança</strong><span>In-nae / 인내</span></div>
+                        <div class="info-mini-card"><strong>Autocontrole</strong><span>Geuk-gi / 극기</span></div>
+                        <div class="info-mini-card"><strong>Espírito
+                                Indomável</strong><span>Baek-jeol-bul-gul<br>백절불굴</span></div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="content3">
+                    <p>O <strong>Dobok (도복)</strong> é a vestimenta oficial de treino e competição nas artes marciais
+                        coreanas, significando literalmente <span class="highlight-text">"vestimenta do caminho"</span>.
+                        Historicamente, os Doboks eram inteiramente brancos para simbolizar a pureza e o patriotismo
+                        tradicional coreano. Antigamente, a única alteração visual permitida ocorria na gola, que se
+                        tornava preta para os faixas pretas adultos e bicolor (vermelha e preta) para os praticantes de
+                        nível avançado menores de idade (Poom).</p>
+                    <p>Com a divisão institucional e a modernização da modalidade, surgiram diferenças marcantes nos
+                        cortes dos uniformes:</p>
+                    <ul style="padding-left: 20px; margin-bottom: 24px;">
+                        <li><strong>Estilo WT (Olímpico):</strong> Caracteriza-se por uma blusa fechada com decote em
+                            "V", projetada para leveza, agilidade e dinâmica eletrônica de combate esportivo.</li>
+                        <li><strong>Estilo ITF (Tradicional):</strong> Pratica o corte transpassado clássico aberto na
+                            frente com fechamento por velcro, muito similar ao formato do Dôgi japonês.</li>
+                    </ul>
+                    <p>Atualmente, federações modernas e equipes de demonstração utilizam Doboks coloridos em tons de
+                        azul, vermelho e preto para apresentações estéticas. No entanto, escolas de linhagem
+                        estritamente tradicional vetam essas variações de cor, exigindo o uso exclusivo do Dobok branco
+                        para a preservação da disciplina marcial.</p>
+
+                    <div class="gallery-grid">
+                        <div class="visual-card">
+                            <img src="public/assets/images/dobok-classico.jpg" alt="Dobok Clássico Branco Tradicional"
+                                onclick="zoomImage(this)">
+                            <h4>Dobok Clássico Branco</h4>
+                            <span>Linhagem Tradicional</span>
+                        </div>
+                        <div class="visual-card">
+                            <img src="public/assets/images/dobok-poom.jpg" alt="Dobok Gola Vermelha e Preta Infantil"
+                                onclick="zoomImage(this)">
+                            <h4>Dobok Crianças Graduadas</h4>
+                            <span>Gola Poom (Infantil Sênior)</span>
+                        </div>
+                        <div class="visual-card">
+                            <img src="public/assets/images/dobok-preta.jpg" alt="Dobok Gola Preta Graduados Adultos"
+                                onclick="zoomImage(this)">
+                            <h4>Dobok Gola Preta</h4>
+                            <span>Graduados Sênior (Adultos)</span>
+                        </div>
+                        <div class="visual-card">
+                            <div class="img-placeholder">Sem Imagem</div>
+                            <h4>Dobok de Demonstração</h4>
+                            <span>Variações de Cores Modernas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="content4">
+                    <p>A introdução do Taekwondo no Brasil ocorreu em um cenário geopolítico complexo. No ano de
+                        <strong>1970</strong>, a pedido do governo brasileiro no período militar, o General Choi Hong Hi
+                        enviou uma comissão de mestres pioneiros para introduzir a modalidade no país, atuando
+                        inicialmente na instrução das forças de segurança pública e policiais na Delegacia de Ordem
+                        Política e Social (DOPS).</p>
+                    <p>Em <strong>8 de agosto de 1970</strong>, o <strong>Grão-Mestre Sang Min Cho</strong> fundou
+                        oficialmente a primeira escola do país no bairro da Liberdade, em São Paulo (a Academia
+                        Liberdade), superando severas barreiras idiomáticas e culturais da época. Logo em seguida, os
+                        Mestres Sang In Kim e Kun Mo Bang chegaram para reforçar o processo de expansão pelo estado
+                        paulista.</p>
+
+                    <div class="gallery-grid">
+                        <div class="visual-card">
+                            <img src="public/assets/images/general-choi.jpg" alt="General Choi Hong Hi"
+                                onclick="zoomImage(this)">
+                            <h4>General Choi Hong Hi</h4>
+                            <span>Idealizador / Pai da Arte</span>
+                        </div>
+                        <div class="visual-card">
+                            <img src="public/assets/images/mestre-cho.jpg" alt="Grão-Mestre Sang Min Cho"
+                                onclick="zoomImage(this)">
+                            <h4>Sang Min Cho</h4>
+                            <span>Introdutor Oficial no Brasil (1970)</span>
+                        </div>
+                        <div class="visual-card">
+                            <img src="public/assets/images/mestre-kim.jpg" alt="Grão-Mestre Sang In Kim"
+                                onclick="zoomImage(this)">
+                            <h4>Sang In Kim</h4>
+                            <span>Pioneiro no Sudeste (1971)</span>
+                        </div>
+                        <div class="visual-card">
+                            <img src="public/assets/images/mestre-bang.jpg" alt="Grão-Mestre Kun Mo Bang"
+                                onclick="zoomImage(this)">
+                            <h4>Kun Mo Bang</h4>
+                            <span>Pioneiro no Sudeste (1971)</span>
+                        </div>
+                    </div>
+                    <p>Em março de 1972, o <strong>Grão-Mestre Woo Jae Lee</strong> introduziu oficialmente a prática na
+                        cidade do Rio de Janeiro, organizando o primeiro Campeonato Carioca em janeiro de 1973 e, em
+                        seguida, o pioneiro Campeonato Brasileiro de Taekwondo no Ginásio do Pacaembu (SP) em julho
+                        daquele ano. Paralelamente, no Nordeste, o Mestre Jung Do Lim iniciou o ensino sistemático na
+                        Bahia a partir de 1968 em Cruz das Almas e Salvador, estruturando com colaboradores locais a
+                        primeira Associação Especializada reconhecida pelo Sistema Desportivo Nacional.</p>
+                    <p>Com as cisões políticas na Coreia e a saída do General Choi da pátria mãe por volta de 1972, o
+                        grupo de pioneiros liderado por Woo Jae Lee tomou a decisão estratégica de migrar os laços
+                        institucionais brasileiros da ITF para a KTA/WT, adotando a linhagem da escola <em>Chang Moo
+                            Kwan</em> e trazendo novos mestres coreanos para consolidar as federações estaduais.</p>
+                    <p>O esporte ganhou chancela oficial em 31 de janeiro de 1974, quando a Confederação Brasileira de
+                        Pugilismo (CBP) integrou o Taekwondo como modalidade oficial reconhecida pelo Conselho Nacional
+                        de Desportes (C.N.D.). Em 1987, visando a independência administrativa exigida pelo Comitê
+                        Olímpico, foi criada a Associação Brasileira de Taekwondo (ABT), posteriormente renomeada para
+                        <strong>Confederação Brasileira de Taekwondo (CBTKD)</strong> em 1990, permanecendo como o órgão
+                        regulator oficial até os dias de hoje.</p>
+
+                    <div class="source-box">
+                        <strong>Referências Bibliográficas e Documentais:</strong>
+                        <ul>
+                            <li>AFONSO, J. 38 anos de Taekwondo "oficial" no Brasil. Taekwondo Livre, 2012.</li>
+                            <li>COSTA, A.P. A Belíssima História do General Choi (1ª Parte). Taekwondo Livre, 2014.</li>
+                            <li>INFANTE, E. Mestre Sang Min Cho – A vida do introdutor do Taekwondo no Brasil. Ed.
+                                Prata, 2013.</li>
+                            <li>KIM, Y.J. Arte marcial coreana: Taekwondo. Ed. Thirê, São Paulo, 1995.</li>
+                            <li>MARTA, F.E.F. O Caminho dos Pés e das Mãos: Taekwondo e a Colônia Coreana. ANPUH, 2005.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="zoom-overlay" class="image-zoom-overlay" onclick="closeZoom()">
+        <img id="zoom-img" src="" alt="Imagem Expandida">
+    </div>
+
+    <script>
+        function zoomImage(element) {
+            const overlay = document.getElementById('zoom-overlay');
+            const zoomImg = document.getElementById('zoom-img');
+
+            zoomImg.src = element.src;
+            zoomImg.alt = element.alt;
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Trava a rolagem da página ao fundo
+        }
+
+        function closeZoom() {
+            const overlay = document.getElementById('zoom-overlay');
+            overlay.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Libera a rolagem novamente
+        }
+    </script>
+
+    <footer>
+        <p>© Todos os direitos reservados: <span>Wil Taekwondo — <span class="highlight">Team Marchesini</span></span>
+        </p>
+        <p>Desenvolvido por Wiliam Longo</p>
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Wil Taekwondo — Team Marchesini</title>
+    <style>
+        :root {
+            --primary: #ff1a1a;
+            --primary-glow: rgba(255, 26, 26, 0.15);
+            --dark-bg: #0a0a0a;
+            --card-bg: #141414;
+            --card-border: #262626;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --success: #25d366;
+            --info: #0076ff;
+        }
+
+        body {
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Topo Premium */
+        header {
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 24px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .brand h1 span {
+            color: var(--primary);
+        }
+
+        .brand .subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 2px;
+            font-weight: 600;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 28px;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s, text-shadow 0.2s;
+        }
+
+        nav a:hover,
+        nav .active {
+            color: var(--text-main);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Seção Hero de Impacto */
+        .hero {
+            position: relative;
+            padding: 120px 24px 80px 24px;
+            text-align: center;
+            background: radial-gradient(circle at center, #1a0505 0%, var(--dark-bg) 70%);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent 60%, var(--dark-bg));
+            pointer-events: none;
+        }
+
+        .hero h2 {
+            font-size: 48px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin: 0 0 20px 0;
+            line-height: 1.1;
+        }
+
+        .hero h2 span {
+            color: var(--primary);
+            display: block;
+            font-size: 56px;
+        }
+
+        .hero p {
+            font-size: 16px;
+            color: var(--text-muted);
+            max-width: 640px;
+            margin: 0 auto;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        /* Grid de Conteúdo */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px 80px 24px;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 32px;
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                padding-bottom: 40px;
+            }
+
+            header {
+                padding: 15px 24px;
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .hero h2 {
+                font-size: 32px;
+            }
+
+            .hero h2 span {
+                font-size: 38px;
+            }
+        }
+
+        /* Cartões Visuais */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .card h3 {
+            margin: 0 0 16px 0;
+            font-size: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h3::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.5;
+            margin: 0 0 24px 0;
+        }
+
+        /* Horários e Turmas */
+        .schedule-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .schedule-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .schedule-row .tag {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+        }
+
+        .schedule-row .time {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* Botões de Conversão */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 700;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .btn-nextfit {
+            background-color: var(--info);
+            color: #ffffff;
+        }
+
+        .btn-whatsapp {
+            background-color: var(--success);
+            color: #ffffff;
+        }
+
+        /* Mapa e Contatos */
+        .contact-info {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .contact-info strong {
+            color: var(--text-main);
+        }
+
+        .map-frame {
+            width: 100%;
+            height: 240px;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            background-color: #000;
+        }
+
+        /* Rodapé Fino */
+        footer {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 32px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--card-border);
+        }
+
+        footer p {
+            margin: 4px 0;
+        }
+
+        footer span {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        footer .highlight {
+            color: var(--primary);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="brand">
+            <h1>WIL <span>TKD</span></h1>
+            <div class="subtitle">Team Marchesini</div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html" class="active">Início</a></li>
+                <li><a href="curriculo.html">Currículo</a></li>
+                <li><a href="exame.html">Exame</a></li>
+                <li><a href="formas.html">Formas</a></li>
+                <li><a href="dicionario.html">Dicionário</a></li>
+                <li><a href="historia.html">História</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h2>FORMAÇÃO DE CAMPEÕES <span>PARA A VIDA</span></h2>
+        <p>"O Taekwondo é uma arte marcial coreana que, através do treinamento, possibilita aos alunos um corpo e mente
+            fortes e saudáveis, com base no respeito e na humildade."</p>
+    </section>
+
+    <main class="main-container">
+        <div class="card">
+            <div>
+                <h3>Horários & Treinos</h3>
+                <p>Turmas planejadas para o desenvolvimento marcial, foco, autocontrole e alta performance física.</p>
+
+                <div class="schedule-box">
+                    <div class="schedule-row">
+                        <span class="tag">Adultos</span>
+                        <span class="time">Terças & Quintas — 18:30h às 19:30h</span>
+                    </div>
+                    <div class="schedule-row">
+                        <span class="tag">Kids</span>
+                        <span class="time">Terças & Quintas — 19:30h às 20:30h</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="https://agendamento.nextfit.com.br/ee5940af-b75d-4d4e-b098-b4db33903915" target="_blank"
+                    class="btn btn-nextfit">
+                    Agendar Aula Experimental (Nextfit)
+                </a>
+                <a href="https://api.whatsapp.com/send/?phone=5511948759648&text=Olá! Gostaria de saber mais sobre as aulas de Taekwondo."
+                    target="_blank" class="btn btn-whatsapp">
+                    Fale Conosco via WhatsApp
+                </a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div>
+                <h3>Onde Treinar</h3>
+                <div class="contact-info">
+                    <strong>Endereço:</strong><br>
+                    Av. Francisco Prestes Maia, 144 - Centro<br>
+                    São Bernardo do Campo - SP, 09770-000<br><br>
+                    <strong>Contato Direto:</strong><br>
+                    (11) 94875-9648
+                </div>
+            </div>
+
+            <iframe class="map-frame"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3654.3475730304917!2d-46.5627254!3d-23.6635205!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce43cdb75240ab%3A0xc64e1ff1304d60d3!2sAv.%20Francisco%20Prestes%20Maia%2C%20144%20-%20Centro%2C%20S%C3%A3o%20Bernardo%20do%20Campo%20-%20SP%2C%2009770-000!5e0!3m2!1spt-BR!2sbr!4v1717865000000!5m2!1spt-BR!2sbr"
+                allowfullscreen loading="lazy"></iframe>
+        </div>
+    </main>
+
+    <footer>
+        <p>© Todos os direitos reservados: <span>Wil Taekwondo — <span class="highlight">Team Marchesini</span></span>
+        </p>
+        <p>Desenvolvido por Wiliam Longo</p>
+    </footer>
+
+</body>
+
+</html>

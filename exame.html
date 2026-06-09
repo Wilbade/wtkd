@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Painel de Exame — Wil Taekwondo</title>
+    <style>
+        :root {
+            --primary: #ff1a1a;
+            --primary-glow: rgba(255, 26, 26, 0.15);
+            --dark-bg: #0a0a0a;
+            --card-bg: #141414;
+            --card-border: #262626;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --success: #25d366;
+            --info: #0076ff;
+        }
+
+        body {
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Topo Premium Compartilhado */
+        header {
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 24px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .brand h1 span {
+            color: var(--primary);
+        }
+
+        .brand .subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 2px;
+            font-weight: 600;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 28px;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s, text-shadow 0.2s;
+        }
+
+        nav a:hover, nav .active {
+            color: var(--text-main);
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        /* Grid de Layout */
+        .main-container {
+            max-width: 1200px;
+            margin: 40px auto 80px auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 32px;
+        }
+
+        @media (max-width: 900px) {
+            .main-container { grid-template-columns: 1fr; }
+            header { padding: 15px 24px; flex-direction: column; gap: 15px; text-align: center; }
+        }
+
+        .page-title {
+            grid-column: 1 / -1;
+            border-left: 4px solid var(--primary);
+            padding-left: 16px;
+            margin-bottom: 8px;
+        }
+
+        .page-title h2 {
+            margin: 0;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .page-title p {
+            margin: 4px 0 0 0;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Cartões Estilo Dashboard */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .card h3 {
+            margin: 0 0 20px 0;
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h3::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* Formulário de Avaliação Simulado */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #0d0d0d;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            padding: 12px 16px;
+            color: var(--text-main);
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .grid-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background-color: #cc0000;
+        }
+
+        /* Critérios da Banca */
+        .criteria-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .criteria-item {
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .criteria-item strong {
+            color: var(--primary);
+            display: block;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .criteria-item p {
+            margin: 0;
+            font-size: 13.5px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Rodapé Fino */
+        footer {
+            background-color: rgba(0,0,0,0.5);
+            padding: 32px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--card-border);
+        }
+        footer p { margin: 4px 0; }
+        footer span { color: var(--text-main); font-weight: 500; }
+        footer .highlight { color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="brand">
+        <h1>WIL <span>TKD</span></h1>
+        <div class="subtitle">Team Marchesini</div>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="index.html">Início</a></li>
+            <li><a href="curriculo.html">Currículo</a></li>
+            <li><a href="exame.html" class="active">Exame</a></li>
+            <li><a href="formas.html">Formas</a></li>
+            <li><a href="dicionario.html">Dicionário</a></li>
+            <li><a href="historia.html">História</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="main-container">
+    <div class="page-title">
+        <h2>Painel de Avaliação</h2>
+        <p>Espaço reservado para a Banca Examinadora lançar notas e validar graduações.</p>
+    </div>
+
+    <div class="card">
+        <h3>Lançamento de Notas</h3>
+        <p>Preencha os dados do candidato de acordo com o desempenho no Dojang.</p>
+        
+        <form onsubmit="event.preventDefault(); alert('Pronto! Layout validado. Na fase avançada, este botão salvará direto no Supabase.');">
+            <div class="form-group">
+                <label>Nome do Aluno / Candidato</label>
+                <input type="text" class="form-control" placeholder="Ex: Rafael Klein Longo" required>
+            </div>
+
+            <div class="grid-inputs">
+                <div class="form-group">
+                    <label>GUB Atual</label>
+                    <input type="text" class="form-control" placeholder="Ex: 10º GUB (Branca)" required>
+                </div>
+                <div class="form-group">
+                    <label>Próximo GUB</label>
+                    <input type="text" class="form-control" placeholder="Ex: 9º GUB (Amarela)" required>
+                </div>
+            </div>
+
+            <div class="grid-inputs">
+                <div class="form-group">
+                    <label>Nota: Kibon Poom-se</label>
+                    <input type="number" step="0.1" min="0" max="10" class="form-control" placeholder="0.0" required>
+                </div>
+                <div class="form-group">
+                    <label>Nota: Chutes (Tchagui)</label>
+                    <input type="number" step="0.1" min="0" max="10" class="form-control" placeholder="0.0" required>
+                </div>
+            </div>
+
+            <div class="grid-inputs">
+                <div class="form-group">
+                    <label>Nota: Poom-se / Tull</label>
+                    <input type="number" step="0.1" min="0" max="10" class="form-control" placeholder="0.0" required>
+                </div>
+                <div class="form-group">
+                    <label>Nota: Luta / Teoria</label>
+                    <input type="number" step="0.1" min="0" max="10" class="form-control" placeholder="0.0" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Gravar Avaliação no Sistema</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>Regras Básicas da Banca</h3>
+        <p>Parâmetros oficiais adotados pela escola baseados na planilha técnica de notas.</p>
+        
+        <div class="criteria-list">
+            <div class="criteria-item">
+                <strong>1. Média de Corte</strong>
+                <p>A nota mínima para aprovação e direito ao uso da nova faixa/ponta é 7.0 na média ponderada de todos os blocos.</p>
+            </div>
+            <div class="criteria-item">
+                <strong>2. Postura e Disciplina</strong>
+                <p>O cumprimento da etiqueta do Dojang (Kyungnet ao entrar/sair) e o espírito indomável somam pontos extras em caso de empate.</p>
+            </div>
+            <div class="criteria-item">
+                <strong>3. Exame Teórico (Iron)</strong>
+                <p>Candidatos a partir do 6º GUB (Verde) respondem a perguntas orais sobre terminologias e significados dos Poom-ses.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>© Todos os direitos reservados: <span>Wil Taekwondo — <span class="highlight">Team Marchesini</span></span></p>
+    <p>Desenvolvido por Wiliam Longo</p>
+</footer>
+
+</body>
+</html>
