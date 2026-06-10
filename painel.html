@@ -4,19 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel — Wil Taekwondo</title>
+
+    <!--
+        NOTA DE DEPENDÊNCIAS (ordem importa):
+        1. Supabase CDN deve vir ANTES de conexao.js
+        2. conexao.js usa "supabase" como namespace global da lib CDN
+        3. Ambos estão no FINAL do body para não bloquear a renderização do HTML
+    -->
+
     <style>
+        /* ======================================================
+           BASE: reset e tipografia
+        ====================================================== */
         body { font-family: sans-serif; background: #0a0a0a; color: #fff; padding: 20px; margin: 0; }
         h2 { font-size: 22px; text-align: center; margin-bottom: 25px; }
+
+        /* ======================================================
+           SISTEMA DE ABAS
+           Dois botões: "📅 Chamada" e "🥋 Matrícula"
+           Apenas uma seção fica visível por vez (class "ativa")
+        ====================================================== */
         .Abas-container { display: flex; gap: 10px; max-width: 1200px; margin: 0 auto 25px auto; }
         .aba-botao { flex: 1; padding: 14px; background: #141414; color: #a0a0a0; border: 1px solid #262626; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; }
         .aba-botao.ativa { background: #ff1a1a; color: #fff; border-color: #ff1a1a; }
+
+        /* Seções das abas: ocultas por padrão, exibidas quando têm class "ativa" */
         .conteudo-secao { display: none; background: #141414; padding: 24px; border-radius: 8px; max-width: 1200px; margin: 0 auto; border: 1px solid #262626; box-sizing: border-box; }
         .conteudo-secao.ativa { display: block; }
+
+        /* Formulário de matrícula centralizado com largura máxima confortável */
         #aba-cadastro form { max-width: 500px; margin: 0 auto; }
+
+        /* ======================================================
+           COMPONENTES DO FORMULÁRIO
+        ====================================================== */
         .form-group { margin-bottom: 16px; display: flex; flex-direction: column; }
         label { font-size: 12px; color: #a0a0a0; margin-bottom: 6px; text-transform: uppercase; }
         input, select, textarea { padding: 12px; background: #222; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 14px; }
         .btn-submit { width: 100%; padding: 14px; background: #ff1a1a; color: #fff; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; }
+
+        /* ======================================================
+           TABELA DE CHAMADA
+           Wrapper com scroll horizontal para telas estreitas
+        ====================================================== */
         .tabela-wrapper { overflow-x: auto; margin-top: 15px; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
         th { padding: 12px 8px; text-align: left; color: #a0a0a0; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #262626; }
@@ -25,13 +55,29 @@
 </head>
 <body>
     <h2>Wil Taekwondo — Dojang</h2>
+
+    <!-- ============================================================
+         BARRA DE NAVEGAÇÃO DE ABAS
+         alternarAba() é definida no <script> abaixo e ativa/desativa
+         as classes "ativa" nas seções e nos botões simultaneamente.
+    ============================================================ -->
     <div class="Abas-container">
         <button class="aba-botao ativa" onclick="alternarAba('aba-chamada', this)">📅 Chamada</button>
-        <button class="aba-botao" onclick="alternarAba('aba-cadastro', this)">🥋 Matrícula</button>
+        <button class="aba-botao"       onclick="alternarAba('aba-cadastro', this)">🥋 Matrícula</button>
     </div>
+
+    <!-- ============================================================
+         ABA 1: CHAMADA DIÁRIA
+         Renderizada dinamicamente pelo conexao.js (carregarListaChamada).
+         O campo de data permite consultar chamadas de qualquer dia.
+         O tbody#tabelaChamada é o ponto de entrada do JS.
+    ============================================================ -->
     <div id="aba-chamada" class="conteudo-secao ativa">
         <h3>Lista de Chamada Diária</h3>
-        <div class="form-group"><input type="date" id="data_chamada" style="max-width: 200px;"></div>
+        <!-- Campo de data: valor padrão = hoje (definido em conexao.js) -->
+        <div class="form-group">
+            <input type="date" id="data_chamada" style="max-width: 200px;">
+        </div>
         <div class="tabela-wrapper">
             <table>
                 <thead>
@@ -41,21 +87,63 @@
                         <th>Idade</th>
                         <th>Graduação</th>
                         <th>Treinos</th>
-                        <th style="text-align: center; width: 60px;">Editar</th> <th style="text-align: right;">Ação</th>
+                        <!-- Editar: botão ✏️ gerado inline pelo JS em cada linha -->
+                        <th style="text-align: center; width: 60px;">Editar</th>
+                        <!-- Ação: botão de presença ou lacre "Registrada" -->
+                        <th style="text-align: right;">Ação</th>
                     </tr>
                 </thead>
+                <!--
+                    tbody#tabelaChamada: populado pela função carregarListaChamada()
+                    do conexao.js. O conteúdo é recriado a cada chamada da função.
+                -->
                 <tbody id="tabelaChamada"></tbody>
             </table>
         </div>
     </div>
+
+    <!-- ============================================================
+         ABA 2: MATRÍCULA / CADASTRO DE ALUNOS
+         Formulário híbrido: opera em modo INSERT ou UPDATE dependendo
+         do campo oculto #aluno_id_edicao (controlado pelo conexao.js).
+
+         MODO INSERT: id_edicao vazio → cadastrarAluno() faz INSERT
+         MODO UPDATE: id_edicao preenchido → cadastrarAluno() faz UPDATE
+
+         A função prepararEdicao() (conexao.js) preenche os campos
+         e injeta o ID quando o usuário clica em ✏️ na chamada.
+    ============================================================ -->
     <div id="aba-cadastro" class="conteudo-secao">
         <h3>Cadastrar Novo Aluno</h3>
+        <!--
+            ATENÇÃO: havia um <form> duplicado no HTML original (bug).
+            Corrigido para um único form#formAluno com o listener no conexao.js.
+        -->
         <form id="formAluno">
-            <form id="formAluno">
-            <input type="hidden" id="aluno_id_edicao" value=""> 
-            <div class="form-group"><label>Nome Completo</label><input type="text" id="nome" required></div>
-            <div class="form-group"><label>Data de Nascimento</label><input type="date" id="data_nascimento" required></div>
-            <div class="form-group"><label>CPF</label><input type="text" id="cpf" placeholder="000.000.000-00"></div>
+            <!-- Campo oculto de controle: vazio = INSERT, preenchido = UPDATE -->
+            <input type="hidden" id="aluno_id_edicao" value="">
+
+            <div class="form-group">
+                <label>Nome Completo</label>
+                <input type="text" id="nome" required>
+            </div>
+
+            <div class="form-group">
+                <label>Data de Nascimento</label>
+                <input type="date" id="data_nascimento" required>
+            </div>
+
+            <div class="form-group">
+                <label>CPF</label>
+                <input type="text" id="cpf" placeholder="000.000.000-00">
+            </div>
+
+            <!--
+                Graduação Atual (faixa_inicial):
+                Gravada no banco como 'faixa_inicial_cadastro'.
+                NÃO é a graduação corrente — para isso, use progresso_tecnico.faixa_atual.
+                Este campo é histórico: registra com qual faixa o aluno ingressou.
+            -->
             <div class="form-group">
                 <label>Graduação Atual</label>
                 <select id="faixa_inicial">
@@ -71,30 +159,64 @@
                     <option value="Ponta Preta">1º Gub - Vermelha Ponta Preta</option>
                 </select>
             </div>
-            <div class="form-group"><label>Dobok (cm)</label><input type="number" id="tamanho_dobok"></div>
-            <div class="form-group"><label>Faixa (cm)</label><input type="number" id="tamanho_faixa"></div>            
-            <div class="form-group"><label>Histórico Médico</label><textarea id="observacoes" rows="3"></textarea></div>
+
+            <!-- Medidas do equipamento (cm) — gravadas como INTEGER no banco -->
             <div class="form-group">
-                <label>Obs:/Geral Desempenho</label>
+                <label>Dobok (cm)</label>
+                <input type="number" id="tamanho_dobok">
+            </div>
+            <div class="form-group">
+                <label>Faixa (cm)</label>
+                <input type="number" id="tamanho_faixa">
+            </div>
+
+            <!-- Histórico médico / restrições de saúde -->
+            <div class="form-group">
+                <label>Histórico Médico</label>
                 <textarea id="observacoes" rows="3"></textarea>
             </div>
 
+            <!-- Upload da foto para o Storage "avatars" do Supabase -->
             <div class="form-group">
                 <label>Foto do Aluno (Para Carteirinha/Certificado)</label>
                 <input type="file" id="foto_aluno" accept="image/*">
             </div>
 
+            <!--
+                Texto do botão muda dinamicamente:
+                  "Gravar Aluno"      → modo INSERT (novo cadastro)
+                  "Salvar Alterações" → modo UPDATE (edição via prepararEdicao)
+            -->
             <button type="submit" class="btn-submit">Gravar Aluno</button>
         </form>
     </div>
+
     <script>
+        /**
+         * Alterna visibilidade das abas do painel.
+         * Remove "ativa" de todas as seções e botões, depois aplica
+         * apenas na seção e botão clicados.
+         *
+         * @param {string} secaoId      - ID da seção a exibir (ex: 'aba-chamada')
+         * @param {Element} botaoClicado - Elemento <button> que disparou o evento
+         */
         function alternarAba(secaoId, botaoClicado) {
+            // Remove a classe ativa de todas as seções de conteúdo
             document.querySelectorAll('.conteudo-secao').forEach(s => s.classList.remove('ativa'));
+            // Remove a classe ativa de todos os botões de aba
             document.querySelectorAll('.aba-botao').forEach(b => b.classList.remove('ativa'));
+            // Ativa apenas a seção e o botão correspondentes
             document.getElementById(secaoId).classList.add('ativa');
             botaoClicado.classList.add('ativa');
         }
     </script>
+
+    <!--
+        ORDEM DE CARREGAMENTO (crítica):
+        1. Supabase CDN: define o namespace global "supabase"
+        2. conexao.js: usa "supabase" para criar o cliente e registrar listeners
+        Inverter essa ordem causaria "supabase is not defined".
+    -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="conexao.js"></script>
 </body>

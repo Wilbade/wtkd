@@ -3,359 +3,600 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Painel de Exame — Wil Taekwondo</title>
+    <title>Banca Multialunos — Wil Taekwondo</title>
+
+    <!--
+        DEPENDÊNCIA: Supabase JS v2 via CDN.
+        Este arquivo instancia seu próprio cliente _supabase (com underscore)
+        para evitar colisão de escopo com o "supabaseClient" global do conexao.js,
+        pois o exame.html NÃO importa o conexao.js — é totalmente autossuficiente.
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
+        /* ======================================================
+           DESIGN SYSTEM — VARIÁVEIS DE COR GLOBAIS
+           Paleta dark com vermelho como cor de destaque (TKD)
+        ====================================================== */
         :root {
-            --primary: #ff1a1a;
-            --primary-glow: rgba(255, 26, 26, 0.15);
-            --dark-bg: #0a0a0a;
-            --card-bg: #141414;
+            --primary:     #ff1a1a;
+            --dark-bg:     #0a0a0a;
+            --card-bg:     #141414;
             --card-border: #262626;
-            --text-main: #ffffff;
-            --text-muted: #a0a0a0;
-            --success: #25d366;
-            --info: #0076ff;
+            --text-main:   #ffffff;
+            --text-muted:  #a0a0a0;
         }
 
         body {
-            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            font-family: '-apple-system', BlinkMacSystemFont, Arial, sans-serif;
             background-color: var(--dark-bg);
             color: var(--text-main);
-            -webkit-font-smoothing: antialiased;
+            margin: 0; padding: 0;
         }
 
-        /* Topo Premium Compartilhado */
+        /* Cabeçalho com nome do avaliador logado (vindo do localStorage) */
         header {
             background-color: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
             padding: 24px 48px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid var(--card-border);
         }
 
-        .brand {
-            display: flex;
-            flex-direction: column;
-        }
+        /* Badge laranja que exibe o nome e graduação do avaliador autenticado */
+        .banca-info { color: #ff9f0a; font-weight: bold; background: #1c1c1e; padding: 6px 12px; border-radius: 20px; }
 
-        .brand h1 {
-            margin: 0;
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
+        .main-container { max-width: 1300px; margin: 40px auto; padding: 0 24px; }
 
-        .brand h1 span {
-            color: var(--primary);
-        }
+        /* Card genérico de seção (configuração + tabela de notas) */
+        .card { background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
 
-        .brand .subtitle {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 2px;
-            font-weight: 600;
-        }
+        /* Grade de 4 colunas para os seletores de candidatos (desktop) */
+        .selectors-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px; }
 
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 28px;
-            margin: 0;
-            padding: 0;
-        }
+        /* Input/select padrão do sistema (dark) */
+        .form-control { width: 100%; box-sizing: border-box; background-color: #0d0d0d; border: 1px solid var(--card-border); border-radius: 6px; padding: 10px; color: var(--text-main); }
 
-        nav a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s, text-shadow 0.2s;
-        }
+        /* ======================================================
+           TABELA DE AVALIAÇÃO — LAYOUT DESKTOP
+           Exibe: Técnica | Max | Nota A1 | Nota A2 | Nota A3 | Nota A4
+        ====================================================== */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--card-border); }
+        th { background-color: #1c1c1e; text-transform: uppercase; font-size: 12px; color: var(--text-muted); }
 
-        nav a:hover, nav .active {
-            color: var(--text-main);
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
-        }
+        /* Input de nota individual por aluno/técnica */
+        .nota-input { width: 70px; text-align: center; background: #000; border: 1px solid #3a3a3c; color: #fff; padding: 6px; border-radius: 4px; }
 
-        /* Grid de Layout */
-        .main-container {
-            max-width: 1200px;
-            margin: 40px auto 80px auto;
-            padding: 0 24px;
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 32px;
-        }
+        /* Botão de submit do formulário de notas */
+        .btn-submit { width: 100%; padding: 15px; background-color: var(--primary); color: #fff; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; text-transform: uppercase; cursor: pointer; margin-top: 20px; }
+        .btn-submit:hover { background-color: #cc0000; }
 
-        @media (max-width: 900px) {
-            .main-container { grid-template-columns: 1fr; }
-            header { padding: 15px 24px; flex-direction: column; gap: 15px; text-align: center; }
-        }
+        /* Badge que exibe a faixa atual do candidato selecionado abaixo do select */
+        .faixa-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-top: 5px; background: #2c2c2e; color: #fff; }
 
-        .page-title {
-            grid-column: 1 / -1;
-            border-left: 4px solid var(--primary);
-            padding-left: 16px;
-            margin-bottom: 8px;
-        }
+        /* ======================================================
+           TABELA MOBILE — MODO CARD EMPILHADO
+           Em telas < 768px, cada linha vira um card vertical
+           com labels geradas via CSS ::before (sem JS extra)
+        ====================================================== */
+        @media (max-width: 768px) {
+            header { padding: 15px 20px; flex-direction: column; gap: 10px; text-align: center; }
+            .selectors-grid { grid-template-columns: 1fr; gap: 10px; }
+            .main-container { padding: 0 10px; margin: 20px auto; }
 
-        .page-title h2 {
-            margin: 0;
-            font-size: 28px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+            /* Transforma table em blocos (necessário para reordenar visualmente) */
+            table, thead, tbody, th, td, tr { display: block; }
 
-        .page-title p {
-            margin: 4px 0 0 0;
-            color: var(--text-muted);
-            font-size: 14px;
-        }
+            /* Esconde o cabeçalho real — os labels são gerados via ::before nas células */
+            thead tr { position: absolute; top: -9999px; left: -9999px; }
 
-        /* Cartões Estilo Dashboard */
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 32px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
+            /* Cada linha da tabela vira um card independente */
+            tr { background: #1c1c1e; border: 1px solid var(--card-border); border-radius: 8px; margin-bottom: 15px; padding: 15px; }
 
-        .card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px var(--primary-glow);
-        }
+            /* Coluna 1: Nome da técnica (destaque laranja) */
+            td:nth-of-type(1) { font-size: 15px; color: #ff9f0a; border-bottom: 1px dashed #3a3a3c; padding-bottom: 10px; margin-bottom: 10px; font-weight: bold; }
 
-        .card h3 {
-            margin: 0 0 20px 0;
-            font-size: 18px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+            /* Coluna 2: Pontuação máxima (label via ::before) */
+            td:nth-of-type(2) { font-size: 12px; color: var(--text-muted); margin-bottom: 15px; padding: 0; }
+            td:nth-of-type(2)::before { content: "Pontuação Máxima da Técnica: "; }
 
-        .card h3::before {
-            content: '';
-            display: inline-block;
-            width: 4px;
-            height: 16px;
-            background-color: var(--primary);
-            border-radius: 2px;
-        }
+            /* Colunas 3–6: Notas de cada aluno (layout flex label + input) */
+            td:nth-of-type(3), td:nth-of-type(4), td:nth-of-type(5), td:nth-of-type(6) { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: none; }
+            td:nth-of-type(3)::before { content: "Nota - Aluno 1:"; font-size: 13px; font-weight: 600; }
+            td:nth-of-type(4)::before { content: "Nota - Aluno 2:"; font-size: 13px; font-weight: 600; }
+            td:nth-of-type(5)::before { content: "Nota - Aluno 3:"; font-size: 13px; font-weight: 600; }
+            td:nth-of-type(6)::before { content: "Nota - Aluno 4:"; font-size: 13px; font-weight: 600; }
 
-        /* Formulário de Avaliação Simulado */
-        .form-group {
-            margin-bottom: 20px;
+            /* Aumenta o input no mobile para facilitar digitação por toque */
+            .nota-input { width: 100px; padding: 8px; font-size: 14px; text-align: right; }
         }
-
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .form-control {
-            width: 100%;
-            box-sizing: border-box;
-            background-color: #0d0d0d;
-            border: 1px solid var(--card-border);
-            border-radius: 6px;
-            padding: 12px 16px;
-            color: var(--text-main);
-            font-size: 14px;
-            transition: border-color 0.2s;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .grid-inputs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 14px;
-            background-color: var(--primary);
-            color: #ffffff;
-            border: none;
-            border-radius: 6px;
-            font-size: 15px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            margin-top: 10px;
-        }
-
-        .btn-submit:hover {
-            background-color: #cc0000;
-        }
-
-        /* Critérios da Banca */
-        .criteria-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .criteria-item {
-            background-color: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: 8px;
-            padding: 16px;
-        }
-
-        .criteria-item strong {
-            color: var(--primary);
-            display: block;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-        }
-
-        .criteria-item p {
-            margin: 0;
-            font-size: 13.5px;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        /* Rodapé Fino */
-        footer {
-            background-color: rgba(0,0,0,0.5);
-            padding: 32px 24px;
-            text-align: center;
-            font-size: 13px;
-            color: var(--text-muted);
-            border-top: 1px solid var(--card-border);
-        }
-        footer p { margin: 4px 0; }
-        footer span { color: var(--text-main); font-weight: 500; }
-        footer .highlight { color: var(--primary); }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="brand">
-        <h1>WIL <span>TKD</span></h1>
-        <div class="subtitle">Team Marchesini</div>
-    </div>
-    <nav>
-        <ul>
-            <li><a href="index.html">Início</a></li>
-            <li><a href="curriculo.html">Currículo</a></li>
-            <li><a href="exame.html" class="active">Exame</a></li>
-            <li><a href="formas.html">Formas</a></li>
-            <li><a href="dicionario.html">Dicionário</a></li>
-            <li><a href="historia.html">História</a></li>
-        </ul>
-    </nav>
+    <div><h1 style="margin:0; font-size:20px;">WIL TKD — BANCA EXAMINADORA</h1></div>
+    <!--
+        Exibe o nome e graduação do avaliador autenticado.
+        Preenchido via JS com dados do localStorage (wtkd_nome_real + wtkd_graduacao).
+        Se o localStorage estiver vazio, o JS redireciona para login.html.
+    -->
+    <div id="info-banca-topo" class="banca-info">Banca: Operador</div>
 </header>
 
 <div class="main-container">
-    <div class="page-title">
-        <h2>Painel de Avaliação</h2>
-        <p>Espaço reservado para a Banca Examinadora lançar notas e validar graduações.</p>
-    </div>
 
+    <!-- ============================================================
+         SEÇÃO 1: CONFIGURAÇÃO DA RODADA
+         Permite selecionar até 4 candidatos pertencentes à MESMA
+         graduação para gerar a matriz técnica unificada.
+    ============================================================ -->
     <div class="card">
-        <h3>Lançamento de Notas</h3>
-        <p>Preencha os dados do candidato de acordo com o desempenho no Dojang.</p>
-        
-        <form onsubmit="event.preventDefault(); alert('Pronto! Layout validado. Na fase avançada, este botão salvará direto no Supabase.');">
+        <h3>Configuração da Rodada de Exame</h3>
+        <p>Selecione até 4 candidatos pertencentes à mesma graduação atual para iniciar a matriz técnica unificada.</p>
+
+        <div class="selectors-grid">
+            <!-- Candidato 1: único ativo por padrão — dispara a renderização da matriz -->
             <div class="form-group">
-                <label>Nome do Aluno / Candidato</label>
-                <input type="text" class="form-control" placeholder="Ex: Rafael Klein Longo" required>
+                <label>Candidato 1</label>
+                <select id="aluno-1" class="form-control"><option value="">Carregando...</option></select>
+                <div id="badge-1" class="faixa-badge">-</div>
             </div>
-
-            <div class="grid-inputs">
-                <div class="form-group">
-                    <label>GUB Atual</label>
-                    <input type="text" class="form-control" placeholder="Ex: 10º GUB (Branca)" required>
-                </div>
-                <div class="form-group">
-                    <label>Próximo GUB</label>
-                    <input type="text" class="form-control" placeholder="Ex: 9º GUB (Amarela)" required>
-                </div>
+            <!-- Candidatos 2, 3, 4: ficam desabilitados até o Candidato 1 ser selecionado -->
+            <div class="form-group">
+                <label>Candidato 2</label>
+                <select id="aluno-2" class="form-control" disabled><option value="">-- Vazio --</option></select>
+                <div id="badge-2" class="faixa-badge">-</div>
             </div>
-
-            <div class="grid-inputs">
-                <div class="form-group">
-                    <label>Nota: Kibon Poom-se</label>
-                    <input type="number" step="0.1" min="0" max="10" class="form-control" placeholder="0.0" required>
-                </div>
-                <div class="form-group">
-                    <label>Nota: Chutes (Tchagui)</label>
-                    <input type="number" step="0.1" min="0" max="10" class="form-control" placeholder="0.0" required>
-                </div>
+            <div class="form-group">
+                <label>Candidato 3</label>
+                <select id="aluno-3" class="form-control" disabled><option value="">-- Vazio --</option></select>
+                <div id="badge-3" class="faixa-badge">-</div>
             </div>
-
-            <div class="grid-inputs">
-                <div class="form-group">
-                    <label>Nota: Poom-se / Tull</label>
-                    <input type="number" step="0.1" min="0" max="10" class="form-control" placeholder="0.0" required>
-                </div>
-                <div class="form-group">
-                    <label>Nota: Luta / Teoria</label>
-                    <input type="number" step="0.1" min="0" max="10" class="form-control" placeholder="0.0" required>
-                </div>
-            </div>
-
-            <button type="submit" class="btn-submit">Gravar Avaliação no Sistema</button>
-        </form>
-    </div>
-
-    <div class="card">
-        <h3>Regras Básicas da Banca</h3>
-        <p>Parâmetros oficiais adotados pela escola baseados na planilha técnica de notas.</p>
-        
-        <div class="criteria-list">
-            <div class="criteria-item">
-                <strong>1. Média de Corte</strong>
-                <p>A nota mínima para aprovação e direito ao uso da nova faixa/ponta é 7.0 na média ponderada de todos os blocos.</p>
-            </div>
-            <div class="criteria-item">
-                <strong>2. Postura e Disciplina</strong>
-                <p>O cumprimento da etiqueta do Dojang (Kyungnet ao entrar/sair) e o espírito indomável somam pontos extras em caso de empate.</p>
-            </div>
-            <div class="criteria-item">
-                <strong>3. Exame Teórico (Iron)</strong>
-                <p>Candidatos a partir do 6º GUB (Verde) respondem a perguntas orais sobre terminologias e significados dos Poom-ses.</p>
+            <div class="form-group">
+                <label>Candidato 4</label>
+                <select id="aluno-4" class="form-control" disabled><option value="">-- Vazio --</option></select>
+                <div id="badge-4" class="faixa-badge">-</div>
             </div>
         </div>
     </div>
+
+    <!-- ============================================================
+         SEÇÃO 2: MATRIZ DE AVALIAÇÃO
+         Oculta por padrão (display:none). Exibida dinamicamente
+         após o Candidato 1 ser selecionado. Cada linha é uma
+         técnica da ementa da graduação com inputs de nota por aluno.
+    ============================================================ -->
+    <div class="card" id="card-notas-dinamicas" style="display: none;">
+        <h3 id="titulo-tabela-exame">Matriz Técnica de Avaliação</h3>
+        <form id="form-banca-notas">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Matéria / Técnica Oficial</th>
+                        <th>Max</th>
+                        <!-- Cabeçalhos de alunos: atualizados com o primeiro nome de cada candidato -->
+                        <th id="col-aluno-1">Aluno 1</th>
+                        <th id="col-aluno-2">Aluno 2</th>
+                        <th id="col-aluno-3">Aluno 3</th>
+                        <th id="col-aluno-4">Aluno 4</th>
+                    </tr>
+                </thead>
+                <!-- Corpo populado dinamicamente pela função renderizarMatriz() -->
+                <tbody id="tabela-corpo-itens"></tbody>
+            </table>
+            <button type="submit" class="btn-submit">Gravar Notas de Toda a Banca</button>
+        </form>
+    </div>
 </div>
 
-<footer>
-    <p>© Todos os direitos reservados: <span>Wil Taekwondo — <span class="highlight">Team Marchesini</span></span></p>
-    <p>Desenvolvido por Wiliam Longo</p>
-</footer>
+<script>
+    // ============================================================
+    // GUARDA DE ROTA
+    // Verifica se os dados de sessão estão no localStorage.
+    // Sem eles, o avaliador é redirecionado para login.html.
+    // O login.html grava: wtkd_conta, wtkd_nome_real, wtkd_graduacao.
+    // ============================================================
+    const contaBanca        = localStorage.getItem('wtkd_conta');
+    const nomeAvaliador     = localStorage.getItem('wtkd_nome_real');
+    const graduacaoAvaliador = localStorage.getItem('wtkd_graduacao');
 
+    if (!contaBanca || !nomeAvaliador || !graduacaoAvaliador) {
+        window.location.href = 'login.html'; // Redireciona imediatamente se não logado
+    } else {
+        // Exibe o nome e graduação do avaliador no badge do cabeçalho
+        document.getElementById('info-banca-topo').textContent = `${nomeAvaliador} (${graduacaoAvaliador})`;
+    }
+
+    // ============================================================
+    // CLIENTE SUPABASE LOCAL
+    // Instanciado com underscore (_supabase) para não colidir com o
+    // "supabaseClient" global do conexao.js (que NÃO é importado aqui).
+    // ============================================================
+    const SUPABASE_URL = "https://pkbusphlutnodgconbbc.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_AXK9wUTEpz-rSdmXYn2SUA_u8O_u6P0";
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // ============================================================
+    // REGRAS_EXAME — EMENTA TÉCNICA COMPLETA POR GRADUAÇÃO
+    //
+    // Estrutura: { "chave_em_minúsculas": [ { cat, nome, max }, ... ] }
+    //
+    // As chaves DEVEM ser em letras minúsculas e sem acento para o
+    // mapeamento funcionar após o .trim().toLowerCase() aplicado na
+    // faixa_atual vinda do banco (que pode ter espaços ou capitalização variável).
+    //
+    // Cada item representa uma técnica/matéria do exame:
+    //   - cat:  categoria (ex: "Poom-se/Tull", "Tchagui", "Combate")
+    //   - nome: nome técnico oficial da técnica
+    //   - max:  pontuação máxima que pode ser atribuída
+    // ============================================================
+    const REGRAS_EXAME = {
+        "branca": [
+            { cat: "Kibon Donjak", nome: "Juntchumso Jumok",     max: 5  },
+            { cat: "Kibon Donjak", nome: "Kibon Poom-se",        max: 5  },
+            { cat: "Poom-se/Tull", nome: "Saju Dirugui",         max: 10 },
+            { cat: "Poom-se/Tull", nome: "Tchon-Ji Hian",        max: 10 },
+            { cat: "Tchagui",      nome: "Ap-tcha Oligui",       max: 10 },
+            { cat: "Tchagui",      nome: "Ap-tchagui",           max: 10 },
+            { cat: "Tchagui",      nome: "Bacat-Tchagui",        max: 10 },
+            { cat: "Tchagui",      nome: "Antchagui",            max: 10 },
+            { cat: "Tchagui",      nome: "An-Bacat-Tchagui",     max: 10 },
+            { cat: "Tchagui",      nome: "Dolio-Tchagui",        max: 10 }
+        ],
+        "ponta amarela": [
+            { cat: "Kibon Donjak", nome: "Kibon Donjak II",      max: 5  },
+            { cat: "Kibon Donjak", nome: "Kibon Poom-se",        max: 5  },
+            { cat: "Poom-se/Tull", nome: "Dangum Hian",          max: 10 },
+            { cat: "Poom-se/Tull", nome: "Teguk Il Jang",        max: 10 },
+            { cat: "Combate",      nome: "Matcho Kyorugui",      max: 10 },
+            { cat: "Tchagui",      nome: "Ap-miro tchagui",      max: 10 },
+            { cat: "Tchagui",      nome: "Tigô-tchagui",         max: 10 },
+            { cat: "Tchagui",      nome: "Yop-Tchagui",          max: 10 },
+            { cat: "Tchagui",      nome: "Tuit-tchagui",         max: 10 },
+            { cat: "Tchagui",      nome: "Dolio-Tchagui",        max: 10 }
+        ],
+        "amarela": [
+            { cat: "Kibon Donjak", nome: "Kibon Donjak II",      max: 5  },
+            { cat: "Kibon Donjak", nome: "Kibon Poom-se",        max: 5  },
+            { cat: "Poom-se/Tull", nome: "Dangum Hian",          max: 10 },
+            { cat: "Poom-se/Tull", nome: "Teguk Il Jang",        max: 10 },
+            { cat: "Combate",      nome: "Matcho Kyorugui",      max: 10 },
+            { cat: "Tchagui",      nome: "Ap-miro tchagui",      max: 10 },
+            { cat: "Tchagui",      nome: "Tigô-tchagui",         max: 10 },
+            { cat: "Tchagui",      nome: "Yop-Tchagui",          max: 10 },
+            { cat: "Tchagui",      nome: "Tuit-tchagui",         max: 10 },
+            { cat: "Tchagui",      nome: "Dolio-Tchagui",        max: 10 }
+        ],
+        "ponta verde": [
+            { cat: "Kibon Donjak",    nome: "Kibon Donjak II e I",                max: 5  },
+            { cat: "Kibon Donjak",    nome: "Kibon Poom-se",                      max: 5  },
+            { cat: "Poom-se/Tull",    nome: "Dosan Hian",                         max: 10 },
+            { cat: "Poom-se/Tull",    nome: "Teguk I Jang",                       max: 10 },
+            { cat: "Combate",         nome: "Matcho Kyorugui",                    max: 5  },
+            { cat: "Tchagui",         nome: "Timio ap bal ap Dolio Tchagui",      max: 10 },
+            { cat: "Tchagui",         nome: "Tuit bal- Rurio-tchagui",            max: 10 },
+            { cat: "Tchagui",         nome: "Ap bal- Rurio-Tchagui",              max: 10 },
+            { cat: "Tchagui",         nome: "Mondolio - Rurio -tchagui",          max: 10 },
+            { cat: "Tchagui",         nome: "Timio Tui Tchagui",                  max: 10 },
+            { cat: "Jaiu Kyorugui",   nome: "Combate Combinado",                  max: 15 }
+        ],
+        "verde": [
+            { cat: "Kibon Donjak", nome: "Kibon Donjak IL, I e Sam",             max: 5  },
+            { cat: "Kibon Donjak", nome: "Kibon Poom-se",                        max: 5  },
+            { cat: "Poom-se/Tull", nome: "Won Yo Hian",                          max: 15 },
+            { cat: "Poom-se/Tull", nome: "Teguk Sam Jang Hian",                  max: 10 },
+            { cat: "Combate",      nome: "Matcho Kyorugui",                      max: 10 },
+            { cat: "Tchagui",      nome: "Tchagui 1 Jejari (no lugar)",           max: 15 },
+            { cat: "Tchagui",      nome: "Thagui 2 Timio (saltando)",             max: 15 },
+            { cat: "Combate",      nome: "Kyorugui Oficial",                     max: 15 },
+            { cat: "Quebramento",  nome: "Kyok-Pa Sull",                         max: 10 }
+        ],
+        "ponta azul": [
+            { cat: "Kibon Donjak", nome: "Kibon Donjak IL, I, Sam, Sa",          max: 5  },
+            { cat: "Kibon Donjak", nome: "Kibon Poom-se",                        max: 5  },
+            { cat: "Poom-se/Tull", nome: "Iul Gok Hian",                         max: 10 },
+            { cat: "Poom-se/Tull", nome: "Teguk Sa Jang Hian",                   max: 10 },
+            { cat: "Combate",      nome: "Matcho Kyorugui",                      max: 10 },
+            { cat: "Tchagui",      nome: "Tchagui 1 Jejari (no lugar)",           max: 15 },
+            { cat: "Tchagui",      nome: "Thagui 2 Apuro (avançando)",            max: 15 },
+            { cat: "Combate",      nome: "Kyorugui Livre",                       max: 15 },
+            { cat: "Quebramento",  nome: "Kyok-Pa Sull (Son-nal)",               max: 15 }
+        ],
+        "azul": [
+            { cat: "Kibon Donjak", nome: "Kibon Poom-se",                        max: 5   },
+            { cat: "Kibon Donjak", nome: "Bal-Ki-sull II",                       max: 5   },
+            { cat: "Poom-se/Tull", nome: "Jun Gun Hian",                         max: 10  },
+            { cat: "Poom-se/Tull", nome: "Teguk O Jang Hian",                    max: 10  },
+            { cat: "Poom-se/Tull", nome: "Sorteio de Formas",                    max: 10  },
+            { cat: "Combate",      nome: "Matcho Kyorugui",                      max: 5   },
+            { cat: "Tchagui",      nome: "Godup Tchagui",                        max: 15  },
+            { cat: "Tchagui",      nome: "Jejari Tchagui",                       max: 15  },
+            { cat: "Tchagui",      nome: "Precisão (Técnica Livre)",              max: 5   },
+            { cat: "Quebramento",  nome: "Kyok-Pa Ju-mok (madeira solta)",       max: 2.5 },
+            { cat: "Quebramento",  nome: "Kyok-Pa Son-nal-dung",                 max: 2.5 },
+            { cat: "Combate",      nome: "Kyorugui",                             max: 15  }
+        ],
+        "ponta vermelha": [
+            { cat: "Kibon Donjak", nome: "Kibon Poom-se",                        max: 5  },
+            { cat: "Kibon Donjak", nome: "Bal-Ki-Sull I e II",                   max: 5  },
+            { cat: "Poom-se/Tull", nome: "Toi Gae Hian",                         max: 10 },
+            { cat: "Poom-se/Tull", nome: "Teguk Iuk Jang",                       max: 10 },
+            { cat: "Poom-se/Tull", nome: "Sorteio Formas 1",                     max: 5  },
+            { cat: "Poom-se/Tull", nome: "Sorteio Formas 2",                     max: 5  },
+            { cat: "Combate",      nome: "Matcho Kyorugui",                      max: 5  },
+            { cat: "Tchagui",      nome: "Jejari Tchagui",                       max: 10 },
+            { cat: "Tchagui",      nome: "Apuro Tchagui",                        max: 20 },
+            { cat: "Combate",      nome: "Jaiu Kyorugui 1X1",                    max: 10 },
+            { cat: "Combate",      nome: "Jaiu Kyorugui 1X2",                    max: 5  },
+            { cat: "Quebramento",  nome: "Timio Yop Tchagui",                    max: 10 }
+        ],
+        "vermelha": [
+            { cat: "Kibon Donjak",  nome: "Kibon Poom-se",                       max: 5  },
+            { cat: "Kibon Donjak",  nome: "Bal-Ki-Sull I , II e San",            max: 5  },
+            { cat: "Poom-se/Tull",  nome: "Hwa Rang Hian",                       max: 5  },
+            { cat: "Poom-se/Tull",  nome: "Teguk Tchil Jang Hian",               max: 5  },
+            { cat: "Poom-se/Tull",  nome: "Sorteio Tui 1",                       max: 5  },
+            { cat: "Poom-se/Tull",  nome: "Sorteio Tui 2",                       max: 5  },
+            { cat: "Defesa Pessoal",nome: "Ho-Shin-Sull",                        max: 5  },
+            { cat: "Tchagui",       nome: "Jejari Tchagui",                      max: 15 },
+            { cat: "Tchagui",       nome: "Taguet Tchagui",                      max: 15 },
+            { cat: "Combate",       nome: "Jaiu Kyorugui 1X1",                   max: 10 },
+            { cat: "Combate",       nome: "Jaiu Kyorugui 1X2",                   max: 5  },
+            { cat: "Combate",       nome: "Jaiu Kyorugui 1X3",                   max: 5  },
+            { cat: "Quebramento",   nome: "Kyok-Pa Sull",                        max: 15 }
+        ],
+        "ponta preta": [
+            { cat: "Kibon Donjak",  nome: "Kibon Donjak 1, 2, 3 e 4",           max: 10 },
+            { cat: "Kibon Donjak",  nome: "Kibom Poonsee",                       max: 10 },
+            { cat: "Poom-se/Tull",  nome: "Chung Mu Hian / Teguk Pal Jang",     max: 15 },
+            { cat: "Poom-se/Tull",  nome: "Sorteio Técnico (3 Formas)",          max: 15 },
+            { cat: "Defesa Pessoal",nome: "Ho-Shin-Sull / Bal-Ki-Sull",         max: 10 },
+            { cat: "Tchagui",       nome: "Sequência 1, 2, 3 (Jejari/Taguet)",  max: 15 },
+            { cat: "Combate",       nome: "Derion Unificado (1x1 ao 1x4)",      max: 15 },
+            { cat: "Quebramento",   nome: "Timio Yop Tchagui (5 pessoas) / Livre", max: 10 }
+        ]
+    };
+
+    // ============================================================
+    // ESTADO GLOBAL DA SESSÃO DE EXAME
+    // cacheAlunos: array normalizado com { id, nome, faixa_atual }
+    //   — lido UMA vez do banco e usado por todos os listeners.
+    // seletores: referências aos 4 <select> de candidatos.
+    // ============================================================
+    let cacheAlunos = [];
+    const seletores = [
+        document.getElementById('aluno-1'),
+        document.getElementById('aluno-2'),
+        document.getElementById('aluno-3'),
+        document.getElementById('aluno-4')
+    ];
+
+    // ============================================================
+    // FUNÇÃO: carregarAlunosBase()
+    //
+    // Busca todos os alunos ATIVOS do Supabase e popula os 4 selects.
+    //
+    // QUERY:
+    //   - Tabela principal: alunos (id, nome)
+    //   - JOIN implícito:   progresso_tecnico (faixa_atual)
+    //     A coluna de graduação atual NÃO fica em 'alunos' diretamente.
+    //     Ela vive na tabela relacionada 'progresso_tecnico'.
+    //
+    // NORMALIZAÇÃO:
+    //   Os dados do banco são transformados em um array plano:
+    //   { id, nome, faixa_atual } — extrai faixa_atual do sub-array.
+    //   Fallback: 'Branca' se o aluno não tiver progresso registrado.
+    // ============================================================
+    async function carregarAlunosBase() {
+        const { data, error } = await _supabase
+            .from('alunos')
+            .select('id, nome, progresso_tecnico (faixa_atual)')
+            .eq('status', 'ativo')            // Apenas alunos com matrícula ativa
+            .order('nome', { ascending: true }); // Ordem alfabética
+
+        if (error) {
+            console.error("Erro Supabase ao listar alunos:", error.message);
+            seletores[0].innerHTML = '<option value="">Erro ao carregar</option>';
+            return;
+        }
+
+        // Normaliza: achata o sub-array do JOIN em uma propriedade simples
+        cacheAlunos = data.map(al => ({
+            id:          al.id,
+            nome:        al.nome,
+            faixa_atual: (al.progresso_tecnico && al.progresso_tecnico[0])
+                ? al.progresso_tecnico[0].faixa_atual
+                : 'Branca' // Valor padrão se não houver registro de progresso
+        }));
+
+        // Popula todos os 4 selects com as mesmas options
+        seletores.forEach((select) => {
+            select.innerHTML = '<option value="">-- Vazio --</option>';
+            cacheAlunos.forEach((al) => {
+                const opt = document.createElement('option');
+                opt.value       = al.id.toString();
+                opt.textContent = al.nome;
+                select.appendChild(opt);
+            });
+        });
+    }
+
+    // ============================================================
+    // EVENTO: Candidato 1 selecionado → DISPARA TUDO
+    //
+    // O Candidato 1 é o "gatilho" da sessão de exame:
+    //   1. Atualiza o badge com a graduação do candidato
+    //   2. Exibe o primeiro nome no cabeçalho da tabela
+    //   3. Desbloqueia os selects dos candidatos 2, 3 e 4
+    //   4. Renderiza a matriz técnica baseada na faixa_atual do aluno 1
+    // ============================================================
+    seletores[0].addEventListener('change', (e) => {
+        const valorSelecionado = e.target.value.toString();
+        const al1 = cacheAlunos.find(a => a.id.toString() === valorSelecionado);
+
+        if (!al1) return; // Selecionou "-- Vazio --" ou valor inválido
+
+        // Exibe faixa e nome no cabeçalho
+        document.getElementById('badge-1').textContent    = al1.faixa_atual;
+        document.getElementById('col-aluno-1').textContent = al1.nome.split(' ')[0];
+
+        // Habilita os selects de candidatos adicionais
+        for (let i = 1; i < 4; i++) {
+            seletores[i].disabled = false;
+        }
+
+        // Gera a tabela de técnicas para a graduação selecionada
+        renderizarMatriz(al1.faixa_atual);
+    });
+
+    // ============================================================
+    // EVENTOS: Candidatos 2, 3 e 4
+    //
+    // Apenas atualizam o badge e o cabeçalho da coluna correspondente.
+    // Não re-renderizam a matriz (que é definida pelo candidato 1).
+    //
+    // Nota: usa closure do loop (let i) — "i" é capturado corretamente.
+    // ============================================================
+    for (let i = 1; i < 4; i++) {
+        seletores[i].addEventListener('change', (e) => {
+            const valorSecundario = e.target.value.toString();
+            const al  = cacheAlunos.find(a => a.id.toString() === valorSecundario);
+            const lbl = document.getElementById(`col-aluno-${i + 1}`);
+            const bdg = document.getElementById(`badge-${i + 1}`);
+
+            if (al) {
+                lbl.textContent = al.nome.split(' ')[0]; // Apenas o primeiro nome no header
+                bdg.textContent = al.faixa_atual;
+            } else {
+                // Candidato desmarcado (voltou para "-- Vazio --")
+                lbl.textContent = `Aluno ${i + 1}`;
+                bdg.textContent = "-";
+            }
+        });
+    }
+
+    // ============================================================
+    // FUNÇÃO: renderizarMatriz(faixa)
+    //
+    // Recebe a graduação do Candidato 1 e gera dinamicamente as
+    // linhas da tabela com base no REGRAS_EXAME correspondente.
+    //
+    // NORMALIZAÇÃO ANTI-ESPAÇO:
+    //   .trim().toLowerCase() antes de consultar o objeto REGRAS_EXAME
+    //   evita que espaços invisíveis vindos do banco (ex: "Branca ")
+    //   causem falha de mapeamento.
+    //
+    // Cada linha gerada contém:
+    //   - Categoria + nome da técnica
+    //   - Pontuação máxima
+    //   - 4 inputs de nota (n-al1 a n-al4) com data-index para controle
+    // ============================================================
+    function renderizarMatriz(faixa) {
+        if (!faixa) {
+            alert("Erro: Aluno sem graduação definida.");
+            return;
+        }
+
+        // Normaliza a faixa: remove espaços e coloca tudo em minúsculo
+        // para garantir match com as chaves do REGRAS_EXAME
+        const faixaChave = faixa.trim().toLowerCase();
+        const items      = REGRAS_EXAME[faixaChave];
+
+        if (!items) {
+            // Graduação existe no banco mas não tem ementa cadastrada no sistema
+            alert(`Erro de Mapeamento: A graduação "${faixa.trim()}" vinda do banco não corresponde a nenhuma ementa técnica.`);
+            return;
+        }
+
+        const corpo = document.getElementById('tabela-corpo-itens');
+        corpo.innerHTML = ""; // Limpa iterações anteriores
+
+        // Atualiza o título da seção com a graduação em maiúsculo
+        document.getElementById('titulo-tabela-exame').textContent =
+            `Matriz de Avaliação — Nível Faixa ${faixa.trim().toUpperCase()}`;
+
+        // Gera uma linha <tr> para cada técnica da ementa
+        items.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>[${item.cat}]</strong> ${item.nome}</td>
+                <td><strong>${item.max}</strong></td>
+                <!-- Inputs das notas: classes n-al1..n-al4 usadas na coleta do submit -->
+                <td><input type="number" step="0.1" min="0" max="${item.max}" class="nota-input n-al1" data-index="${index}" required></td>
+                <td><input type="number" step="0.1" min="0" max="${item.max}" class="nota-input n-al2" data-index="${index}"></td>
+                <td><input type="number" step="0.1" min="0" max="${item.max}" class="nota-input n-al3" data-index="${index}"></td>
+                <td><input type="number" step="0.1" min="0" max="${item.max}" class="nota-input n-al4" data-index="${index}"></td>
+            `;
+            corpo.appendChild(tr);
+        });
+
+        // Exibe o card de notas (estava oculto por padrão)
+        document.getElementById('card-notas-dinamicas').style.display = 'block';
+    }
+
+    // ============================================================
+    // EVENTO: Submit do formulário — GRAVAÇÃO EM LOTE NO SUPABASE
+    //
+    // Percorre os 4 candidatos, soma todas as notas de cada um e
+    // monta um array de objetos para INSERT em lote na tabela
+    // 'exames_notas'. Candidatos sem seleção (value="") são ignorados.
+    //
+    // DADOS GRAVADOS POR ALUNO:
+    //   - conta_avaliador:       identificador da banca (do localStorage)
+    //   - nome_real_avaliador:   nome do avaliador (do localStorage)
+    //   - graduacao_avaliador:   graduação do avaliador (do localStorage)
+    //   - id_aluno:              UUID do candidato
+    //   - faixa_avaliada:        graduação do candidato no momento do exame
+    //   - materia:               rótulo fixo "Exame de Graduação em Lote"
+    //   - nota:                  somatório bruto de todos os inputs do aluno
+    // ============================================================
+    document.getElementById('form-banca-notas').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const inserts = [];
+
+        for (let i = 0; i < 4; i++) {
+            const idAluno = seletores[i].value;
+            if (!idAluno) continue; // Slot vazio — pula sem erro
+
+            // Recupera o objeto completo do aluno do cache local
+            const alObj = cacheAlunos.find(a => a.id.toString() === idAluno.toString());
+
+            // Seleciona todos os inputs de nota do aluno i+1
+            const inputsNota = document.querySelectorAll(`.n-al${i + 1}`);
+            let somatorioBruto = 0;
+
+            // Soma todas as notas digitadas (parseFloat || 0 para campos vazios)
+            inputsNota.forEach(input => {
+                somatorioBruto += parseFloat(input.value) || 0;
+            });
+
+            inserts.push({
+                conta_avaliador:      contaBanca,
+                nome_real_avaliador:  nomeAvaliador,
+                graduacao_avaliador:  graduacaoAvaliador,
+                id_aluno:             idAluno,
+                faixa_avaliada:       alObj ? alObj.faixa_atual : 'Desconhecida',
+                materia:              "Exame de Graduação em Lote",
+                nota:                 somatorioBruto
+            });
+        }
+
+        // INSERT em lote: envia todos os registros de uma só vez
+        const { data, error } = await _supabase.from('exames_notas').insert(inserts);
+
+        if (error) {
+            alert(`Erro na gravação das notas: ${error.message}`);
+        } else {
+            alert(`Sucesso! Notas da banca gravadas com êxito no Supabase.`);
+            location.reload(); // Reseta a sessão para nova rodada
+        }
+    });
+
+    // ============================================================
+    // INICIALIZAÇÃO: carrega os alunos ao abrir a página
+    // ============================================================
+    window.onload = carregarAlunosBase;
+</script>
 </body>
 </html>

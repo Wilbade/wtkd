@@ -4,20 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WTKD — Acesso à Banca de Exame</title>
+
+    <!--
+        Supabase JS v2 carregado via CDN.
+        Usado aqui exclusivamente para autenticação (auth.signInWithPassword).
+        NÃO importamos conexao.js nesta página pois a autenticação é
+        um fluxo independente do painel de chamada/cadastro.
+    -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
+        /* Reset mínimo e fonte padrão */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial', sans-serif; }
+
+        /* Centralização vertical total para a tela de login */
         body { background-color: #111; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+
+        /* Card central de login — tamanho fixo e sombra profunda */
         .login-container { background: #1c1c1e; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; border: 1px solid #2c2c2e; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
-        h2 { text-align: center; margin-bottom: 10px; font-size: 22px; }
+
+        h2 { text-align: center; margin-bottom: 10px; font-size: 22px; color: #fff; }
+
+        /* Subtítulo dinâmico: muda entre os dois passos do fluxo de login */
         .subtitle { text-align: center; color: #8e8e93; font-size: 14px; margin-bottom: 25px; }
+
         .form-group { margin-bottom: 20px; }
         label { display: block; font-size: 12px; color: #aeaea3; text-transform: uppercase; margin-bottom: 6px; font-weight: bold; }
+
+        /* Inputs com borda laranja no foco (cor de destaque da marca) */
         input, select { width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 6px; color: #fff; font-size: 15px; outline: none; }
         input:focus, select:focus { border-color: #ff9f0a; }
+
+        /* Botão principal laranja (cor de ação, diferente do vermelho do TKD) */
         button { width: 100%; padding: 14px; background: #ff9f0a; border: none; border-radius: 6px; color: #000; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 10px; }
         button:hover { background: #ffb340; }
+
+        /* Utilitário para esconder o segundo formulário até o passo 1 ser concluído */
         .hidden { display: none; }
+
+        /* Mensagem de erro de autenticação (credenciais inválidas) */
         .error-msg { color: #ff453a; font-size: 13px; margin-top: 10px; text-align: center; font-weight: bold; }
     </style>
 </head>
@@ -25,8 +50,18 @@
 
 <div class="login-container">
     <h2>WTKD DO JANG</h2>
+    <!--
+        Subtítulo dinâmico: atualizado via JS conforme o fluxo avança.
+        Passo 1: "Autenticação da Banca Examinadora"
+        Passo 2: "Identificação da Banca [AVALIADOR1]"
+    -->
     <div class="subtitle" id="flow-title">Autenticação da Banca Examinadora</div>
 
+    <!--
+        PASSO 1 — AUTENTICAÇÃO (auth-form)
+        Valida as credenciais do avaliador contra o Supabase Auth.
+        Em caso de sucesso, esconde este form e exibe o profile-form.
+    -->
     <form id="auth-form">
         <div class="form-group">
             <label for="email">Conta do Avaliador</label>
@@ -37,9 +72,16 @@
             <input type="password" id="password" placeholder="••••••••" required>
         </div>
         <button type="submit">Validar Credenciais</button>
+        <!-- Div para exibir mensagens de erro da API do Supabase Auth -->
         <div id="error-auth" class="error-msg"></div>
     </form>
 
+    <!--
+        PASSO 2 — PERFIL DA BANCA (profile-form)
+        Inicia oculto (class="hidden"). Exibido após login bem-sucedido.
+        Coleta nome e graduação do avaliador para auditoria das notas.
+        Estes dados são gravados no localStorage, não no Supabase.
+    -->
     <form id="profile-form" class="hidden">
         <div class="form-group">
             <label for="nome-real">Nome do Avaliador</label>
@@ -53,7 +95,7 @@
                 <option value="1º Dan">1º Dan (Faixa Preta)</option>
                 <option value="2º Dan">2º Dan (Faixa Preta)</option>
                 <option value="3º Dan">3º Dan (Faixa Preta)</option>
-                <option value="4º Dan">4º Dan (Faixa Preta)</option>
+                <option value="4º Dan">4º Dan (Mestre)</option>
                 <option value="5º Dan">5º Dan (Mestre)</option>
                 <option value="6º Dan">6º Dan (Mestre)</option>
                 <option value="7º Dan">7º Dan (Mestre)</option>
@@ -65,52 +107,85 @@
 </div>
 
 <script>
-    // IMPORTANTE: Insira aqui os dados estáveis do seu projeto do Supabase
+    // ============================================================
+    // INICIALIZAÇÃO DO CLIENTE SUPABASE
+    // Instanciado como "_supabase" (com underscore) para não colidir
+    // com o namespace global "supabase" da biblioteca CDN.
+    // ============================================================
     const SUPABASE_URL = "https://pkbusphlutnodgconbbc.supabase.co";
     const SUPABASE_KEY = "sb_publishable_AXK9wUTEpz-rSdmXYn2SUA_u8O_u6P0";
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const authForm = document.getElementById('auth-form');
+    // Referências DOM reutilizadas nos dois passos do fluxo
+    const authForm    = document.getElementById('auth-form');
     const profileForm = document.getElementById('profile-form');
-    const flowTitle = document.getElementById('flow-title');
-    const errorAuth = document.getElementById('error-auth');
+    const flowTitle   = document.getElementById('flow-title');
+    const errorAuth   = document.getElementById('error-auth');
 
+    // Variável de módulo para passar o email entre os dois passos
+    // sem expor em campos ocultos do DOM
     let contaDefinida = "";
 
+    // ============================================================
+    // PASSO 1: Validação de credenciais no Supabase Auth
+    //
+    // Usa signInWithPassword — autenticação nativa do Supabase.
+    // Em caso de sucesso: troca o formulário visível (sem reload).
+    // Em caso de erro: exibe a mensagem retornada pela API.
+    // ============================================================
     authForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        errorAuth.textContent = "";
-        
-        const email = document.getElementById('email').value.trim();
+        e.preventDefault();     // Evita reload da página (comportamento padrão do form)
+        errorAuth.textContent = ""; // Limpa erro anterior
+
+        const email    = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
 
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        // Dispara a autenticação via API REST do Supabase
+        const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
 
         if (error) {
-            errorAuth.textContent = "Erro: Credenciais inválidas para a banca.";
+            // Exibe o erro original da API (ex: "Invalid login credentials")
+            errorAuth.textContent = "Erro: " + error.message;
         } else {
-            contaDefinida = email.split('@')[0]; // Extrai 'avaliador1', 'avaliador2', etc.
-            
+            // Extrai o identificador curto da conta: "avaliador1@wtkd.com.br" → "avaliador1"
+            contaDefinida = email.split('@')[0];
+
+            // Alterna os formulários sem refresh de página
             authForm.classList.add('hidden');
             profileForm.classList.remove('hidden');
             flowTitle.textContent = `Identificação da Banca [${contaDefinida.toUpperCase()}]`;
         }
     });
 
+    // ============================================================
+    // PASSO 2: Coleta de perfil e gravação no localStorage
+    //
+    // NÃO faz requisição ao banco — apenas salva os metadados
+    // localmente para que exame.html os leia na guarda de rota.
+    //
+    // CHAVES GRAVADAS NO LOCALSTORAGE:
+    //   wtkd_conta      → identificador curto (ex: "avaliador1")
+    //   wtkd_nome_real  → nome completo do avaliador
+    //   wtkd_graduacao  → graduação selecionada (ex: "3º Dan")
+    //
+    // Após salvar, redireciona para exame.html onde a guarda de rota
+    // valida a presença dessas chaves antes de renderizar a banca.
+    // ============================================================
     profileForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        
-        const nomeReal = document.getElementById('nome-real').value.trim();
+
+        const nomeReal  = document.getElementById('nome-real').value.trim();
         const graduacao = document.getElementById('graduacao').value;
 
-        // Armazena os dados locais para auditoria histórica das notas
-        localStorage.setItem('wtkd_conta', contaDefinida);
+        // Persiste os metadados de auditoria da sessão de exame
+        localStorage.setItem('wtkd_conta',     contaDefinida);
         localStorage.setItem('wtkd_nome_real', nomeReal);
         localStorage.setItem('wtkd_graduacao', graduacao);
 
-        // Avança para a tela de avaliação
+        // Navega para a banca de exame após configuração completa
         window.location.href = 'exame.html';
     });
 </script>
+
 </body>
 </html>
