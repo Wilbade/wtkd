@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WTKD — Acesso à Banca de Exame</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial', sans-serif; }
+        body { background-color: #111; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .login-container { background: #1c1c1e; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; border: 1px solid #2c2c2e; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+        h2 { text-align: center; margin-bottom: 10px; font-size: 22px; }
+        .subtitle { text-align: center; color: #8e8e93; font-size: 14px; margin-bottom: 25px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 12px; color: #aeaea3; text-transform: uppercase; margin-bottom: 6px; font-weight: bold; }
+        input, select { width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 6px; color: #fff; font-size: 15px; outline: none; }
+        input:focus, select:focus { border-color: #ff9f0a; }
+        button { width: 100%; padding: 14px; background: #ff9f0a; border: none; border-radius: 6px; color: #000; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 10px; }
+        button:hover { background: #ffb340; }
+        .hidden { display: none; }
+        .error-msg { color: #ff453a; font-size: 13px; margin-top: 10px; text-align: center; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>WTKD DO JANG</h2>
+    <div class="subtitle" id="flow-title">Autenticação da Banca Examinadora</div>
+
+    <form id="auth-form">
+        <div class="form-group">
+            <label for="email">Conta do Avaliador</label>
+            <input type="email" id="email" placeholder="avaliador1@wtkd.com.br" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Senha de Segurança</label>
+            <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+        <button type="submit">Validar Credenciais</button>
+        <div id="error-auth" class="error-msg"></div>
+    </form>
+
+    <form id="profile-form" class="hidden">
+        <div class="form-group">
+            <label for="nome-real">Nome do Avaliador</label>
+            <input type="text" id="nome-real" placeholder="Ex: Mestre Wiliam Longo" required>
+        </div>
+        <div class="form-group">
+            <label for="graduacao">Graduação Atual</label>
+            <select id="graduacao" required>
+                <option value="" disabled selected>Selecione seu Dan/Gub</option>
+                <option value="1º Gub">1º Gub (Ponta Preta)</option>
+                <option value="1º Dan">1º Dan (Faixa Preta)</option>
+                <option value="2º Dan">2º Dan (Faixa Preta)</option>
+                <option value="3º Dan">3º Dan (Faixa Preta)</option>
+                <option value="4º Dan">4º Dan (Faixa Preta)</option>
+                <option value="5º Dan">5º Dan (Mestre)</option>
+                <option value="6º Dan">6º Dan (Mestre)</option>
+                <option value="7º Dan">7º Dan (Mestre)</option>
+                <option value="8º Dan">8º Dan (Grão-Mestre)</option>
+            </select>
+        </div>
+        <button type="submit">Entrar no Sistema de Exame</button>
+    </form>
+</div>
+
+<script>
+    // IMPORTANTE: Insira aqui os dados estáveis do seu projeto do Supabase
+    const SUPABASE_URL = "https://pkbusphlutnodgconbbc.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_AXK9wUTEpz-rSdmXYn2SUA_u8O_u6P0";
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const authForm = document.getElementById('auth-form');
+    const profileForm = document.getElementById('profile-form');
+    const flowTitle = document.getElementById('flow-title');
+    const errorAuth = document.getElementById('error-auth');
+
+    let contaDefinida = "";
+
+    authForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorAuth.textContent = "";
+        
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+        if (error) {
+            errorAuth.textContent = "Erro: Credenciais inválidas para a banca.";
+        } else {
+            contaDefinida = email.split('@')[0]; // Extrai 'avaliador1', 'avaliador2', etc.
+            
+            authForm.classList.add('hidden');
+            profileForm.classList.remove('hidden');
+            flowTitle.textContent = `Identificação da Banca [${contaDefinida.toUpperCase()}]`;
+        }
+    });
+
+    profileForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const nomeReal = document.getElementById('nome-real').value.trim();
+        const graduacao = document.getElementById('graduacao').value;
+
+        // Armazena os dados locais para auditoria histórica das notas
+        localStorage.setItem('wtkd_conta', contaDefinida);
+        localStorage.setItem('wtkd_nome_real', nomeReal);
+        localStorage.setItem('wtkd_graduacao', graduacao);
+
+        // Avança para a tela de avaliação
+        window.location.href = 'exame.html';
+    });
+</script>
+</body>
+</html>
