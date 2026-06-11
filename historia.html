@@ -4,7 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>História e Tradição — Wil Taekwondo</title>
+    <link rel="icon" type="image/png" href="public/assets/images/logo.png">
+    <title>História e Tradição — Wil TKD</title>
+    <script src="nav.js" defer></script>
     <style>
         :root {
             --primary: #ff1a1a;
@@ -26,67 +28,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Topo Premium Compartilhado */
-        header {
-            background-color: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            padding: 24px 48px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--card-border);
-        }
-
-        .brand {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .brand h1 {
-            margin: 0;
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .brand h1 span {
-            color: var(--primary);
-        }
-
-        .brand .subtitle {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 2px;
-            font-weight: 600;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 28px;
-            margin: 0;
-            padding: 0;
-        }
-
-        nav a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        nav a:hover,
-        nav .active {
-            color: var(--text-main);
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
+        /* Header gerenciado pelo nav.js (Web Component) */
 
         /* Container Principal */
         .main-container {
@@ -374,22 +316,7 @@
 
 <body>
 
-    <header>
-        <div class="brand">
-            <h1>WIL <span>TKD</span></h1>
-            <div class="subtitle">Team Marchesini</div>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="index.html">Início</a></li>
-                <li><a href="curriculo.html">Currículo</a></li>
-                <li><a href="exame.html">Exame</a></li>
-                <li><a href="formas.html">Formas</a></li>
-                <li><a href="dicionario.html">Dicionário</a></li>
-                <li><a href="historia.html" class="active">História</a></li>
-            </ul>
-        </nav>
-    </header>
+    <wtkd-nav></wtkd-nav>
 
     <div class="main-container">
         <div class="page-title">
@@ -418,7 +345,8 @@
                         tropas de invasão japonesas na Coreia. No entanto, suas raízes estão intimamente ligadas aos
                         mais de 2000 anos de história das artes marciais coreanas tradicionais, como o
                         <em>Taekkyeon</em>, o <em>Subak</em> e o <em>Gwonbeop</em>, além de incorporar elementos
-                        técnicos do Karate de Okinawa e do Kung Fu chinês.</p>
+                        técnicos do Karate de Okinawa e do Kung Fu chinês.
+                    </p>
                     <p>Em 1945, logo após o fim da ocupação da Coreia pelo Japão Imperial, novas escolas de artes
                         marciais, chamadas <strong>Kwans</strong>, foram abertas em Seul por mestres que haviam estudado
                         no exterior. Durante os anos 40 e 50, cada Kwan praticava seu próprio estilo e linhagem técnica.
@@ -437,7 +365,8 @@
                         como a academia mundial oficial e chancelou a criação da <strong>Federação Mundial de Taekwondo
                             (WT)</strong> para promover a modalidade como esporte olímpico. Desde o ano 2000 (Jogos de
                         Sydney), o Taekwondo figura como esporte oficial das Olimpíadas, integrando hoje mais de 30
-                        milhões de praticantes em 156 países.</p>
+                        milhões de praticantes em 156 países.
+                    </p>
                 </div>
 
                 <div class="tab-content" id="content2">
@@ -521,7 +450,8 @@
                         <strong>1970</strong>, a pedido do governo brasileiro no período militar, o General Choi Hong Hi
                         enviou uma comissão de mestres pioneiros para introduzir a modalidade no país, atuando
                         inicialmente na instrução das forças de segurança pública e policiais na Delegacia de Ordem
-                        Política e Social (DOPS).</p>
+                        Política e Social (DOPS).
+                    </p>
                     <p>Em <strong>8 de agosto de 1970</strong>, o <strong>Grão-Mestre Sang Min Cho</strong> fundou
                         oficialmente a primeira escola do país no bairro da Liberdade, em São Paulo (a Academia
                         Liberdade), superando severas barreiras idiomáticas e culturais da época. Logo em seguida, os
@@ -569,7 +499,8 @@
                         de Desportes (C.N.D.). Em 1987, visando a independência administrativa exigida pelo Comitê
                         Olímpico, foi criada a Associação Brasileira de Taekwondo (ABT), posteriormente renomeada para
                         <strong>Confederação Brasileira de Taekwondo (CBTKD)</strong> em 1990, permanecendo como o órgão
-                        regulator oficial até os dias de hoje.</p>
+                        regulator oficial até os dias de hoje.
+                    </p>
 
                     <div class="source-box">
                         <strong>Referências Bibliográficas e Documentais:</strong>

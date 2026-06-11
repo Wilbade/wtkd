@@ -3,8 +3,10 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Currículo Técnico — Wil Taekwondo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="public/assets/images/logo.png">
+    <title>Currículo Marcial — Wil TKD</title>
+    <script src="nav.js" defer></script>
     <style>
         :root {
             --primary: #ff1a1a;
@@ -29,67 +31,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Topo Premium Compartilhado */
-        header {
-            background-color: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            padding: 24px 48px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--card-border);
-        }
-
-        .brand {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .brand h1 {
-            margin: 0;
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .brand h1 span {
-            color: var(--primary);
-        }
-
-        .brand .subtitle {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 2px;
-            font-weight: 600;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 28px;
-            margin: 0;
-            padding: 0;
-        }
-
-        nav a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s, text-shadow 0.2s;
-        }
-
-        nav a:hover,
-        nav .active {
-            color: var(--text-main);
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
+        /* Header gerenciado pelo nav.js (Web Component) */
 
         /* Container do Conteúdo Técnico */
         .main-container {
@@ -302,13 +244,6 @@
         }
 
         @media (max-width: 900px) {
-            header {
-                padding: 15px 24px;
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-
             .main-container {
                 margin-top: 24px;
             }
@@ -475,22 +410,7 @@
 
 <body>
 
-    <header>
-        <div class="brand">
-            <h1>WIL <span>TKD</span></h1>
-            <div class="subtitle">Team Marchesini</div>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="index.html">Início</a></li>
-                <li><a href="curriculo.html" class="active">Currículo</a></li>
-                <li><a href="exame.html">Exame</a></li>
-                <li><a href="formas.html">Formas</a></li>
-                <li><a href="dicionario.html">Dicionário</a></li>
-                <li><a href="historia.html">História</a></li>
-            </ul>
-        </nav>
-    </header>
+    <wtkd-nav></wtkd-nav>
 
     <div class="main-container">
         <div class="page-title">
@@ -1100,73 +1020,92 @@
                     </table>
                 </div>
 
-<h3>🔥 3. Tchagui (Tchá-guí) — Currículo de Exame em Raquete</h3>
-<p style="font-size: 13px; color: #ff9f0a; margin-bottom: 8px; font-weight: bold;">
-    Bases: Narani Retchio Are Maki Jumbi (Sequência 1 a 4) | Kyonumse / Kyorugui Jasé Jumbi (Sequência 5 a 10)
-</p>
-<div class="table-container">
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 8%">Nº</th>
-                <th style="width: 42%">Nome Técnico / Fonética</th>
-                <th style="width: 50%">Mecânica, Sequência e Critério de Avaliação</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>Godup Ap Tchagui<span class="phonetic">Gô-dup Ap Tchá-guí</span></td>
-                <td>Dois chutes frontais consecutivos com a mesma perna no lugar (Jejari). Foco em equilíbrio e rebatida.</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>An Tchagô, Bacat Tchagô Rurio Tchagui<span class="phonetic">An Tchá-gô, Bá-cat Tchá-gô Ru-rió Tchá-guí</span></td>
-                <td>Sequência combinada de chute para dentro, chute para fora e chute de gancho (chicote).</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Ap, Yop, Rurio, Dolio Tchagô e Tit Tchagui<span class="phonetic">Ap, Yóp, Ru-rió, Dô-lió Tchá-gô ê Dit Tchá-guí</span></td>
-                <td>Sequência técnica complexa: frontal, lateral, gancho, semicircular e chute para trás.</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>Godup Yop Tchagui<span class="phonetic">Gô-dup Yóp Tchá-guí</span></td>
-                <td>Dois chutes laterais consecutivos com a mesma perna, avaliando extensão de quadril e precisão.</td>
-            </tr>
-            <tr>
-                <td>5</td>
-                <td>Timio Tit Bal Ap Tchagui<span class="phonetic">Dí-mió Dit Bal Ap Tchá-guí</span></td>
-                <td>Chute frontal saltando, desferido com a perna de trás. Avaliação de impulsão no alvo.</td>
-            </tr>
-            <tr>
-                <td>6</td>
-                <td>Timio Tit Bal Tigô Tchagui<span class="phonetic">Dí-mió Dit Bal Di-gô Tchá-guí</span></td>
-                <td>Chute descendente (martelo) saltando com a perna de trás. Foco na altura do ponto de impacto.</td>
-            </tr>
-            <tr>
-                <td>7</td>
-                <td>Timio Ap Bal Rurio Tchagui<span class="phonetic">Dí-mió Ap Bal Ru-rió Tchá-guí</span></td>
-                <td>Chute gancho saltando, desferido com a perna da frente. Exige alta coordenação técnica.</td>
-            </tr>
-            <tr>
-                <td>8</td>
-                <td>Timio Tit Bal Yop Mirô Tchagui<span class="phonetic">Dí-mió Dit Bal Yóp Mi-rô Tchá-guí</span></td>
-                <td>Chute lateral de empurrão saltando com a perna de trás. Avaliação de projeção linear de força.</td>
-            </tr>
-            <tr>
-                <td>9</td>
-                <td>Timio Tit Bal Dolio Tchagui<span class="phonetic">Dí-mió Dit Bal Dô-lió Tchá-guí</span></td>
-                <td>Chute semicircular saltando com a perna de trás. Foco na rotação rápida do tronco no ar.</td>
-            </tr>
-            <tr>
-                <td>10</td>
-                <td>Timio Mondolio Rurio Tchagui<span class="phonetic">Dí-mió Món-dô-lió Ru-rió Tchá-guí</span></td>
-                <td>Chute gancho giratório saltando (360 graus). Chute de alta complexidade, avaliando giro e precisão no aparador.</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+                <h3>🔥 3. Tchagui (Tchá-guí) — Currículo de Exame em Raquete</h3>
+                <p style="font-size: 13px; color: #ff9f0a; margin-bottom: 8px; font-weight: bold;">
+                    Bases: Narani Retchio Are Maki Jumbi (Sequência 1 a 4) | Kyonumse / Kyorugui Jasé Jumbi (Sequência 5
+                    a 10)
+                </p>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 8%">Nº</th>
+                                <th style="width: 42%">Nome Técnico / Fonética</th>
+                                <th style="width: 50%">Mecânica, Sequência e Critério de Avaliação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Godup Ap Tchagui<span class="phonetic">Gô-dup Ap Tchá-guí</span></td>
+                                <td>Dois chutes frontais consecutivos com a mesma perna no lugar (Jejari). Foco em
+                                    equilíbrio e rebatida.</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>An Tchagô, Bacat Tchagô Rurio Tchagui<span class="phonetic">An Tchá-gô, Bá-cat
+                                        Tchá-gô Ru-rió Tchá-guí</span></td>
+                                <td>Sequência combinada de chute para dentro, chute para fora e chute de gancho
+                                    (chicote).</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Ap, Yop, Rurio, Dolio Tchagô e Tit Tchagui<span class="phonetic">Ap, Yóp, Ru-rió,
+                                        Dô-lió Tchá-gô ê Dit Tchá-guí</span></td>
+                                <td>Sequência técnica complexa: frontal, lateral, gancho, semicircular e chute para
+                                    trás.</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Godup Yop Tchagui<span class="phonetic">Gô-dup Yóp Tchá-guí</span></td>
+                                <td>Dois chutes laterais consecutivos com a mesma perna, avaliando extensão de quadril e
+                                    precisão.</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>Timio Tit Bal Ap Tchagui<span class="phonetic">Dí-mió Dit Bal Ap Tchá-guí</span>
+                                </td>
+                                <td>Chute frontal saltando, desferido com a perna de trás. Avaliação de impulsão no
+                                    alvo.</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>Timio Tit Bal Tigô Tchagui<span class="phonetic">Dí-mió Dit Bal Di-gô
+                                        Tchá-guí</span></td>
+                                <td>Chute descendente (martelo) saltando com a perna de trás. Foco na altura do ponto de
+                                    impacto.</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>Timio Ap Bal Rurio Tchagui<span class="phonetic">Dí-mió Ap Bal Ru-rió
+                                        Tchá-guí</span></td>
+                                <td>Chute gancho saltando, desferido com a perna da frente. Exige alta coordenação
+                                    técnica.</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>Timio Tit Bal Yop Mirô Tchagui<span class="phonetic">Dí-mió Dit Bal Yóp Mi-rô
+                                        Tchá-guí</span></td>
+                                <td>Chute lateral de empurrão saltando com a perna de trás. Avaliação de projeção linear
+                                    de força.</td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>Timio Tit Bal Dolio Tchagui<span class="phonetic">Dí-mió Dit Bal Dô-lió
+                                        Tchá-guí</span></td>
+                                <td>Chute semicircular saltando com a perna de trás. Foco na rotação rápida do tronco no
+                                    ar.</td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td>Timio Mondolio Rurio Tchagui<span class="phonetic">Dí-mió Món-dô-lió Ru-rió
+                                        Tchá-guí</span></td>
+                                <td>Chute gancho giratório saltando (360 graus). Chute de alta complexidade, avaliando
+                                    giro e precisão no aparador.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 <h3>👊 4. Kibon Donjak (Qui-bôn Dôn-djác) - Técnicas de Base Estática</h3>
                 <p style="font-size: 13.5px; color: #aeaeb2; margin: 4px 0;">
                     • <b>Kibon Donjak IL, I e Sam:</b> Avaliação estática na base de prontidão das técnicas acumuladas
@@ -1631,7 +1570,8 @@
                     rigorosamente o controle de distância. (Valendo 5 Pontos)</p>
                 <p class="sub-info-text">• <b>Kyok-Pa Sull (Quebramento):</b> Teste estrito de impacto real com
                     quebramento de madeira usando as técnicas de <b>Ju-mok</b> (madeira solta - 2.5 pontos) e
-                    <b>Son-nal-dung</b> (madeira - 2.5 pontos). (Valendo 5 Pontos)</p>
+                    <b>Son-nal-dung</b> (madeira - 2.5 pontos). (Valendo 5 Pontos)
+                </p>
             </div>
         </details>
 

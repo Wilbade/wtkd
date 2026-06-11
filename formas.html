@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Formas e Poomsae — Wil Taekwondo</title>
+    <link rel="icon" type="image/png" href="public/assets/images/logo.png">
+    <title>Formas e Poomsae — Wil TKD</title>
+    <script src="nav.js" defer></script>
     <style>
         :root {
             --primary: #ff1a1a;
@@ -26,34 +29,36 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        header {
-            background-color: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            padding: 24px 48px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--card-border);
+        /* Header gerenciado pelo nav.js (Web Component) */
+
+        .main-container {
+            max-width: 1100px;
+            margin: 40px auto 80px auto;
+            padding: 0 24px;
         }
 
-        .brand { display: flex; flex-direction: column; }
-        .brand h1 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
-        .brand h1 span { color: var(--primary); }
-        .brand .subtitle { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; font-weight: 600; }
+        .page-title {
+            margin-bottom: 32px;
+            border-left: 4px solid var(--primary);
+            padding-left: 16px;
+        }
 
-        nav ul { list-style: none; display: flex; gap: 28px; margin: 0; padding: 0; }
-        nav a { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
-        nav a:hover, nav .active { color: var(--text-main); text-shadow: 0 0 10px rgba(255,255,255,0.5); }
-
-        .main-container { max-width: 1100px; margin: 40px auto 80px auto; padding: 0 24px; }
-        .page-title { margin-bottom: 32px; border-left: 4px solid var(--primary); padding-left: 16px; }
-        .page-title h2 { margin: 0; font-size: 28px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .page-title h2 {
+            margin: 0;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
         /* Filtros de Categoria */
-        .filter-controller { display: flex; gap: 12px; margin-bottom: 32px; border-bottom: 1px solid var(--card-border); padding-bottom: 16px; }
+        .filter-controller {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 16px;
+        }
+
         .filter-btn {
             background: var(--highlight-box);
             border: 1px solid var(--card-border);
@@ -66,10 +71,14 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        input[name="gub-filter"] { display: none; }
-        #filter-all:checked ~ .filter-controller [for="filter-all"],
-        #filter-coloridas:checked ~ .filter-controller [for="filter-coloridas"],
-        #filter-pretas:checked ~ .filter-controller [for="filter-pretas"] {
+
+        input[name="gub-filter"] {
+            display: none;
+        }
+
+        #filter-all:checked~.filter-controller [for="filter-all"],
+        #filter-coloridas:checked~.filter-controller [for="filter-coloridas"],
+        #filter-pretas:checked~.filter-controller [for="filter-pretas"] {
             background: var(--primary);
             color: var(--text-main);
             border-color: var(--primary);
@@ -77,7 +86,12 @@
         }
 
         /* Grid e Cards de Formas */
-        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
         .form-card {
             background-color: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -87,28 +101,109 @@
             flex-direction: column;
             transition: transform 0.2s, border-color 0.2s;
         }
-        .form-card:hover { transform: translateY(-4px); border-color: #3a3a3a; }
 
-        .belt-indicator { height: 8px; width: 100%; border-radius: 4px; margin-bottom: 16px; }
-        .b-branca { background: #ffffff; }
-        .b-amarela { background: #ffcc00; }
-        .b-amarela-verde { background: linear-gradient(to right, #ffcc00 50%, #009933 50%); }
-        .b-verde { background: #009933; }
-        .b-verde-azul { background: linear-gradient(to right, #009933 50%, #0066cc 50%); }
-        .b-azul { background: #0066cc; }
-        .b-azul-vermelha { background: linear-gradient(to right, #0066cc 50%, #cc0000 50%); }
-        .b-vermelha { background: #cc0000; }
-        .b-vermelha-preta { background: linear-gradient(to right, #cc0000 50%, #222222 50%); border: 1px solid rgba(255,255,255,0.1); }
-        .b-preta { background: #222222; border: 1px solid #444; }
+        .form-card:hover {
+            transform: translateY(-4px);
+            border-color: #3a3a3a;
+        }
 
-        .form-card h3 { margin: 0 0 4px 0; font-size: 18px; font-weight: 800; text-transform: uppercase; }
-        .form-card .belt-name { font-size: 11px; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
-        
-        .forms-required { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; flex-grow: 1; }
-        .form-row { background: var(--highlight-box); padding: 10px 14px; border-radius: 6px; border-left: 3px solid var(--primary); }
-        .form-row.alt { border-left-color: #ffffff; }
-        .form-type { font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; }
-        .form-title { font-size: 14.5px; font-weight: 700; color: var(--text-main); margin-top: 2px; }
+        .belt-indicator {
+            height: 8px;
+            width: 100%;
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
+
+        .b-branca {
+            background: #ffffff;
+        }
+
+        .b-amarela {
+            background: #ffcc00;
+        }
+
+        .b-amarela-verde {
+            background: linear-gradient(to right, #ffcc00 50%, #009933 50%);
+        }
+
+        .b-verde {
+            background: #009933;
+        }
+
+        .b-verde-azul {
+            background: linear-gradient(to right, #009933 50%, #0066cc 50%);
+        }
+
+        .b-azul {
+            background: #0066cc;
+        }
+
+        .b-azul-vermelha {
+            background: linear-gradient(to right, #0066cc 50%, #cc0000 50%);
+        }
+
+        .b-vermelha {
+            background: #cc0000;
+        }
+
+        .b-vermelha-preta {
+            background: linear-gradient(to right, #cc0000 50%, #222222 50%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .b-preta {
+            background: #222222;
+            border: 1px solid #444;
+        }
+
+        .form-card h3 {
+            margin: 0 0 4px 0;
+            font-size: 18px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .form-card .belt-name {
+            font-size: 11px;
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+        }
+
+        .forms-required {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .form-row {
+            background: var(--highlight-box);
+            padding: 10px 14px;
+            border-radius: 6px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .form-row.alt {
+            border-left-color: #ffffff;
+        }
+
+        .form-type {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .form-title {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-top: 2px;
+        }
 
         .action-btn {
             background-color: #1a1a1a;
@@ -123,16 +218,29 @@
             text-align: center;
             transition: all 0.2s;
         }
-        .action-btn:hover { background-color: var(--primary); border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
 
-        #filter-coloridas:checked ~ .cards-grid .cat-preta { display: none; }
-        #filter-pretas:checked ~ .cards-grid .cat-colorida { display: none; }
+        .action-btn:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        #filter-coloridas:checked~.cards-grid .cat-preta {
+            display: none;
+        }
+
+        #filter-pretas:checked~.cards-grid .cat-colorida {
+            display: none;
+        }
 
         /* MOTOR DE ARQUITETURA DO MODAL PREMIUM */
         #modal-overlay {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: var(--modal-overlay);
             backdrop-filter: blur(10px);
             z-index: 1000;
@@ -149,7 +257,7 @@
             border-radius: 16px;
             border: 1px solid var(--card-border);
             position: relative;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
             display: flex;
             flex-direction: column;
             max-height: 90vh;
@@ -164,15 +272,44 @@
             align-items: center;
             border-radius: 16px 16px 0 0;
         }
-        .modal-header h2 { margin: 0; font-size: 20px; text-transform: uppercase; color: #fff; }
-        .modal-header h2 span { color: var(--primary); }
-        .close-modal { background: none; border: none; color: var(--text-muted); font-size: 26px; cursor: pointer; }
-        .close-modal:hover { color: #fff; }
 
-        .modal-body { padding: 30px; overflow-y: auto; }
+        .modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+            text-transform: uppercase;
+            color: #fff;
+        }
+
+        .modal-header h2 span {
+            color: var(--primary);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 26px;
+            cursor: pointer;
+        }
+
+        .close-modal:hover {
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+        }
 
         /* Sistema Interno de Abas do Modal (WT vs Tradicional) */
-        .modal-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--card-border); padding-bottom: 12px; }
+        .modal-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 12px;
+        }
+
         .m-tab-btn {
             background: var(--highlight-box);
             border: 1px solid var(--card-border);
@@ -184,340 +321,479 @@
             text-transform: uppercase;
             cursor: pointer;
         }
-        .m-tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; background: #000; margin-bottom: 24px; border: 1px solid var(--card-border); }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        .m-tab-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #000;
+            margin-bottom: 24px;
+            border: 1px solid var(--card-border);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
 
         /* Tabela Técnica de Ficha Limpa */
-        .tech-spec-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; background: #0d0d0d; border-radius: 8px; border: 1px solid var(--card-border); overflow: hidden; }
-        .tech-spec-table td { padding: 12px 16px; font-size: 13.5px; border-bottom: 1px solid var(--card-border); }
-        .tech-spec-table tr:last-child td { border-bottom: none; }
-        .tech-spec-table td.label { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 11px; width: 30%; letter-spacing: 0.5px; }
-        .tech-spec-table td.value { color: #fff; font-weight: 700; }
+        .tech-spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            background: #0d0d0d;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+        }
 
-        .modal-info-section { margin-bottom: 24px; }
-        .modal-info-section h4 { font-size: 13px; text-transform: uppercase; color: var(--primary); margin: 0 0 8px 0; letter-spacing: 0.5px; }
-        .modal-info-section p { font-size: 14.5px; line-height: 1.6; color: rgba(255,255,255,0.8); margin: 0; }
+        .tech-spec-table td {
+            padding: 12px 16px;
+            font-size: 13.5px;
+            border-bottom: 1px solid var(--card-border);
+        }
 
-        footer { background-color: rgba(0,0,0,0.5); padding: 32px 24px; text-align: center; font-size: 13px; color: var(--text-muted); border-top: 1px solid var(--card-border); margin-top: 40px;}
-        footer span { color: var(--text-main); font-weight: 500; }
-        footer .highlight { color: var(--primary); }
+        .tech-spec-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .tech-spec-table td.label {
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            width: 30%;
+            letter-spacing: 0.5px;
+        }
+
+        .tech-spec-table td.value {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .modal-info-section {
+            margin-bottom: 24px;
+        }
+
+        .modal-info-section h4 {
+            font-size: 13px;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin: 0 0 8px 0;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-info-section p {
+            font-size: 14.5px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+        }
+
+        footer {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 32px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--card-border);
+            margin-top: 40px;
+        }
+
+        footer span {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        footer .highlight {
+            color: var(--primary);
+        }
 
         @media (max-width: 768px) {
-            header { padding: 15px 24px; flex-direction: column; gap: 15px; text-align: center; }
-            .filter-controller { overflow-x: auto; white-space: nowrap; }
-            .modal-content { max-height: 95vh; }
-            .modal-body { padding: 15px; }
+            .filter-controller {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .modal-content {
+                max-height: 95vh;
+            }
+
+            .modal-body {
+                padding: 15px;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<header>
-    <div class="brand">
-        <h1>WIL <span>TKD</span></h1>
-        <div class="subtitle">Team Marchesini</div>
+    <wtkd-nav></wtkd-nav>
+
+    <div class="main-container">
+        <div class="page-title">
+            <h2>Formas & Poomsaes</h2>
+            <p>Cronograma oficial de exames. Escolha a graduação para acessar vídeos, diagramas e contagens de
+                movimentos.</p>
+        </div>
+
+        <input type="radio" id="filter-all" name="gub-filter" checked>
+        <input type="radio" id="filter-coloridas" name="gub-filter">
+        <input type="radio" id="filter-pretas" name="gub-filter">
+
+        <div class="filter-controller">
+            <label for="filter-all" class="filter-btn">Todos os Níveis</label>
+            <label for="filter-coloridas" class="filter-btn">Faixas Coloridas (Gub)</label>
+            <label for="filter-pretas" class="filter-btn">Faixas Pretas (Dan)</label>
+        </div>
+
+        <div class="cards-grid">
+
+            <div class="form-card cat-colorida">
+                <div class="belt-indicator b-branca"></div>
+                <h3>10º e 9º Gub</h3>
+                <div class="belt-name">Faixa Branca</div>
+                <div class="forms-required">
+                    <div class="form-row">
+                        <div class="form-type">WT / Kibon</div>
+                        <div class="form-title">Saju Jirugi / Maki</div>
+                    </div>
+                    <div class="form-row alt">
+                        <div class="form-type">Hyong (Tradicional)</div>
+                        <div class="form-title">Chon-Ji Hyong</div>
+                    </div>
+                </div>
+                <button class="action-btn" onclick="openGubModal(0)">Ver Conteúdo Técnico</button>
+            </div>
+
+            <div class="form-card cat-colorida">
+                <div class="belt-indicator b-amarela"></div>
+                <h3>8º Gub</h3>
+                <div class="belt-name">Faixa Amarela</div>
+                <div class="forms-required">
+                    <div class="form-row">
+                        <div class="form-type">Poom-se (WT)</div>
+                        <div class="form-title">Taegeuk Il Jang</div>
+                    </div>
+                    <div class="form-row alt">
+                        <div class="form-type">Hyong (Tradicional)</div>
+                        <div class="form-title">Dan-Gun Hyong</div>
+                    </div>
+                </div>
+                <button class="action-btn" onclick="openGubModal(1)">Ver Conteúdo Técnico</button>
+            </div>
+
+            <div class="form-card cat-colorida">
+                <div class="belt-indicator b-amarela-verde"></div>
+                <h3>7º Gub</h3>
+                <div class="belt-name">Faixa Amarela Ponta Verde</div>
+                <div class="forms-required">
+                    <div class="form-row">
+                        <div class="form-type">Poom-se (WT)</div>
+                        <div class="form-title">Taegeuk Ee Jang</div>
+                    </div>
+                    <div class="form-row alt">
+                        <div class="form-type">Hyong (Tradicional)</div>
+                        <div class="form-title">Do-San Hyong</div>
+                    </div>
+                </div>
+                <button class="action-btn" onclick="openGubModal(2)">Ver Conteúdo Técnico</button>
+            </div>
+
+            <div class="form-card cat-colorida">
+                <div class="belt-indicator b-verde"></div>
+                <h3>6º Gub</h3>
+                <div class="belt-name">Faixa Verde</div>
+                <div class="forms-required">
+                    <div class="form-row">
+                        <div class="form-type">Poom-se (WT)</div>
+                        <div class="form-title">Taegeuk Sam Jang</div>
+                    </div>
+                    <div class="form-row alt">
+                        <div class="form-type">Hyong (Tradicional)</div>
+                        <div class="form-title">Won-Hyo Hyong</div>
+                    </div>
+                </div>
+                <button class="action-btn" onclick="openGubModal(3)">Ver Conteúdo Técnico</button>
+            </div>
+
+            <div class="form-card cat-colorida">
+                <div class="belt-indicator b-verde-azul"></div>
+                <h3>5º Gub</h3>
+                <div class="belt-name">Faixa Verde Ponta Azul</div>
+                <div class="forms-required">
+                    <div class="form-row">
+                        <div class="form-type">Poom-se (WT)</div>
+                        <div class="form-title">Taegeuk Sa Jang</div>
+                    </div>
+                    <div class="form-row alt">
+                        <div class="form-type">Hyong (Tradicional)</div>
+                        <div class="form-title">Yul-Gok Hyong</div>
+                    </div>
+                </div>
+                <button class="action-btn" onclick="openGubModal(4)">Ver Conteúdo Técnico</button>
+            </div>
+
+            <div class="form-card cat-colorida">
+                <div class="belt-indicator b-azul"></div>
+                <h3>4º Gub</h3>
+                <div class="belt-name">Faixa Azul</div>
+                <div class="forms-required">
+                    <div class="form-row">
+                        <div class="form-type">Poom-se (WT)</div>
+                        <div class="form-title">Taegeuk Oh Jang</div>
+                    </div>
+                    <div class="form-row alt">
+                        <div class="form-type">Hyong (Tradicional)</div>
+                        <div class="form-title">Joong-Gun Hyong</div>
+                    </div>
+                </div>
+                <button class="action-btn" onclick="openGubModal(5)">Ver Conteúdo Técnico</button>
+            </div>
+
+            <div class="form-card cat-colorida">
+                <div class="belt-indicator b-azul-vermelha"></div>
+                <h3>3º Gub</h3>
+                <div class="belt-name">Faixa Azul Ponta Vermelha</div>
+                <div class="forms-required">
+                    <div class="form-row">
+                        <div class="form-type">Poom-se (WT)</div>
+                        <div class="form-title">Taegeuk Yuk Jang</div>
+                    </div>
+                    <div class="form-row alt">
+                        <div class="form-type">Hyong (Tradicional)</div>
+                        <div class="form-title">Toi-Gye Hyong</div>
+                    </div>
+                </div>
+                <button class="action-btn" onclick="openGubModal(6)">Ver Conteúdo Técnico</button>
+            </div>
+
+            <div class="form-card cat-colorida">
+                <div class="belt-indicator b-vermelha"></div>
+                <h3>2º Gub</h3>
+                <div class="belt-name">Faixa Vermelha</div>
+                <div class="forms-required">
+                    <div class="form-row">
+                        <div class="form-type">Poom-se (WT)</div>
+                        <div class="form-title">Taegeuk Chil Jang</div>
+                    </div>
+                    <div class="form-row alt">
+                        <div class="form-type">Hyong (Tradicional)</div>
+                        <div class="form-title">Hwa-Rang Hyong</div>
+                    </div>
+                </div>
+                <button class="action-btn" onclick="openGubModal(7)">Ver Conteúdo Técnico</button>
+            </div>
+
+            <div class="form-card cat-colorida">
+                <div class="belt-indicator b-vermelha-preta"></div>
+                <h3>1º Gub</h3>
+                <div class="belt-name">Faixa Vermelha Ponta Preta</div>
+                <div class="forms-required">
+                    <div class="form-row">
+                        <div class="form-type">Poom-se (WT)</div>
+                        <div class="form-title">Taegeuk Pal Jang</div>
+                    </div>
+                    <div class="form-row alt">
+                        <div class="form-type">Hyong (Tradicional)</div>
+                        <div class="form-title">Choong-Moo Hyong</div>
+                    </div>
+                </div>
+                <button class="action-btn" onclick="openGubModal(8)">Ver Conteúdo Técnico</button>
+            </div>
+
+            <div class="form-card cat-preta">
+                <div class="belt-indicator b-preta"></div>
+                <h3>1º Dan</h3>
+                <div class="belt-name">Faixa Preta</div>
+                <div class="forms-required">
+                    <div class="form-row">
+                        <div class="form-type">Poom-se (WT)</div>
+                        <div class="form-title">Koryo</div>
+                    </div>
+                    <div class="form-row alt">
+                        <div class="form-type">Hyong (Tradicional)</div>
+                        <div class="form-title">Kwang-Gae / Po-Eun</div>
+                    </div>
+                </div>
+                <button class="action-btn" onclick="openGubModal(9)">Ver Conteúdo Técnico</button>
+            </div>
+
+        </div>
     </div>
-    <nav>
-        <ul>
-            <li><a href="index.html">Início</a></li>
-            <li><a href="curriculo.html">Currículo</a></li>
-            <li><a href="exame.html">Exame</a></li>
-            <li><a href="formas.html" class="active">Formas</a></li>
-            <li><a href="dicionario.html">Dicionário</a></li>
-            <li><a href="historia.html">História</a></li>
-        </ul>
-    </nav>
-</header>
 
-<div class="main-container">
-    <div class="page-title">
-        <h2>Formas & Poomsaes</h2>
-        <p>Cronograma oficial de exames. Escolha a graduação para acessar vídeos, diagramas e contagens de movimentos.</p>
-    </div>
-
-    <input type="radio" id="filter-all" name="gub-filter" checked>
-    <input type="radio" id="filter-coloridas" name="gub-filter">
-    <input type="radio" id="filter-pretas" name="gub-filter">
-
-    <div class="filter-controller">
-        <label for="filter-all" class="filter-btn">Todos os Níveis</label>
-        <label for="filter-coloridas" class="filter-btn">Faixas Coloridas (Gub)</label>
-        <label for="filter-pretas" class="filter-btn">Faixas Pretas (Dan)</label>
-    </div>
-
-    <div class="cards-grid">
-
-        <div class="form-card cat-colorida">
-            <div class="belt-indicator b-branca"></div>
-            <h3>10º e 9º Gub</h3>
-            <div class="belt-name">Faixa Branca</div>
-            <div class="forms-required">
-                <div class="form-row"><div class="form-type">WT / Kibon</div><div class="form-title">Saju Jirugi / Maki</div></div>
-                <div class="form-row alt"><div class="form-type">Hyong (Tradicional)</div><div class="form-title">Chon-Ji Hyong</div></div>
+    <div id="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="m-title">GRADUAÇÃO</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
             </div>
-            <button class="action-btn" onclick="openGubModal(0)">Ver Conteúdo Técnico</button>
-        </div>
+            <div class="modal-body">
 
-        <div class="form-card cat-colorida">
-            <div class="belt-indicator b-amarela"></div>
-            <h3>8º Gub</h3>
-            <div class="belt-name">Faixa Amarela</div>
-            <div class="forms-required">
-                <div class="form-row"><div class="form-type">Poom-se (WT)</div><div class="form-title">Taegeuk Il Jang</div></div>
-                <div class="form-row alt"><div class="form-type">Hyong (Tradicional)</div><div class="form-title">Dan-Gun Hyong</div></div>
+                <div class="modal-tabs">
+                    <button id="btn-tab-wt" class="m-tab-btn active" onclick="switchFormType('wt')">Forma WT
+                        (Olímpica)</button>
+                    <button id="btn-tab-itf" class="m-tab-btn" onclick="switchFormType('itf')">Forma
+                        Tradicional</button>
+                </div>
+
+                <div class="video-container">
+                    <iframe id="m-iframe" src="" allowfullscreen></iframe>
+                </div>
+
+                <table class="tech-spec-table">
+                    <tr>
+                        <td class="label">Quantidade de Movimentos</td>
+                        <td id="m-movements" class="value">—</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Posição Inicial (Jumbi)</td>
+                        <td id="m-jumbi" class="value">—</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Sentido do Diagrama</td>
+                        <td id="m-diagram" class="value">—</td>
+                    </tr>
+                </table>
+
+                <div class="modal-info-section">
+                    <h4>Significado Filosófico</h4>
+                    <p id="m-philosophy">—</p>
+                </div>
+
             </div>
-            <button class="action-btn" onclick="openGubModal(1)">Ver Conteúdo Técnico</button>
-        </div>
-
-        <div class="form-card cat-colorida">
-            <div class="belt-indicator b-amarela-verde"></div>
-            <h3>7º Gub</h3>
-            <div class="belt-name">Faixa Amarela Ponta Verde</div>
-            <div class="forms-required">
-                <div class="form-row"><div class="form-type">Poom-se (WT)</div><div class="form-title">Taegeuk Ee Jang</div></div>
-                <div class="form-row alt"><div class="form-type">Hyong (Tradicional)</div><div class="form-title">Do-San Hyong</div></div>
-            </div>
-            <button class="action-btn" onclick="openGubModal(2)">Ver Conteúdo Técnico</button>
-        </div>
-
-        <div class="form-card cat-colorida">
-            <div class="belt-indicator b-verde"></div>
-            <h3>6º Gub</h3>
-            <div class="belt-name">Faixa Verde</div>
-            <div class="forms-required">
-                <div class="form-row"><div class="form-type">Poom-se (WT)</div><div class="form-title">Taegeuk Sam Jang</div></div>
-                <div class="form-row alt"><div class="form-type">Hyong (Tradicional)</div><div class="form-title">Won-Hyo Hyong</div></div>
-            </div>
-            <button class="action-btn" onclick="openGubModal(3)">Ver Conteúdo Técnico</button>
-        </div>
-
-        <div class="form-card cat-colorida">
-            <div class="belt-indicator b-verde-azul"></div>
-            <h3>5º Gub</h3>
-            <div class="belt-name">Faixa Verde Ponta Azul</div>
-            <div class="forms-required">
-                <div class="form-row"><div class="form-type">Poom-se (WT)</div><div class="form-title">Taegeuk Sa Jang</div></div>
-                <div class="form-row alt"><div class="form-type">Hyong (Tradicional)</div><div class="form-title">Yul-Gok Hyong</div></div>
-            </div>
-            <button class="action-btn" onclick="openGubModal(4)">Ver Conteúdo Técnico</button>
-        </div>
-
-        <div class="form-card cat-colorida">
-            <div class="belt-indicator b-azul"></div>
-            <h3>4º Gub</h3>
-            <div class="belt-name">Faixa Azul</div>
-            <div class="forms-required">
-                <div class="form-row"><div class="form-type">Poom-se (WT)</div><div class="form-title">Taegeuk Oh Jang</div></div>
-                <div class="form-row alt"><div class="form-type">Hyong (Tradicional)</div><div class="form-title">Joong-Gun Hyong</div></div>
-            </div>
-            <button class="action-btn" onclick="openGubModal(5)">Ver Conteúdo Técnico</button>
-        </div>
-
-        <div class="form-card cat-colorida">
-            <div class="belt-indicator b-azul-vermelha"></div>
-            <h3>3º Gub</h3>
-            <div class="belt-name">Faixa Azul Ponta Vermelha</div>
-            <div class="forms-required">
-                <div class="form-row"><div class="form-type">Poom-se (WT)</div><div class="form-title">Taegeuk Yuk Jang</div></div>
-                <div class="form-row alt"><div class="form-type">Hyong (Tradicional)</div><div class="form-title">Toi-Gye Hyong</div></div>
-            </div>
-            <button class="action-btn" onclick="openGubModal(6)">Ver Conteúdo Técnico</button>
-        </div>
-
-        <div class="form-card cat-colorida">
-            <div class="belt-indicator b-vermelha"></div>
-            <h3>2º Gub</h3>
-            <div class="belt-name">Faixa Vermelha</div>
-            <div class="forms-required">
-                <div class="form-row"><div class="form-type">Poom-se (WT)</div><div class="form-title">Taegeuk Chil Jang</div></div>
-                <div class="form-row alt"><div class="form-type">Hyong (Tradicional)</div><div class="form-title">Hwa-Rang Hyong</div></div>
-            </div>
-            <button class="action-btn" onclick="openGubModal(7)">Ver Conteúdo Técnico</button>
-        </div>
-
-        <div class="form-card cat-colorida">
-            <div class="belt-indicator b-vermelha-preta"></div>
-            <h3>1º Gub</h3>
-            <div class="belt-name">Faixa Vermelha Ponta Preta</div>
-            <div class="forms-required">
-                <div class="form-row"><div class="form-type">Poom-se (WT)</div><div class="form-title">Taegeuk Pal Jang</div></div>
-                <div class="form-row alt"><div class="form-type">Hyong (Tradicional)</div><div class="form-title">Choong-Moo Hyong</div></div>
-            </div>
-            <button class="action-btn" onclick="openGubModal(8)">Ver Conteúdo Técnico</button>
-        </div>
-
-        <div class="form-card cat-preta">
-            <div class="belt-indicator b-preta"></div>
-            <h3>1º Dan</h3>
-            <div class="belt-name">Faixa Preta</div>
-            <div class="forms-required">
-                <div class="form-row"><div class="form-type">Poom-se (WT)</div><div class="form-title">Koryo</div></div>
-                <div class="form-row alt"><div class="form-type">Hyong (Tradicional)</div><div class="form-title">Kwang-Gae / Po-Eun</div></div>
-            </div>
-            <button class="action-btn" onclick="openGubModal(9)">Ver Conteúdo Técnico</button>
-        </div>
-
-    </div>
-</div>
-
-<div id="modal-overlay" onclick="closeModal()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="modal-header">
-            <h2 id="m-title">GRADUAÇÃO</h2>
-            <button class="close-modal" onclick="closeModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            
-            <div class="modal-tabs">
-                <button id="btn-tab-wt" class="m-tab-btn active" onclick="switchFormType('wt')">Forma WT (Olímpica)</button>
-                <button id="btn-tab-itf" class="m-tab-btn" onclick="switchFormType('itf')">Forma Tradicional</button>
-            </div>
-
-            <div class="video-container">
-                <iframe id="m-iframe" src="" allowfullscreen></iframe>
-            </div>
-
-            <table class="tech-spec-table">
-                <tr>
-                    <td class="label">Quantidade de Movimentos</td>
-                    <td id="m-movements" class="value">—</td>
-                </tr>
-                <tr>
-                    <td class="label">Posição Inicial (Jumbi)</td>
-                    <td id="m-jumbi" class="value">—</td>
-                </tr>
-                <tr>
-                    <td class="label">Sentido do Diagrama</td>
-                    <td id="m-diagram" class="value">—</td>
-                </tr>
-            </table>
-
-            <div class="modal-info-section">
-                <h4>Significado Filosófico</h4>
-                <p id="m-philosophy">—</p>
-            </div>
-
         </div>
     </div>
-</div>
 
-<script>
-    // BANCO DE DADOS TÉCNICO COMPLETO CHANCELADO DA TEAM MARCHESINI
-    const gubDatabase = [
-        {
-            title: "10º e 9º Gub — Faixa Branca",
-            philosophy: "Significa a pureza e a inocência: o aluno iniciante não possui conhecimento prévio do Taekwondo, sendo uma semente pronta para o plantio e início do aprendizado.",
-            wt:  { name: "Saju Jirugi / Maki", video: "https://www.youtube.com/embed/SB6nKpm-Yus", movements: "7 Passos / Direções", jumbi: "Narani Seogi", diagram: "Cruz (+) nas 4 direções" },
-            itf: { name: "Chon-Ji Hyong", video: "https://www.youtube.com/embed/pRbmNys1tKI", movements: "19 Movimentos", jumbi: "Narani Sogi", diagram: "Formato de Cruz Alinhada (+)" }
-        },
-        {
-            title: "8º Gub — Faixa Amarela",
-            philosophy: "Representa a Terra, onde a semente do conhecimento cria suas primeiras raízes sólidas e profundas, preparando o terreno para o crescimento marcial.",
-            wt:  { name: "Taegeuk Il Jang", video: "https://www.youtube.com/embed/X1DvJsm5Kg8", movements: "18 Movimentos", jumbi: "Kibon Jumbi Seogi", diagram: "Ideograma Keon (Três linhas inteiras - Céu)" },
-            itf: { name: "Dan-Gun Hyong", video: "https://www.youtube.com/embed/GoZFgtc9kHQ", movements: "21 Movimentos", jumbi: "Narani Sogi", diagram: "Linha Capital I" }
-        },
-        {
-            title: "7º Gub — Faixa Amarela Ponta Verde",
-            philosophy: "O nascimento do broto. Indica que a técnica começou a romper a superfície da terra firme e ganha direção em busca da luz.",
-            wt:  { name: "Taegeuk Ee Jang", video: "https://www.youtube.com/embed/jYVqfdVO7XI", movements: "18 Movimentos", jumbi: "Kibon Jumbi Seogi", diagram: "Ideograma Tae (Alegria e Firmeza)" },
-            itf: { name: "Do-San Hyong", video: "https://www.youtube.com/embed/WqUy-MeFSJs", movements: "24 Movimentos", jumbi: "Narani Sogi", diagram: "Formato de Escada Reta" }
-        },
-        {
-            title: "6º Gub — Faixa Verde",
-            philosophy: "Representa a planta em pleno crescimento. O aluno começa a desenvolver poder de impacto, flexibilidade e domínio de trajetórias circulares.",
-            wt:  { name: "Taegeuk Sam Jang", video: "https://www.youtube.com/embed/VLRDkWl0Sr0", movements: "20 Movimentos", jumbi: "Kibon Jumbi Seogi", diagram: "Ideograma Ri (Fogo e Claridade)" },
-            itf: { name: "Won-Hyo Hyong", video: "https://www.youtube.com/embed/UIldWDhfddM", movements: "28 Movimentos", jumbi: "Moa Sogi A", diagram: "Formato de I Maiúsculo" }
-        },
-        {
-            title: "5º Gub — Faixa Verde Ponta Azul",
-            philosophy: "A planta se eleva em direção ao céu azul. Simboliza a transição técnica onde o aluno ganha alcance aéreo e projeção de chutes complexos.",
-            wt:  { name: "Taegeuk Sa Jang", video: "https://www.youtube.com/embed/QPK2RMshkJk", movements: "20 Movimentos", jumbi: "Kibon Jumbi Seogi", diagram: "Ideograma Jin (Trovão e Poder)" },
-            itf: { name: "Yul-Gok Hyong", video: "https://www.youtube.com/embed/IYjaMnn8IsM", movements: "38 Movimentos", jumbi: "Narani Sogi", diagram: "Ideograma Coreano de Escrita" }
-        },
-        {
-            title: "4º Gub — Faixa Azul",
-            philosophy: "Representa o Céu. O conhecimento marcial agora tem amplitude e profundidade, exigindo maturidade para guiar a força acumulada.",
-            wt:  { name: "Taegeuk Oh Jang", video: "https://www.youtube.com/embed/5yyUJDA-1nw", movements: "20 Movimentos", jumbi: "Kibon Jumbi Seogi", diagram: "Ideograma Son (Vento e Fluidez)" },
-            itf: { name: "Joong-Gun Hyong", video: "https://www.youtube.com/embed/79vzu3Hgm3U", movements: "32 Movimentos", jumbi: "Moa Sogi B", diagram: "Formato de I" }
-        },
-        {
-            title: "3º Gub — Faixa Azul Ponta Vermelha",
-            philosophy: "O sinal de alerta. A planta atinge maturidade e o fruto começa a avermelhar, exigindo cautela e controle técnico absoluto.",
-            wt:  { name: "Taegeuk Yuk Jang", video: "https://www.youtube.com/embed/iPsdZmbaJl4", movements: "19 Movimentos", jumbi: "Kibon Jumbi Seogi", diagram: "Ideograma Kam (Água e Fluidez Contínua)" },
-            itf: { name: "Toi-Gye Hyong", video: "https://www.youtube.com/embed/dXySPEHjwW0", movements: "37 Movimentos", jumbi: "Moa Sogi B", diagram: "Ideograma de Estudo Tradicional" }
-        },
-        {
-            title: "2º Gub — Faixa Vermelha",
-            philosophy: "Representa o perigo ou o sangue. O aluno possui técnica altamente destrutiva, sendo obrigatório o desenvolvimento do autocontrole para evitar abusos.",
-            wt:  { name: "Taegeuk Chil Jang", video: "https://www.youtube.com/embed/mO7JPSxjP4g", movements: "25 Movimentos", jumbi: "Kibon Jumbi Seogi", diagram: "Ideograma Kan (Montanha e Estabilidade)" },
-            itf: { name: "Hwa-Rang Hyong", video: "https://www.youtube.com/embed/1oZjONeEBkQ", movements: "29 Movimentos", jumbi: "Moa Sogi C", diagram: "Linha de Eixo I" }
-        },
-        {
-            title: "1º Gub — Faixa Vermelha Ponta Preta",
-            philosophy: "A maturidade máxima antes do desabrochar. O aluno domina a grade colorida e lapida as transições finais para entrar no dojang dos faixas pretas.",
-            wt:  { name: "Taegeuk Pal Jang", video: "https://www.youtube.com/embed/toRYOQCttWQ", movements: "24 Movimentos", jumbi: "Kibon Jumbi Seogi", diagram: "Ideograma Kon (Terra, Raiz e Conclusão)" },
-            itf: { name: "Choong-Moo Hyong", video: "https://www.youtube.com/embed/ivdVFnOXu3A", movements: "30 Movimentos", jumbi: "Narani Sogi", diagram: "Eixo Técnico I" }
-        },
-        {
-            title: "1º Dan — Faixa Preta",
-            philosophy: "O oposto da faixa branca: representa a maturidade, o conhecimento pleno e a impermeabilidade ao medo e à escuridão. O reinício do verdadeiro caminho.",
-            wt:  { name: "Koryo Poomse", video: "https://www.youtube.com/embed/V6vK67F0wM4", movements: "30 Movimentos", jumbi: "Tongmilgi Jumbi Seogi", diagram: "Ideograma Seon (Homem Culto/Evoluído)" },
-            itf: { name: "Kwang-Gae / Po-Eun", video: "https://www.youtube.com/embed/79vzu3Hgm3U", movements: "39 / 36 Movimentos", jumbi: "Moa Sogi / Charyot Sogi", diagram: "Eixos Cruzados e Paralelos" }
-        }
-    ];
+    <script>
+        // BANCO DE DADOS TÉCNICO COMPLETO CHANCELADO DA TEAM MARCHESINI
+        const gubDatabase = [
+            {
+                title: "10º e 9º Gub — Faixa Branca",
+                philosophy: "Significa a pureza e a inocência: o aluno iniciante não possui conhecimento prévio do Taekwondo, sendo uma semente pronta para o plantio e início do aprendizado.",
+                wt: { name: "Saju Jirugi / Maki", video: "https://www.youtube.com/embed/SB6nKpm-Yus", movements: "7 Passos / Direções", jumbi: "Narani Seogi", diagram: "Cruz (+) nas 4 direções" },
+                itf: { name: "Chon-Ji Hyong", video: "https://www.youtube.com/embed/pRbmNys1tKI", movements: "19 Movimentos", jumbi: "Narani Sogi", diagram: "Formato de Cruz Alinhada (+)" }
+            },
+            {
+                title: "8º Gub — Faixa Amarela",
+                philosophy: "Representa a Terra, onde a semente do conhecimento cria suas primeiras raízes sólidas e profundas, preparando o terreno para o crescimento marcial.",
+                wt: { name: "Taegeuk Il Jang", video: "https://www.youtube.com/embed/X1DvJsm5Kg8", movements: "18 Movimentos", jumbi: "Kibon Jumbi Seogi", diagram: "Ideograma Keon (Três linhas inteiras - Céu)" },
+                itf: { name: "Dan-Gun Hyong", video: "https://www.youtube.com/embed/GoZFgtc9kHQ", movements: "21 Movimentos", jumbi: "Narani Sogi", diagram: "Linha Capital I" }
+            },
+            {
+                title: "7º Gub — Faixa Amarela Ponta Verde",
+                philosophy: "O nascimento do broto. Indica que a técnica começou a romper a superfície da terra firme e ganha direção em busca da luz.",
+                wt: { name: "Taegeuk Ee Jang", video: "https://www.youtube.com/embed/jYVqfdVO7XI", movements: "18 Movimentos", jumbi: "Kibon Jumbi Seogi", diagram: "Ideograma Tae (Alegria e Firmeza)" },
+                itf: { name: "Do-San Hyong", video: "https://www.youtube.com/embed/WqUy-MeFSJs", movements: "24 Movimentos", jumbi: "Narani Sogi", diagram: "Formato de Escada Reta" }
+            },
+            {
+                title: "6º Gub — Faixa Verde",
+                philosophy: "Representa a planta em pleno crescimento. O aluno começa a desenvolver poder de impacto, flexibilidade e domínio de trajetórias circulares.",
+                wt: { name: "Taegeuk Sam Jang", video: "https://www.youtube.com/embed/VLRDkWl0Sr0", movements: "20 Movimentos", jumbi: "Kibon Jumbi Seogi", diagram: "Ideograma Ri (Fogo e Claridade)" },
+                itf: { name: "Won-Hyo Hyong", video: "https://www.youtube.com/embed/UIldWDhfddM", movements: "28 Movimentos", jumbi: "Moa Sogi A", diagram: "Formato de I Maiúsculo" }
+            },
+            {
+                title: "5º Gub — Faixa Verde Ponta Azul",
+                philosophy: "A planta se eleva em direção ao céu azul. Simboliza a transição técnica onde o aluno ganha alcance aéreo e projeção de chutes complexos.",
+                wt: { name: "Taegeuk Sa Jang", video: "https://www.youtube.com/embed/QPK2RMshkJk", movements: "20 Movimentos", jumbi: "Kibon Jumbi Seogi", diagram: "Ideograma Jin (Trovão e Poder)" },
+                itf: { name: "Yul-Gok Hyong", video: "https://www.youtube.com/embed/IYjaMnn8IsM", movements: "38 Movimentos", jumbi: "Narani Sogi", diagram: "Ideograma Coreano de Escrita" }
+            },
+            {
+                title: "4º Gub — Faixa Azul",
+                philosophy: "Representa o Céu. O conhecimento marcial agora tem amplitude e profundidade, exigindo maturidade para guiar a força acumulada.",
+                wt: { name: "Taegeuk Oh Jang", video: "https://www.youtube.com/embed/5yyUJDA-1nw", movements: "20 Movimentos", jumbi: "Kibon Jumbi Seogi", diagram: "Ideograma Son (Vento e Fluidez)" },
+                itf: { name: "Joong-Gun Hyong", video: "https://www.youtube.com/embed/79vzu3Hgm3U", movements: "32 Movimentos", jumbi: "Moa Sogi B", diagram: "Formato de I" }
+            },
+            {
+                title: "3º Gub — Faixa Azul Ponta Vermelha",
+                philosophy: "O sinal de alerta. A planta atinge maturidade e o fruto começa a avermelhar, exigindo cautela e controle técnico absoluto.",
+                wt: { name: "Taegeuk Yuk Jang", video: "https://www.youtube.com/embed/iPsdZmbaJl4", movements: "19 Movimentos", jumbi: "Kibon Jumbi Seogi", diagram: "Ideograma Kam (Água e Fluidez Contínua)" },
+                itf: { name: "Toi-Gye Hyong", video: "https://www.youtube.com/embed/dXySPEHjwW0", movements: "37 Movimentos", jumbi: "Moa Sogi B", diagram: "Ideograma de Estudo Tradicional" }
+            },
+            {
+                title: "2º Gub — Faixa Vermelha",
+                philosophy: "Representa o perigo ou o sangue. O aluno possui técnica altamente destrutiva, sendo obrigatório o desenvolvimento do autocontrole para evitar abusos.",
+                wt: { name: "Taegeuk Chil Jang", video: "https://www.youtube.com/embed/mO7JPSxjP4g", movements: "25 Movimentos", jumbi: "Kibon Jumbi Seogi", diagram: "Ideograma Kan (Montanha e Estabilidade)" },
+                itf: { name: "Hwa-Rang Hyong", video: "https://www.youtube.com/embed/1oZjONeEBkQ", movements: "29 Movimentos", jumbi: "Moa Sogi C", diagram: "Linha de Eixo I" }
+            },
+            {
+                title: "1º Gub — Faixa Vermelha Ponta Preta",
+                philosophy: "A maturidade máxima antes do desabrochar. O aluno domina a grade colorida e lapida as transições finais para entrar no dojang dos faixas pretas.",
+                wt: { name: "Taegeuk Pal Jang", video: "https://www.youtube.com/embed/toRYOQCttWQ", movements: "24 Movimentos", jumbi: "Kibon Jumbi Seogi", diagram: "Ideograma Kon (Terra, Raiz e Conclusão)" },
+                itf: { name: "Choong-Moo Hyong", video: "https://www.youtube.com/embed/ivdVFnOXu3A", movements: "30 Movimentos", jumbi: "Narani Sogi", diagram: "Eixo Técnico I" }
+            },
+            {
+                title: "1º Dan — Faixa Preta",
+                philosophy: "O oposto da faixa branca: representa a maturidade, o conhecimento pleno e a impermeabilidade ao medo e à escuridão. O reinício do verdadeiro caminho.",
+                wt: { name: "Koryo Poomse", video: "https://www.youtube.com/embed/V6vK67F0wM4", movements: "30 Movimentos", jumbi: "Tongmilgi Jumbi Seogi", diagram: "Ideograma Seon (Homem Culto/Evoluído)" },
+                itf: { name: "Kwang-Gae / Po-Eun", video: "https://www.youtube.com/embed/79vzu3Hgm3U", movements: "39 / 36 Movimentos", jumbi: "Moa Sogi / Charyot Sogi", diagram: "Eixos Cruzados e Paralelos" }
+            }
+        ];
 
-    let currentGubIndex = 0;
-    let currentFormType = 'wt';
+        let currentGubIndex = 0;
+        let currentFormType = 'wt';
 
-    function openGubModal(index) {
-        currentGubIndex = index;
-        currentFormType = 'wt'; // Sempre reseta abrindo a aba olímpica WT
-        
-        document.getElementById('btn-tab-wt').classList.add('active');
-        document.getElementById('btn-tab-itf').classList.remove('active');
-        
-        renderModalData();
-        document.getElementById('modal-overlay').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
+        function openGubModal(index) {
+            currentGubIndex = index;
+            currentFormType = 'wt'; // Sempre reseta abrindo a aba olímpica WT
 
-    function switchFormType(type) {
-        currentFormType = type;
-        if(type === 'wt') {
             document.getElementById('btn-tab-wt').classList.add('active');
             document.getElementById('btn-tab-itf').classList.remove('active');
-        } else {
-            document.getElementById('btn-tab-wt').classList.remove('active');
-            document.getElementById('btn-tab-itf').classList.add('active');
+
+            renderModalData();
+            document.getElementById('modal-overlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
         }
-        renderModalData();
-    }
 
-    function renderModalData() {
-        const gub = gubDatabase[currentGubIndex];
-        const formData = gub[currentFormType];
+        function switchFormType(type) {
+            currentFormType = type;
+            if (type === 'wt') {
+                document.getElementById('btn-tab-wt').classList.add('active');
+                document.getElementById('btn-tab-itf').classList.remove('active');
+            } else {
+                document.getElementById('btn-tab-wt').classList.remove('active');
+                document.getElementById('btn-tab-itf').classList.add('active');
+            }
+            renderModalData();
+        }
 
-        document.getElementById('m-title').innerHTML = gub.title + ` <span style="font-size:13px; font-weight:500; text-transform:none; color:#a0a0a0;">(${formData.name})</span>`;
-        document.getElementById('m-iframe').src = formData.video;
-        document.getElementById('m-movements').innerText = formData.movements;
-        document.getElementById('m-jumbi').innerText = formData.jumbi;
-        document.getElementById('m-diagram').innerText = formData.diagram;
-        document.getElementById('m-philosophy').innerText = gub.philosophy;
-    }
+        function renderModalData() {
+            const gub = gubDatabase[currentGubIndex];
+            const formData = gub[currentFormType];
 
-    function closeModal() {
-        document.getElementById('modal-overlay').style.display = 'none';
-        document.getElementById('m-iframe').src = ""; // Corta o áudio/vídeo imediatamente
-        document.body.style.overflow = 'auto';
-    }
-</script>
+            document.getElementById('m-title').innerHTML = gub.title + ` <span style="font-size:13px; font-weight:500; text-transform:none; color:#a0a0a0;">(${formData.name})</span>`;
+            document.getElementById('m-iframe').src = formData.video;
+            document.getElementById('m-movements').innerText = formData.movements;
+            document.getElementById('m-jumbi').innerText = formData.jumbi;
+            document.getElementById('m-diagram').innerText = formData.diagram;
+            document.getElementById('m-philosophy').innerText = gub.philosophy;
+        }
 
-<footer>
-    <p>© Todos os direitos reservados: <span>Wil Taekwondo — <span class="highlight">Team Marchesini</span></span></p>
-    <p>Desenvolvido por Wiliam Longo</p>
-</footer>
+        function closeModal() {
+            document.getElementById('modal-overlay').style.display = 'none';
+            document.getElementById('m-iframe').src = ""; // Corta o áudio/vídeo imediatamente
+            document.body.style.overflow = 'auto';
+        }
+    </script>
+
+    <footer>
+        <p>© Todos os direitos reservados: <span>Wil Taekwondo — <span class="highlight">Team Marchesini</span></span>
+        </p>
+        <p>Desenvolvido por Wiliam Longo</p>
+    </footer>
 
 </body>
+
 </html>

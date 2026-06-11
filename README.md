@@ -13,6 +13,7 @@ Sistema web completo para gerenciamento de alunos, controle de presença e banca
 | **Banca de Exame** | `exame.html` | Avaliação de até 4 alunos simultâneos com matriz técnica por graduação |
 | **Login da Banca** | `login.html` | Autenticação em 2 passos via Supabase Auth |
 | **Conteúdo Técnico** | `curriculo.html`, `formas.html`, `dicionario.html`, `historia.html` | Material pedagógico do TKD |
+| **Menu Global** | `nav.js` | Web Component `<wtkd-nav>` — header compartilhado entre todas as páginas públicas com detecção automática da página ativa |
 
 ---
 
@@ -72,6 +73,7 @@ wtkd/
 ├── painel.html         # Painel do professor (usa conexao.js)
 ├── conexao.js          # Camada de acesso ao banco — CRUD, chamada, presença
 ├── exame.html          # Banca multialunos (standalone — não usa conexao.js)
+├── nav.js              # 🔑 Web Component <wtkd-nav> — menu global das páginas públicas
 ├── curriculo.html      # Currículo técnico de TKD
 ├── formas.html         # Biblioteca de formas (Poom-se/Hyun/Tull)
 ├── dicionario.html     # Dicionário de termos coreanos
@@ -79,7 +81,24 @@ wtkd/
 ├── .env                # Variáveis de ambiente (não comitar — veja .gitignore)
 ├── CNAME               # Domínio customizado do GitHub Pages
 └── public/             # Assets estáticos
+    └── assets/images/  # logo.png, favicon e imagens do conteúdo
 ```
+
+### Menu Global (`nav.js`)
+
+```html
+<!-- Inclua no <head> de qualquer página pública: -->
+<script src="nav.js" defer></script>
+
+<!-- Coloque no <body> onde o header deve aparecer: -->
+<wtkd-nav></wtkd-nav>
+```
+
+**Como funciona:**
+- `customElements.define('wtkd-nav', ...)` registra um Web Component nativo do browser.
+- Detecta a página atual via `window.location.pathname` e aplica a classe `active` no link correto.
+- Para adicionar/remover itens do menu, edite **apenas** o array `NAV_LINKS` no `nav.js`.
+- Compatível com GitHub Pages, Live Server ou qualquer servidor de arquivos estáticos.
 
 ### Fluxo de Autenticação da Banca
 

@@ -3,8 +3,10 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Wil Taekwondo — Team Marchesini</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="public/assets/images/logo.png">
+    <title>Wil TKD — Team Marchesini</title>
+    <script src="nav.js" defer></script>
     <style>
         :root {
             --primary: #ff1a1a;
@@ -27,67 +29,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Topo Premium */
-        header {
-            background-color: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            padding: 24px 48px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--card-border);
-        }
-
-        .brand {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .brand h1 {
-            margin: 0;
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .brand h1 span {
-            color: var(--primary);
-        }
-
-        .brand .subtitle {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 2px;
-            font-weight: 600;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 28px;
-            margin: 0;
-            padding: 0;
-        }
-
-        nav a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s, text-shadow 0.2s;
-        }
-
-        nav a:hover,
-        nav .active {
-            color: var(--text-main);
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
+        /* Header gerenciado pelo nav.js (Web Component) */
 
         /* Seção Hero de Impacto */
         .hero {
@@ -338,22 +280,7 @@
 
 <body>
 
-    <header>
-        <div class="brand">
-            <h1>WIL <span>TKD</span></h1>
-            <div class="subtitle">Team Marchesini</div>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="index.html" class="active">Início</a></li>
-                <li><a href="curriculo.html">Currículo</a></li>
-                <li><a href="exame.html">Exame</a></li>
-                <li><a href="formas.html">Formas</a></li>
-                <li><a href="dicionario.html">Dicionário</a></li>
-                <li><a href="historia.html">História</a></li>
-            </ul>
-        </nav>
-    </header>
+    <wtkd-nav></wtkd-nav>
 
     <section class="hero">
         <h2>FORMAÇÃO DE CAMPEÕES <span>PARA A VIDA</span></h2>
@@ -411,9 +338,7 @@
 
             <iframe class="map-frame"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3653.3!2d-46.5502!3d-23.7037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce436a7e3b5b3f%3A0x0!2sAv.+Francisco+Prestes+Maia%2C+144+-+Centro%2C+S%C3%A3o+Bernardo+do+Campo+-+SP%2C+09770-000!5e0!3m2!1spt-BR!2sbr!4v1"
-                allowfullscreen
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
     </main>
 
