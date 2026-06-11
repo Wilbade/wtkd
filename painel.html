@@ -78,18 +78,62 @@
         }
 
         /* ======================================================
-           NAVEGAÇÃO DE ABAS — Mobile-First com flex-wrap
+           GLOBAL NAVIGATION (MOBILE BOTTOM BAR -> DESKTOP HEADER)
         ====================================================== */
-        .abas-nav {
+        .global-nav {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(28, 28, 30, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border);
             display: flex;
-            flex-wrap: wrap;          /* Permite quebra em linha se necessário */
-            gap: 8px;
-            padding: 16px 20px;
-            background: var(--dark-bg);
-            border-bottom: 1px solid var(--card-border);
-            position: sticky;
-            top: 57px;               /* Abaixo do header fixo */
-            z-index: 100;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+            padding-bottom: calc(10px + env(safe-area-inset-bottom));
+        }
+
+        .global-nav .nav-item {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.2s;
+            text-transform: uppercase;
+        }
+
+        .global-nav .nav-item:hover,
+        .global-nav .nav-item.active {
+            color: var(--primary);
+        }
+
+        .global-nav .nav-item span { font-size: 20px; }
+
+        body { padding-bottom: 80px; } /* Espaço para a barra no mobile */
+
+        @media (min-width: 768px) {
+            .global-nav {
+                position: static;
+                width: auto;
+                background: none;
+                border: none;
+                padding: 0;
+                margin-left: 30px;
+                margin-right: auto;
+                justify-content: flex-start;
+                gap: 30px;
+            }
+            .global-nav .nav-item {
+                flex-direction: row;
+                font-size: 13px;
+            }
+            .global-nav .nav-item span { font-size: 16px; }
+            body { padding-bottom: 0; }
         }
 
         .aba-btn {
@@ -342,31 +386,22 @@
 <body>
 
 <!-- ============================================================
-     HEADER FIXO COM BADGE DO OPERADOR
+     HEADER FIXO E NAVEGAÇÃO GLOBAL
 ============================================================ -->
 <header>
-    <div class="header-brand">WIL <span>TKD</span> — Dojang</div>
-    <!--
-        Badge preenchido via JS com o nome do operador logado.
-        Vem do localStorage (wtkd_nome_real + wtkd_graduacao).
-    -->
+    <div class="header-brand">WIL <span>TKD</span></div>
+    
+    <nav id="main-nav" class="global-nav">
+        <a href="#" id="nav-chamada" class="nav-item ativa" onclick="alternarAba('aba-chamada', this)"><span>📅</span>Chamada</a>
+        <a href="#" id="nav-matricula" class="nav-item" onclick="alternarAba('aba-cadastro', this)"><span>📝</span>Matrícula</a>
+        <a href="exame.html" id="nav-exame" class="nav-item"><span>🥋</span>Exame</a>
+        <a href="#" onclick="fazerLogoff()" class="nav-item"><span>🚪</span>Sair</a>
+    </nav>
+
     <div style="display: flex; align-items: center; gap: 15px;">
-        <div id="badge-operador" onclick="fazerLogoff()" style="cursor: pointer;" title="Clique para sair e deslogar">Carregando...</div>
-        <button onclick="fazerLogoff()" style="background: #ff3b30; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;">Sair</button>
+        <div id="badge-operador" title="Usuário Logado">Carregando...</div>
     </div>
 </header>
-
-<!-- ============================================================
-     NAVEGAÇÃO DE ABAS
-============================================================ -->
-<nav class="abas-nav">
-    <button class="aba-btn ativa" onclick="alternarAba('aba-chamada', this)">
-        📅 Chamada Diária
-    </button>
-    <button class="aba-btn" onclick="alternarAba('aba-cadastro', this)">
-        🥋 Matrícula
-    </button>
-</nav>
 
 <!-- ============================================================
      ABA 1: CHAMADA DIÁRIA
@@ -512,6 +547,7 @@
     // O código abaixo SÓ executa se a sessão for válida.
     // ============================================================
     const sessao = verificarSessao();
+    aplicarRegrasDeMenu();
     document.getElementById('badge-operador').textContent =
         `${sessao.nome} (${sessao.graduacao})`;
 

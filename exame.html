@@ -69,6 +69,65 @@
         }
 
         /* ======================================================
+           GLOBAL NAVIGATION (MOBILE BOTTOM BAR -> DESKTOP HEADER)
+        ====================================================== */
+        .global-nav {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(28, 28, 30, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+            padding-bottom: calc(10px + env(safe-area-inset-bottom));
+        }
+
+        .global-nav .nav-item {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.2s;
+            text-transform: uppercase;
+        }
+
+        .global-nav .nav-item:hover,
+        .global-nav .nav-item.ativa {
+            color: var(--primary);
+        }
+
+        .global-nav .nav-item span { font-size: 20px; }
+
+        body { padding-bottom: 80px; } /* Espaço para a barra no mobile */
+
+        @media (min-width: 768px) {
+            .global-nav {
+                position: static;
+                width: auto;
+                background: none;
+                border: none;
+                padding: 0;
+                margin-left: 30px;
+                margin-right: auto;
+                justify-content: flex-start;
+                gap: 30px;
+            }
+            .global-nav .nav-item {
+                flex-direction: row;
+                font-size: 13px;
+            }
+            .global-nav .nav-item span { font-size: 16px; }
+            body { padding-bottom: 0; }
+        }
+
+        /* ======================================================
            LAYOUT PRINCIPAL
         ====================================================== */
         .main-container {
@@ -352,14 +411,17 @@
 <body>
 
 <header>
-    <div class="header-brand">WIL <span>TKD</span> — BANCA</div>
-    <!--
-        Badge do avaliador: preenchido via JS com dados do localStorage.
-        A guarda de rota (auth.js) garante que chegar aqui implica sessão válida.
-    -->
-    <div style="display: flex; align-items: center; gap: 15px;">
-        <div id="info-banca-topo" class="banca-info" onclick="fazerLogoff()" style="cursor: pointer;" title="Clique para sair e deslogar">Carregando...</div>
-        <button onclick="fazerLogoff()" style="background: #ff3b30; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;">Sair</button>
+    <div class="header-brand">WIL <span>TKD</span></div>
+    
+    <nav id="main-nav" class="global-nav">
+        <a href="painel.html" id="nav-chamada" class="nav-item"><span>📅</span>Chamada</a>
+        <a href="painel.html" id="nav-matricula" class="nav-item"><span>📝</span>Matrícula</a>
+        <a href="exame.html" id="nav-exame" class="nav-item ativa"><span>🥋</span>Exame</a>
+        <a href="#" onclick="fazerLogoff()" class="nav-item"><span>🚪</span>Sair</a>
+    </nav>
+
+    <div style="display: flex; align-items: center; gap: 15px;" class="header-user-info">
+        <div id="info-banca-topo" class="banca-info" title="Avaliador Logado">Carregando...</div>
     </div>
 </header>
 
@@ -450,6 +512,7 @@
     //    O código abaixo SÓ executa se a sessão for válida.
     // ============================================================
     const sessao = verificarSessao();
+    aplicarRegrasDeMenu();
     const { conta: contaBanca, nome: nomeAvaliador, graduacao: graduacaoAvaliador } = sessao;
 
     // Exibe o nome e graduação no badge do header

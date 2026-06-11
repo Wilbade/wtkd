@@ -83,10 +83,55 @@ function verificarSessao() {
 // @returns {string} - URL de destino ('exame.html' ou 'painel.html')
 // ============================================================================
 function resolverDestino(conta) {
+    // Master vai para o painel por padrão, onde tem acesso a tudo
+    if (isMaster(conta)) {
+        return 'painel.html';
+    }
+    // Avaliador vai direto para o painel de exame
     if (isAvaliador(conta)) {
         return 'exame.html';
     }
+    // Donos de escola / demais contas vão para o painel (matrícula)
     return 'painel.html';
+}
+
+// ============================================================================
+// 3.1. CONTROLE DE MENU - aplicarRegrasDeMenu()
+//
+// Esconde ou exibe itens de navegação dependendo do perfil do usuário.
+// Deve ser chamada logo após verificarSessao() nas páginas protegidas.
+// ============================================================================
+function aplicarRegrasDeMenu() {
+    const contaAtual = localStorage.getItem('wtkd_conta') || '';
+    const isM = isMaster(contaAtual);
+    const isA = isAvaliador(contaAtual);
+
+    const navChamada = document.getElementById('nav-chamada');
+    const navMatricula = document.getElementById('nav-matricula');
+    const navExame = document.getElementById('nav-exame');
+
+    // Regras para não-Master
+    if (!isM) {
+        // Esconde Chamada (Navegação inferior/superior)
+        if (navChamada) {
+            navChamada.style.display = 'none';
+            // Se a pessoa está no painel, força abrir a aba matrícula
+            if (typeof alternarAba === 'function' && navMatricula) {
+                alternarAba('aba-cadastro', navMatricula);
+            }
+        }
+    }
+
+    // Regras para quem não é nem Master nem Avaliador (ex: Donos de Escola)
+    if (!isM && !isA) {
+        if (navExame) navExame.style.display = 'none';
+    }
+
+    // Regras para quem é APENAS Avaliador
+    if (isA && !isM) {
+        if (navMatricula) navMatricula.style.display = 'none';
+        if (navChamada) navChamada.style.display = 'none';
+    }
 }
 
 
