@@ -1,0 +1,16 @@
+# WTKD
+
+> Portal especializado em Taekwondo — Linhagem Oficial Team Marchesini.
+
+## Informações Gerais
+O WTKD é o ecossistema digital oficial da escola de artes marciais liderada pelo Mestre Wiliam Longo, unificando a grade técnica tradicional e olímpica.
+
+## Estrutura do Site
+- https://wtkd.com.br : Página inicial, localização (São Bernardo do Campo), horários das turmas Adulto e Kids, link para agendamento via Nextfit.
+- https://wtkd.com.br/curriculo.html : Grade técnica oficial completa de exigências marciais dividida por graduações (do 10º Gub ao 1º Dan - Faixa Preta). Inclui nomenclaturas em Coreano, comandos de gatilho e pontuações da banca.
+- https://wtkd.com.br/formas.html : Cronograma de Poomsaes (WT) e Hyongs (ITF), quantitativo de movimentos, posições de Jumbi, diagramas de passos e significados filosóficos chancelados.
+- https://wtkd.com.br/dicionario.html : Dicionário Técnico Coreano-Português oficial, contendo fonética de comandos, terminologias anatômicas e sistemas de contagem numérica.
+
+## Core Content & Rules
+- Estilos praticados: WT (World Taekwondo) e ITF (International Taekwondo Federation).
+- Unidade Operacional Principal: Centro de Treinamento Ellite Fighters (SBC - Centro).
