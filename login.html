@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,24 +18,30 @@
            DESIGN SYSTEM — Tokens globais
         ====================================================== */
         :root {
-            --primary:     #ff1a1a;
-            --accent:      #ff9f0a;
-            --dark-bg:     #111111;
-            --card-bg:     #1c1c1e;
-            --input-bg:    #2c2c2e;
-            --border:      #3a3a3c;
-            --border-focus:#ff9f0a;
-            --text-main:   #ffffff;
-            --text-muted:  #8e8e93;
-            --text-label:  #aeaeb2;
-            --error:       #ff453a;
-            --success:     #30d158;
+            --primary: #ff1a1a;
+            --accent: #ff9f0a;
+            --dark-bg: #111111;
+            --card-bg: #1c1c1e;
+            --input-bg: #2c2c2e;
+            --border: #3a3a3c;
+            --border-focus: #ff9f0a;
+            --text-main: #ffffff;
+            --text-muted: #8e8e93;
+            --text-label: #aeaeb2;
+            --error: #ff453a;
+            --success: #30d158;
         }
 
         /* ======================================================
            BASE
         ====================================================== */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
@@ -66,13 +73,18 @@
             text-align: center;
             margin-bottom: 28px;
         }
+
         .brand-block .logo-text {
             font-size: 28px;
             font-weight: 900;
             letter-spacing: 2px;
             text-transform: uppercase;
         }
-        .brand-block .logo-text span { color: var(--primary); }
+
+        .brand-block .logo-text span {
+            color: var(--primary);
+        }
+
         .brand-block .logo-sub {
             font-size: 11px;
             color: var(--text-muted);
@@ -88,7 +100,7 @@
             text-align: center;
             margin-bottom: 24px;
             padding: 8px 12px;
-            background: rgba(255,255,255,0.03);
+            background: rgba(255, 255, 255, 0.03);
             border-radius: 6px;
             border: 1px solid #2c2c2e;
         }
@@ -111,7 +123,8 @@
             margin-bottom: 8px;
         }
 
-        input, select {
+        input,
+        select {
             width: 100%;
             padding: 13px 14px;
             background: var(--input-bg);
@@ -125,12 +138,15 @@
             appearance: none;
         }
 
-        input:focus, select:focus {
+        input:focus,
+        select:focus {
             border-color: var(--border-focus);
             box-shadow: 0 0 0 3px rgba(255, 159, 10, 0.12);
         }
 
-        input::placeholder { color: var(--text-muted); }
+        input::placeholder {
+            color: var(--text-muted);
+        }
 
         /* ======================================================
            BOTÃO PRINCIPAL COM ESTADO DE LOADING
@@ -156,8 +172,13 @@
             gap: 8px;
         }
 
-        .btn-primary:hover:not(:disabled) { background: #ffb340; }
-        .btn-primary:active:not(:disabled) { transform: scale(0.98); }
+        .btn-primary:hover:not(:disabled) {
+            background: #ffb340;
+        }
+
+        .btn-primary:active:not(:disabled) {
+            transform: scale(0.98);
+        }
 
         /* Estado desabilitado durante a requisição assíncrona */
         .btn-primary:disabled {
@@ -171,17 +192,24 @@
             display: none;
             width: 16px;
             height: 16px;
-            border: 2px solid rgba(0,0,0,0.3);
+            border: 2px solid rgba(0, 0, 0, 0.3);
             border-top-color: #000;
             border-radius: 50%;
             animation: spin 0.7s linear infinite;
         }
 
-        .btn-primary.loading .spinner { display: block; }
-        .btn-primary.loading .btn-label { opacity: 0.6; }
+        .btn-primary.loading .spinner {
+            display: block;
+        }
+
+        .btn-primary.loading .btn-label {
+            opacity: 0.6;
+        }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* ======================================================
@@ -199,6 +227,7 @@
             background: transparent;
             transition: background 0.2s;
         }
+
         .error-msg:not(:empty) {
             background: rgba(255, 69, 58, 0.08);
             border: 1px solid rgba(255, 69, 58, 0.2);
@@ -207,7 +236,9 @@
         /* ======================================================
            UTILITÁRIO DE VISIBILIDADE
         ====================================================== */
-        .hidden { display: none !important; }
+        .hidden {
+            display: none !important;
+        }
 
         /* ======================================================
            RODAPÉ MÍNIMO
@@ -223,222 +254,223 @@
            RESPONSIVE — Ajustes para telas muito pequenas
         ====================================================== */
         @media (max-width: 440px) {
-            .login-card { padding: 28px 20px; border-radius: 12px; }
-            .brand-block .logo-text { font-size: 24px; }
+            .login-card {
+                padding: 28px 20px;
+                border-radius: 12px;
+            }
+
+            .brand-block .logo-text {
+                font-size: 24px;
+            }
         }
     </style>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
 </head>
+
 <body>
 
-<div class="login-card">
-    <!-- Branding do Dojang -->
-    <div class="brand-block">
-        <a href="index.html" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center;">
-            <img src="public/assets/images/logo.png" alt="WIL TKD Logo" style="width: 100px; height: 100px; border-radius: 50%; margin-bottom: 12px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-            <div class="logo-text">WIL <span>TKD</span></div>
-        </a>
-        <div class="logo-sub">Dojang Management System</div>
-    </div>
+    <div class="login-card">
+        <!-- Branding do Dojang -->
+        <div class="brand-block">
+            <a href="index.html"
+                style="text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center;">
+                <img src="public/assets/images/logo.png" alt="WIL TKD Logo"
+                    style="width: 100px; height: 100px; border-radius: 50%; margin-bottom: 12px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                <div class="logo-text">WIL <span>TKD</span></div>
+            </a>
+            <div class="logo-sub">Dojang Management System</div>
+        </div>
 
-    <!--
+        <!--
         Subtítulo dinâmico — atualizado via JS conforme o fluxo avança:
         Passo 1: "Autenticação da Banca Examinadora"
         Passo 2: "Identificação da Banca [AVALIADOR1]"
     -->
-    <div class="flow-title" id="flow-title">Autenticação do Sistema</div>
+        <div class="flow-title" id="flow-title">Autenticação do Sistema</div>
 
-    <!-- ============================================================
+        <!-- ============================================================
          PASSO 1 — AUTENTICAÇÃO via Supabase Auth
          Valida email + senha. Em sucesso → exibe passo 2.
     ============================================================ -->
-    <form id="auth-form" novalidate>
-        <div class="form-group">
-            <label for="email">Conta de Acesso</label>
-            <input type="email" id="email"
-                   placeholder="avaliador1@wtkd.com.br"
-                   autocomplete="email"
-                   required>
-        </div>
-        <div class="form-group">
-            <label for="password">Senha de Segurança</label>
-            <input type="password" id="password"
-                   placeholder="••••••••"
-                   autocomplete="current-password"
-                   required>
-        </div>
-        <div class="cf-turnstile" data-sitekey="0x4AAAAAADi04h-f9mhMrl41F2gkssuksSc" data-theme="dark"></div>
-        <button type="submit" class="btn-primary" id="btn-auth">
-            <div class="spinner"></div>
-            <span class="btn-label">Validar Credenciais</span>
-        </button>
-        <div id="error-auth" class="error-msg" role="alert" aria-live="polite"></div>
-    </form>
+        <form id="auth-form" novalidate>
+            <div class="form-group">
+                <label for="email">Conta de Acesso</label>
+                <input type="email" id="email" placeholder="avaliador1@wtkd.com.br" autocomplete="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Senha de Segurança</label>
+                <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+            </div>
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAADi04phstlIV5BIH" data-theme="dark"></div>
+            <button type="submit" class="btn-primary" id="btn-auth">
+                <div class="spinner"></div>
+                <span class="btn-label">Validar Credenciais</span>
+            </button>
+            <div id="error-auth" class="error-msg" role="alert" aria-live="polite"></div>
+        </form>
 
-    <!-- ============================================================
+        <!-- ============================================================
          PASSO 2 — PERFIL DA BANCA
          Inicia oculto. Exibido após autenticação bem-sucedida.
          Coleta nome real e graduação do avaliador.
          Dados gravados no localStorage (auditoria da sessão de exame).
          O roteamento final é feito por resolverDestino() do auth.js.
     ============================================================ -->
-    <form id="profile-form" class="hidden" novalidate>
-        <div class="form-group">
-            <label for="nome-real">Nome Completo do Avaliador</label>
-            <input type="text" id="nome-real"
-                   placeholder="Ex: Mestre Wiliam Longo"
-                   autocomplete="name"
-                   required>
-        </div>
-        <div class="form-group">
-            <label for="graduacao">Graduação Atual</label>
-            <select id="graduacao" required>
-                <option value="" disabled selected>Selecione seu Dan/Gub</option>
-                <option value="1º Gub">1º Gub (Ponta Preta)</option>
-                <option value="1º Dan">1º Dan (Faixa Preta)</option>
-                <option value="2º Dan">2º Dan (Faixa Preta)</option>
-                <option value="3º Dan">3º Dan (Faixa Preta)</option>
-                <option value="4º Dan">4º Dan (Mestre)</option>
-                <option value="5º Dan">5º Dan (Mestre)</option>
-                <option value="6º Dan">6º Dan (Mestre)</option>
-                <option value="7º Dan">7º Dan (Mestre)</option>
-                <option value="8º Dan">8º Dan (Grão-Mestre)</option>
-            </select>
-        </div>
-        <button type="submit" class="btn-primary" id="btn-profile">
-            <div class="spinner"></div>
-            <span class="btn-label">Entrar no Sistema</span>
-        </button>
-    </form>
-</div>
+        <form id="profile-form" class="hidden" novalidate>
+            <div class="form-group">
+                <label for="nome-real">Nome Completo do Avaliador</label>
+                <input type="text" id="nome-real" placeholder="Ex: Mestre Wiliam Longo" autocomplete="name" required>
+            </div>
+            <div class="form-group">
+                <label for="graduacao">Graduação Atual</label>
+                <select id="graduacao" required>
+                    <option value="" disabled selected>Selecione seu Dan/Gub</option>
+                    <option value="1º Gub">1º Gub (Ponta Preta)</option>
+                    <option value="1º Dan">1º Dan (Faixa Preta)</option>
+                    <option value="2º Dan">2º Dan (Faixa Preta)</option>
+                    <option value="3º Dan">3º Dan (Faixa Preta)</option>
+                    <option value="4º Dan">4º Dan (Mestre)</option>
+                    <option value="5º Dan">5º Dan (Mestre)</option>
+                    <option value="6º Dan">6º Dan (Mestre)</option>
+                    <option value="7º Dan">7º Dan (Mestre)</option>
+                    <option value="8º Dan">8º Dan (Grão-Mestre)</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary" id="btn-profile">
+                <div class="spinner"></div>
+                <span class="btn-label">Entrar no Sistema</span>
+            </button>
+        </form>
+    </div>
 
-<div class="login-footer">© Wil Taekwondo — Team Marchesini</div>
+    <div class="login-footer">© Wil Taekwondo — Team Marchesini</div>
 
-<script>
-    // ============================================================
-    // CLIENTE SUPABASE LOCAL
-    // Instanciado como "_supabase" para não conflitar com o namespace
-    // global "supabase" da biblioteca CDN.
-    // ============================================================
-    const SUPABASE_URL = "https://pkbusphlutnodgconbbc.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_AXK9wUTEpz-rSdmXYn2SUA_u8O_u6P0";
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    <script>
+        // ============================================================
+        // CLIENTE SUPABASE LOCAL
+        // Instanciado como "_supabase" para não conflitar com o namespace
+        // global "supabase" da biblioteca CDN.
+        // ============================================================
+        const SUPABASE_URL = "https://pkbusphlutnodgconbbc.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_AXK9wUTEpz-rSdmXYn2SUA_u8O_u6P0";
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Referências DOM
-    const authForm    = document.getElementById('auth-form');
-    const profileForm = document.getElementById('profile-form');
-    const flowTitle   = document.getElementById('flow-title');
-    const errorAuth   = document.getElementById('error-auth');
-    const btnAuth     = document.getElementById('btn-auth');
-    const btnProfile  = document.getElementById('btn-profile');
+        // Referências DOM
+        const authForm = document.getElementById('auth-form');
+        const profileForm = document.getElementById('profile-form');
+        const flowTitle = document.getElementById('flow-title');
+        const errorAuth = document.getElementById('error-auth');
+        const btnAuth = document.getElementById('btn-auth');
+        const btnProfile = document.getElementById('btn-profile');
 
-    // Identificador curto da conta (preenchido no passo 1, usado no passo 2)
-    let contaDefinida = "";
+        // Identificador curto da conta (preenchido no passo 1, usado no passo 2)
+        let contaDefinida = "";
 
-    // ============================================================
-    // HELPER: estado de loading do botão
-    // ============================================================
-    function setBtnLoading(btn, loading) {
-        btn.disabled = loading;
-        btn.classList.toggle('loading', loading);
-    }
-
-    // ============================================================
-    // PASSO 1: Autenticação via Supabase Auth
-    //
-    // signInWithPassword envia as credenciais para o backend do Supabase.
-    // Em sucesso: mostra o Passo 2.
-    // Em erro: exibe a mensagem retornada pela API.
-    // ============================================================
-    authForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        errorAuth.textContent = "";
-
-        const email    = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-
-        if (!email || !password) {
-            errorAuth.textContent = "Preencha email e senha.";
-            return;
+        // ============================================================
+        // HELPER: estado de loading do botão
+        // ============================================================
+        function setBtnLoading(btn, loading) {
+            btn.disabled = loading;
+            btn.classList.toggle('loading', loading);
         }
 
-        setBtnLoading(btnAuth, true);
+        // ============================================================
+        // PASSO 1: Autenticação via Supabase Auth
+        //
+        // signInWithPassword envia as credenciais para o backend do Supabase.
+        // Em sucesso: mostra o Passo 2.
+        // Em erro: exibe a mensagem retornada pela API.
+        // ============================================================
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorAuth.textContent = "";
 
-        const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
 
-        setBtnLoading(btnAuth, false);
-
-        if (error) {
-            // Traduz erros comuns do Supabase para português
-            const errosTraduzidos = {
-                'Invalid login credentials': 'Credenciais inválidas. Verifique e-mail e senha.',
-                'Email not confirmed': 'E-mail não confirmado. Verifique sua caixa de entrada.',
-                'Too many requests': 'Muitas tentativas. Aguarde alguns minutos.'
-            };
-            errorAuth.textContent = errosTraduzidos[error.message] || `Erro: ${error.message}`;
-        } else {
-            // Login bem-sucedido: extrai o identificador curto da conta
-            // "avaliador1@wtkd.com.br" → "avaliador1"
-            contaDefinida = email.split('@')[0].toLowerCase().trim();
-
-            if (isAvaliador(contaDefinida)) {
-                // Alterna formulários sem refresh de página (APENAS AVALIADORES)
-                authForm.classList.add('hidden');
-                profileForm.classList.remove('hidden');
-                flowTitle.textContent = `Sessão: ${contaDefinida.toUpperCase()}`;
-
-                // Foco automático no primeiro campo do passo 2
-                document.getElementById('nome-real').focus();
-            } else {
-                // ADMIN/DONOS DE ESCOLA: Pula o Passo 2 e vai direto para o Painel
-                localStorage.setItem('wtkd_conta',     contaDefinida);
-                localStorage.setItem('wtkd_nome_real', 'Administração (' + contaDefinida.toUpperCase() + ')');
-                localStorage.setItem('wtkd_graduacao', 'Administrador');
-                
-                window.location.href = resolverDestino(contaDefinida);
+            if (!email || !password) {
+                errorAuth.textContent = "Preencha email e senha.";
+                return;
             }
-        }
-    });
 
-    // ============================================================
-    // PASSO 2: Coleta de perfil → localStorage → roteamento
-    //
-    // CHAVES GRAVADAS:
-    //   wtkd_conta     → identificador curto (ex: "avaliador1")
-    //   wtkd_nome_real → nome completo digitado
-    //   wtkd_graduacao → graduação selecionada
-    //
-    // ROTEAMENTO (definido em auth.js — resolverDestino()):
-    //   avaliador1-4 → exame.html
-    //   qualquer outro → painel.html
-    // ============================================================
-    profileForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+            setBtnLoading(btnAuth, true);
 
-        const nomeReal  = document.getElementById('nome-real').value.trim();
-        const graduacao = document.getElementById('graduacao').value;
+            const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
 
-        if (!nomeReal) {
-            exibirToast('Informe seu nome completo.', 'aviso');
-            return;
-        }
-        if (!graduacao) {
-            exibirToast('Selecione sua graduação.', 'aviso');
-            return;
-        }
+            setBtnLoading(btnAuth, false);
 
-        setBtnLoading(btnProfile, true);
+            if (error) {
+                // Traduz erros comuns do Supabase para português
+                const errosTraduzidos = {
+                    'Invalid login credentials': 'Credenciais inválidas. Verifique e-mail e senha.',
+                    'Email not confirmed': 'E-mail não confirmado. Verifique sua caixa de entrada.',
+                    'Too many requests': 'Muitas tentativas. Aguarde alguns minutos.'
+                };
+                errorAuth.textContent = errosTraduzidos[error.message] || `Erro: ${error.message}`;
+            } else {
+                // Login bem-sucedido: extrai o identificador curto da conta
+                // "avaliador1@wtkd.com.br" → "avaliador1"
+                contaDefinida = email.split('@')[0].toLowerCase().trim();
 
-        // Persiste os metadados de auditoria da sessão
-        localStorage.setItem('wtkd_conta',     contaDefinida);
-        localStorage.setItem('wtkd_nome_real', nomeReal);
-        localStorage.setItem('wtkd_graduacao', graduacao);
+                if (isAvaliador(contaDefinida)) {
+                    // Alterna formulários sem refresh de página (APENAS AVALIADORES)
+                    authForm.classList.add('hidden');
+                    profileForm.classList.remove('hidden');
+                    flowTitle.textContent = `Sessão: ${contaDefinida.toUpperCase()}`;
 
-        // Roteamento inteligente por perfil (via auth.js)
-        const destino = resolverDestino(contaDefinida);
-        window.location.href = destino;
-    });
-</script>
+                    // Foco automático no primeiro campo do passo 2
+                    document.getElementById('nome-real').focus();
+                } else {
+                    // ADMIN/DONOS DE ESCOLA: Pula o Passo 2 e vai direto para o Painel
+                    localStorage.setItem('wtkd_conta', contaDefinida);
+                    localStorage.setItem('wtkd_nome_real', 'Administração (' + contaDefinida.toUpperCase() + ')');
+                    localStorage.setItem('wtkd_graduacao', 'Administrador');
+
+                    window.location.href = resolverDestino(contaDefinida);
+                }
+            }
+        });
+
+        // ============================================================
+        // PASSO 2: Coleta de perfil → localStorage → roteamento
+        //
+        // CHAVES GRAVADAS:
+        //   wtkd_conta     → identificador curto (ex: "avaliador1")
+        //   wtkd_nome_real → nome completo digitado
+        //   wtkd_graduacao → graduação selecionada
+        //
+        // ROTEAMENTO (definido em auth.js — resolverDestino()):
+        //   avaliador1-4 → exame.html
+        //   qualquer outro → painel.html
+        // ============================================================
+        profileForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const nomeReal = document.getElementById('nome-real').value.trim();
+            const graduacao = document.getElementById('graduacao').value;
+
+            if (!nomeReal) {
+                exibirToast('Informe seu nome completo.', 'aviso');
+                return;
+            }
+            if (!graduacao) {
+                exibirToast('Selecione sua graduação.', 'aviso');
+                return;
+            }
+
+            setBtnLoading(btnProfile, true);
+
+            // Persiste os metadados de auditoria da sessão
+            localStorage.setItem('wtkd_conta', contaDefinida);
+            localStorage.setItem('wtkd_nome_real', nomeReal);
+            localStorage.setItem('wtkd_graduacao', graduacao);
+
+            // Roteamento inteligente por perfil (via auth.js)
+            const destino = resolverDestino(contaDefinida);
+            window.location.href = destino;
+        });
+    </script>
 
 </body>
+
 </html>
