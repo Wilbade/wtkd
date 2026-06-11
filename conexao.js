@@ -162,8 +162,17 @@ async function cadastrarAluno(event) {
         if (btnSubmit) btnSubmit.textContent = 'Gravar Aluno';
 
         // Volta para a aba de chamada
+        const navChamada = document.getElementById('nav-chamada');
         if (typeof alternarAba === 'function') {
-            alternarAba('aba-chamada', document.querySelectorAll('.aba-btn')[0]);
+            // Se o elemento nav-chamada existir, passa ele, caso contrário passa null de forma segura
+            alternarAba('aba-chamada', navChamada || null);
+        } else {
+            // Fallback de segurança caso a aba opere por exibição de blocos padrão
+            const abaChamadaBloco = document.getElementById('aba-chamada');
+            if (abaChamadaBloco) {
+                document.getElementById('aba-cadastro').classList.add('hidden');
+                abaChamadaBloco.classList.remove('hidden');
+            }
         }
 
         // Recarrega a lista para refletir o aluno salvo
@@ -343,6 +352,8 @@ async function carregarListaChamada() {
             const img = document.createElement('img');
             img.src   = aluno.foto_url;                // URL segura (não é input do usuário)
             img.alt   = 'Foto';
+            img.loading = 'lazy';
+            img.decoding = 'async';
             img.style.cssText = 'width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #333;';
             tdFoto.appendChild(img);
         } else {
