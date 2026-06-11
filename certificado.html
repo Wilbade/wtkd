@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificado de Exame — WTKD</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* CSS Reset e Configuração para Impressão */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #52525e;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Container que segura as páginas */
+        #certificados-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        /* Estilo do Certificado Individual (A4 Paisagem) */
+        .certificado {
+            width: 297mm;
+            height: 210mm;
+            background: #fff;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 20mm;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+            /* Fundo com marca d'água simulada */
+            background-image: radial-gradient(circle at center, rgba(255, 26, 26, 0.03) 0%, transparent 60%);
+        }
+
+        /* Borda elegante */
+        .certificado::before {
+            content: '';
+            position: absolute;
+            top: 10mm; left: 10mm; right: 10mm; bottom: 10mm;
+            border: 3px solid #111;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+        .certificado::after {
+            content: '';
+            position: absolute;
+            top: 12mm; left: 12mm; right: 12mm; bottom: 12mm;
+            border: 1px solid #d4af37; /* Dourado */
+            border-radius: 6px;
+            pointer-events: none;
+        }
+
+        .cabecalho {
+            margin-bottom: 30px;
+        }
+
+        .titulo-escola {
+            font-size: 32px;
+            font-weight: 900;
+            color: #111;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+        
+        .titulo-escola span { color: #ff1a1a; }
+
+        .subtitulo-escola {
+            font-size: 14px;
+            color: #666;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .certificado-titulo {
+            font-size: 48px;
+            font-weight: 700;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin: 20px 0 40px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .texto-corpo {
+            font-size: 22px;
+            color: #333;
+            line-height: 1.6;
+            max-width: 80%;
+            margin: 0 auto;
+        }
+
+        .nome-aluno {
+            font-size: 36px;
+            font-weight: 700;
+            color: #111;
+            margin: 15px 0;
+            text-transform: uppercase;
+            border-bottom: 2px solid #d4af37;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        .detalhes {
+            font-size: 20px;
+            margin-top: 20px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .assinaturas {
+            display: flex;
+            justify-content: space-around;
+            width: 80%;
+            margin-top: 60px;
+        }
+
+        .linha-assinatura {
+            width: 250px;
+            border-top: 1px solid #111;
+            padding-top: 10px;
+            font-size: 16px;
+            color: #333;
+            font-weight: 600;
+        }
+        .linha-assinatura span {
+            display: block;
+            font-size: 12px;
+            font-weight: 400;
+            color: #666;
+        }
+
+        .selo-data {
+            position: absolute;
+            bottom: 25mm;
+            right: 25mm;
+            text-align: right;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .acoes {
+            position: fixed;
+            bottom: 30px;
+            background: rgba(0,0,0,0.8);
+            padding: 15px 30px;
+            border-radius: 50px;
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .btn {
+            background: #0a84ff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .btn:hover { background: #006ae6; }
+        .btn-fechar { background: #3a3a3c; }
+
+        /* Esconder tudo que não é o certificado na hora de imprimir */
+        @media print {
+            body { background: transparent; padding: 0; }
+            .acoes { display: none !important; }
+            .certificado {
+                box-shadow: none;
+                margin: 0;
+                page-break-after: always;
+            }
+            #certificados-container { gap: 0; }
+            
+            /* Remove margins da página e força paisagem no css print */
+            @page { size: A4 landscape; margin: 0; }
+        }
+        
+        .loading {
+            color: white;
+            font-size: 24px;
+            margin-top: 100px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="acoes">
+        <button class="btn btn-fechar" onclick="window.close()">Voltar</button>
+        <button class="btn" onclick="window.print()">🖨️ Imprimir Agora</button>
+    </div>
+
+    <div id="certificados-container">
+        <div class="loading">Gerando certificados, aguarde...</div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = "https://pkbusphlutnodgconbbc.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_AXK9wUTEpz-rSdmXYn2SUA_u8O_u6P0";
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function gerarCertificados() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const idsParam = urlParams.get('ids');
+
+            if (!idsParam) {
+                document.getElementById('certificados-container').innerHTML = '<div class="loading">Nenhum ID de aluno fornecido.</div>';
+                return;
+            }
+
+            const ids = idsParam.split(',').filter(id => id.trim() !== '');
+            const container = document.getElementById('certificados-container');
+            container.innerHTML = ''; // Limpa loading
+
+            // Hoje formatado
+            const hoje = new Date();
+            const dataFormatada = hoje.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+
+            for (const idAluno of ids) {
+                // Busca dados do aluno
+                const { data: aluno } = await _supabase
+                    .from('alunos')
+                    .select('nome')
+                    .eq('id', idAluno)
+                    .single();
+
+                // Busca a última nota de exame lançada
+                const { data: exames } = await _supabase
+                    .from('exames_notas')
+                    .select('nota, faixa_avaliada, nome_real_avaliador')
+                    .eq('id_aluno', idAluno)
+                    .order('criado_em', { ascending: false })
+                    .limit(1);
+
+                if (aluno && exames && exames.length > 0) {
+                    const exame = exames[0];
+                    
+                    // Monta o DOM do certificado
+                    const cert = document.createElement('div');
+                    cert.className = 'certificado';
+                    cert.innerHTML = `
+                        <div class="cabecalho">
+                            <div class="titulo-escola">WIL <span>TKD</span></div>
+                            <div class="subtitulo-escola">Dojang • Escola de Artes Marciais</div>
+                        </div>
+
+                        <div class="certificado-titulo">Certificado de Graduação</div>
+
+                        <div class="texto-corpo">
+                            Certificamos para os devidos fins que o(a) aluno(a)
+                            <div class="nome-aluno">${aluno.nome}</div>
+                            foi avaliado(a) e aprovado(a) no exame técnico oficial da escola, 
+                            demonstrando excelência e domínio das técnicas necessárias para a graduação de:
+                        </div>
+
+                        <div class="detalhes">
+                            Faixa Avaliada: <strong>${exame.faixa_avaliada}</strong><br>
+                            Nota Final do Exame: <strong>${exame.nota} pontos</strong>
+                        </div>
+
+                        <div class="assinaturas">
+                            <div class="linha-assinatura">
+                                Wiliam Longo
+                                <span>Mestre / Diretor Geral</span>
+                            </div>
+                            <div class="linha-assinatura">
+                                ${exame.nome_real_avaliador || 'Banca Examinadora'}
+                                <span>Avaliador(a) Oficial</span>
+                            </div>
+                        </div>
+
+                        <div class="selo-data">
+                            Data de Emissão:<br>
+                            <strong>${dataFormatada}</strong>
+                        </div>
+                    `;
+                    container.appendChild(cert);
+                }
+            }
+
+            if (container.children.length === 0) {
+                container.innerHTML = '<div class="loading">Nenhum exame encontrado para os IDs informados.</div>';
+            } else {
+                // Força impressão automática após um breve delay para renderizar CSS
+                setTimeout(() => window.print(), 800);
+            }
+        }
+
+        gerarCertificados();
+    </script>
+</body>
+</html>

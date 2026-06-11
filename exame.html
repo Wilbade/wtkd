@@ -141,6 +141,7 @@
             color: var(--text-main);
             font-size: 14px;
             -webkit-appearance: none;
+            appearance: none;
             transition: border-color 0.2s;
         }
 
@@ -255,10 +256,10 @@
                 border-bottom: none;
             }
 
-            td:nth-of-type(3)::before { content: "Nota — Candidato 1:"; font-size: 12px; font-weight: 600; color: var(--text-muted); }
-            td:nth-of-type(4)::before { content: "Nota — Candidato 2:"; font-size: 12px; font-weight: 600; color: var(--text-muted); }
-            td:nth-of-type(5)::before { content: "Nota — Candidato 3:"; font-size: 12px; font-weight: 600; color: var(--text-muted); }
-            td:nth-of-type(6)::before { content: "Nota — Candidato 4:"; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+            td:nth-of-type(3)::before { content: "Nota — " attr(data-label) ":"; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+            td:nth-of-type(4)::before { content: "Nota — " attr(data-label) ":"; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+            td:nth-of-type(5)::before { content: "Nota — " attr(data-label) ":"; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+            td:nth-of-type(6)::before { content: "Nota — " attr(data-label) ":"; font-size: 12px; font-weight: 600; color: var(--text-muted); }
 
             /* Input maior no mobile para facilitar toque */
             .nota-input { width: 90px; padding: 8px; font-size: 15px; text-align: right; }
@@ -356,7 +357,10 @@
         Badge do avaliador: preenchido via JS com dados do localStorage.
         A guarda de rota (auth.js) garante que chegar aqui implica sessão válida.
     -->
-    <div id="info-banca-topo" class="banca-info">Carregando...</div>
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <div id="info-banca-topo" class="banca-info" onclick="fazerLogoff()" style="cursor: pointer;" title="Clique para sair e deslogar">Carregando...</div>
+        <button onclick="fazerLogoff()" style="background: #ff3b30; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;">Sair</button>
+    </div>
 </header>
 
 <div class="main-container">
@@ -476,120 +480,137 @@
             { cat: "Tchagui", nome: "Bacat-Tchagui", max: 10 },
             { cat: "Tchagui", nome: "Antchagui", max: 10 },
             { cat: "Tchagui", nome: "Ap-Dolio-Tchagui", max: 10 },
-            { cat: "Combate", nome: "Jaiu Kyorugui", max: 10 },
+            { cat: "Jaiu Kyorugui", nome: "Combate Livre", max: 10 },
             { cat: "Coordenação", nome: "Coordenação motora", max: 10 }
         ],
         "ponta amarela": [
-            { cat: "Kibon Donjak", nome: "Kibon Donjak II",      max: 5  },
-            { cat: "Kibon Donjak", nome: "Kibon Poom-se",        max: 5  },
-            { cat: "Poom-se/Tull", nome: "Dangum Hian",          max: 10 },
-            { cat: "Poom-se/Tull", nome: "Teguk Il Jang",        max: 10 },
-            { cat: "Combate",      nome: "Matcho Kyorugui",      max: 10 },
-            { cat: "Tchagui",      nome: "Ap-miro tchagui",      max: 10 },
-            { cat: "Tchagui",      nome: "Tigô-tchagui",         max: 10 },
-            { cat: "Tchagui",      nome: "Yop-Tchagui",          max: 10 },
-            { cat: "Tchagui",      nome: "Tuit-tchagui",         max: 10 },
-            { cat: "Tchagui",      nome: "Dolio-Tchagui",        max: 10 }
+            { cat: "Kibon Donjak", nome: "Kibon Donjak II", max: 5 },
+            { cat: "Kibon Donjak", nome: "Kibon Poom-se", max: 5 },
+            { cat: "Poom-se/Tull", nome: "Dangum Hian", max: 10 },
+            { cat: "Poom-se/Tull", nome: "Teguk Il Jang", max: 10 },
+            { cat: "Combate", nome: "Matcho Kyorugui", max: 10 },
+            { cat: "Tchagui", nome: "Ap-miro tchagui", max: 10 },
+            { cat: "Tchagui", nome: "Tigô-tchagui", max: 10 },
+            { cat: "Tchagui", nome: "Yop-Tchagui", max: 10 },
+            { cat: "Tchagui", nome: "Tuit-tchagui", max: 10 },
+            { cat: "Tchagui", nome: "Dolio-Tchagui", max: 10 },
+            { cat: "Jaiu Kyorugui", nome: "Combate Livre", max: 5 },
+            { cat: "Iron", nome: "Teoria (Iron)", max: 5 }
         ],
         "amarela": [
-            { cat: "Kibon Donjak", nome: "Kibon Donjak II",      max: 5  },
-            { cat: "Kibon Donjak", nome: "Kibon Poom-se",        max: 5  },
-            { cat: "Poom-se/Tull", nome: "Dangum Hian",          max: 10 },
-            { cat: "Poom-se/Tull", nome: "Teguk Il Jang",        max: 10 },
-            { cat: "Combate",      nome: "Matcho Kyorugui",      max: 10 },
-            { cat: "Tchagui",      nome: "Ap-miro tchagui",      max: 10 },
-            { cat: "Tchagui",      nome: "Tigô-tchagui",         max: 10 },
-            { cat: "Tchagui",      nome: "Yop-Tchagui",          max: 10 },
-            { cat: "Tchagui",      nome: "Tuit-tchagui",         max: 10 },
-            { cat: "Tchagui",      nome: "Dolio-Tchagui",        max: 10 }
+            { cat: "Kibon Donjak", nome: "Kibon Donjak II", max: 5 },
+            { cat: "Kibon Donjak", nome: "Kibon Poom-se", max: 5 },
+            { cat: "Poom-se/Tull", nome: "Dangum Hian", max: 10 },
+            { cat: "Poom-se/Tull", nome: "Teguk Il Jang", max: 10 },
+            { cat: "Combate", nome: "Matcho Kyorugui", max: 10 },
+            { cat: "Tchagui", nome: "Ap-miro tchagui", max: 10 },
+            { cat: "Tchagui", nome: "Tigô-tchagui", max: 10 },
+            { cat: "Tchagui", nome: "Yop-Tchagui", max: 10 },
+            { cat: "Tchagui", nome: "Tuit-tchagui", max: 10 },
+            { cat: "Tchagui", nome: "Dolio-Tchagui", max: 10 },
+            { cat: "Jaiu Kyorugui", nome: "Combate Livre", max: 5 },
+            { cat: "Iron", nome: "Teoria (Iron)", max: 5 }
         ],
         "ponta verde": [
-            { cat: "Kibon Donjak",  nome: "Kibon Donjak II e I",           max: 5  },
-            { cat: "Kibon Donjak",  nome: "Kibon Poom-se",                 max: 5  },
-            { cat: "Poom-se/Tull",  nome: "Dosan Hian",                    max: 10 },
-            { cat: "Poom-se/Tull",  nome: "Teguk I Jang",                  max: 10 },
-            { cat: "Combate",       nome: "Matcho Kyorugui",               max: 5  },
-            { cat: "Tchagui",       nome: "Timio ap bal ap Dolio Tchagui", max: 10 },
-            { cat: "Tchagui",       nome: "Tuit bal- Rurio-tchagui",       max: 10 },
-            { cat: "Tchagui",       nome: "Ap bal- Rurio-Tchagui",         max: 10 },
-            { cat: "Tchagui",       nome: "Mondolio - Rurio -tchagui",     max: 10 },
-            { cat: "Tchagui",       nome: "Timio Tui Tchagui",             max: 10 },
-            { cat: "Jaiu Kyorugui", nome: "Combate Combinado",             max: 15 }
+            { cat: "Kibon Donjak", nome: "Kibon Donjak Il e I", max: 5 },
+            { cat: "Kibon Donjak", nome: "Kibon Poom-se", max: 5 },
+            { cat: "Poom-se/Tull", nome: "Dosan Hian", max: 10 },
+            { cat: "Poom-se/Tull", nome: "Teguk I Jang", max: 10 },
+            { cat: "Combate", nome: "Matcho Kyorugui", max: 5 },
+            { cat: "Tchagui", nome: "Timio ap bal ap Dolio Tchagui", max: 10 },
+            { cat: "Tchagui", nome: "Tuit bal- Rurio-tchagui", max: 10 },
+            { cat: "Tchagui", nome: "Ap bal- Rurio-Tchagui", max: 10 },
+            { cat: "Tchagui", nome: "Mondolio - Rurio -tchagui", max: 10 },
+            { cat: "Tchagui", nome: "Timio Tui Tchagui", max: 10 },
+            { cat: "Jaiu Kyorugui", nome: "Combate Livre", max: 10 },
+            { cat: "Iron", nome: "Teoria (Iron)", max: 5 }
         ],
         "verde": [
-            { cat: "Kibon Donjak", nome: "Kibon Donjak IL, I e Sam",      max: 5  },
-            { cat: "Kibon Donjak", nome: "Kibon Poom-se",                 max: 5  },
-            { cat: "Poom-se/Tull", nome: "Won Yo Hian",                   max: 15 },
-            { cat: "Poom-se/Tull", nome: "Teguk Sam Jang Hian",           max: 10 },
-            { cat: "Combate",      nome: "Matcho Kyorugui",               max: 10 },
-            { cat: "Tchagui",      nome: "Tchagui 1 Jejari (no lugar)",   max: 15 },
-            { cat: "Tchagui",      nome: "Thagui 2 Timio (saltando)",     max: 15 },
-            { cat: "Combate",      nome: "Kyorugui Oficial",              max: 15 },
-            { cat: "Quebramento",  nome: "Kyok-Pa Sull",                  max: 10 }
+            { cat: "Kibon Donjak", nome: "Kibon Donjak IL, I e Sam", max: 5 },
+            { cat: "Kibon Donjak", nome: "Kibon Poom-se", max: 5 },
+            { cat: "Poom-se/Tull", nome: "Won Yo Hian", max: 15 },
+            { cat: "Poom-se/Tull", nome: "Teguk Sam Jang", max: 10 },
+            { cat: "Combate", nome: "Matcho Kyorugui", max: 10 },
+            { cat: "Tchagui", nome: "Tchagui 1 Jejari (no lugar)", max: 15 },
+            { cat: "Tchagui", nome: "Thagui 2 Timio (saltando)", max: 15 },
+            { cat: "Combate", nome: "Kyorugui", max: 15 },
+            { cat: "Quebramento", nome: "Kyok-Pa Sull (Son-nal)", max: 10 }
         ],
         "ponta azul": [
-            { cat: "Kibon Donjak", nome: "Kibon Donjak IL, I, Sam, Sa",   max: 5  },
-            { cat: "Kibon Donjak", nome: "Kibon Poom-se",                 max: 5  },
-            { cat: "Poom-se/Tull", nome: "Iul Gok Hian",                  max: 10 },
-            { cat: "Poom-se/Tull", nome: "Teguk Sa Jang Hian",            max: 10 },
-            { cat: "Combate",      nome: "Matcho Kyorugui",               max: 10 },
-            { cat: "Tchagui",      nome: "Tchagui 1 Jejari (no lugar)",   max: 15 },
-            { cat: "Tchagui",      nome: "Thagui 2 Apuro (avançando)",    max: 15 },
-            { cat: "Combate",      nome: "Kyorugui Livre",                max: 15 },
-            { cat: "Quebramento",  nome: "Kyok-Pa Sull (Son-nal)",        max: 15 }
+            { cat: "Kibon Donjak", nome: "Kibon Donjak IL, I, Sam, Sa", max: 5 },
+            { cat: "Kibon Donjak", nome: "Kibon Poom-se", max: 5 },
+            { cat: "Poom-se/Tull", nome: "Iul Gok Hian", max: 15 },
+            { cat: "Poom-se/Tull", nome: "Teguk Sa Jang", max: 10 },
+            { cat: "Combate", nome: "Matcho Kyorugui", max: 10 },
+            { cat: "Tchagui", nome: "Tchagui 1 Jejari (no lugar)", max: 15 },
+            { cat: "Tchagui", nome: "Thagui 2 Apuro", max: 15 },
+            { cat: "Combate", nome: "Kyorugui", max: 15 },
+            { cat: "Quebramento", nome: "Kyok-Pa Sull (Son-nal)", max: 5 },
+            { cat: "Quebramento", nome: "Pal Kub (madeira)", max: 5 }
         ],
         "azul": [
-            { cat: "Kibon Donjak", nome: "Kibon Poom-se",                  max: 5   },
-            { cat: "Kibon Donjak", nome: "Bal-Ki-sull II",                 max: 5   },
-            { cat: "Poom-se/Tull", nome: "Jun Gun Hian",                   max: 10  },
-            { cat: "Poom-se/Tull", nome: "Teguk O Jang Hian",              max: 10  },
-            { cat: "Poom-se/Tull", nome: "Sorteio de Formas",              max: 10  },
-            { cat: "Combate",      nome: "Matcho Kyorugui",                max: 5   },
-            { cat: "Tchagui",      nome: "Godup Tchagui",                  max: 15  },
-            { cat: "Tchagui",      nome: "Jejari Tchagui",                 max: 15  },
-            { cat: "Tchagui",      nome: "Precisão (Técnica Livre)",       max: 5   },
-            { cat: "Quebramento",  nome: "Kyok-Pa Ju-mok (madeira solta)", max: 2.5 },
-            { cat: "Quebramento",  nome: "Kyok-Pa Son-nal-dung",           max: 2.5 },
-            { cat: "Combate",      nome: "Kyorugui",                       max: 15  }
+            { cat: "Kibon Donjak", nome: "Kibon Poom-se", max: 5 },
+            { cat: "Kibon Donjak", nome: "Bal-Ki-sull II", max: 5 },
+            { cat: "Poom-se/Tull", nome: "Jun Gun Hian", max: 10 },
+            { cat: "Poom-se/Tull", nome: "Teguk O Jang", max: 10 },
+            { cat: "Poom-se/Tull", nome: "Sorteio", max: 10 },
+            { cat: "Combate", nome: "Matcho Kyorugui", max: 10 },
+            { cat: "Tchagui", nome: "Godup", max: 15 },
+            { cat: "Tchagui", nome: "Jejari", max: 15 },
+            { cat: "Tchagui", nome: "Precisão (técnica livre)", max: 10 },
+            { cat: "Quebramento", nome: "Ju-mok (madeira solta)", max: 5 },
+            { cat: "Quebramento", nome: "Son-nal-dung (madeira)", max: 5 }
         ],
         "ponta vermelha": [
-            { cat: "Kibon Donjak", nome: "Kibon Poom-se",        max: 5  },
-            { cat: "Kibon Donjak", nome: "Bal-Ki-Sull I e II",   max: 5  },
-            { cat: "Poom-se/Tull", nome: "Toi Gae Hian",         max: 10 },
-            { cat: "Poom-se/Tull", nome: "Teguk Iuk Jang",       max: 10 },
-            { cat: "Poom-se/Tull", nome: "Sorteio Formas 1",     max: 5  },
-            { cat: "Poom-se/Tull", nome: "Sorteio Formas 2",     max: 5  },
-            { cat: "Combate",      nome: "Matcho Kyorugui",      max: 5  },
-            { cat: "Tchagui",      nome: "Jejari Tchagui",       max: 10 },
-            { cat: "Tchagui",      nome: "Apuro Tchagui",        max: 20 },
-            { cat: "Combate",      nome: "Jaiu Kyorugui 1X1",    max: 10 },
-            { cat: "Combate",      nome: "Jaiu Kyorugui 1X2",    max: 5  },
-            { cat: "Quebramento",  nome: "Timio Yop Tchagui",    max: 10 }
+            { cat: "Kibon Donjak", nome: "Kibon Poom-se", max: 5 },
+            { cat: "Kibon Donjak", nome: "Bal-Ki-Sull Il e I", max: 5 },
+            { cat: "Poom-se/Tull", nome: "Toi Gae Hian", max: 10 },
+            { cat: "Poom-se/Tull", nome: "Teguk Iuk Jang", max: 10 },
+            { cat: "Poom-se/Tull", nome: "Sorteio 1", max: 5 },
+            { cat: "Poom-se/Tull", nome: "Sorteio 2", max: 5 },
+            { cat: "Combate", nome: "Matcho Kyorugui", max: 5 },
+            { cat: "Tchagui", nome: "Jejari", max: 10 },
+            { cat: "Tchagui", nome: "Apuro", max: 20 },
+            { cat: "Combate Livre", nome: "Jaiu Kyorugui 1X1", max: 10 },
+            { cat: "Combate Livre", nome: "Jaiu Kyorugui 1X2", max: 5 },
+            { cat: "Quebramento", nome: "Timio Yop Tchagui (3 pessoas)", max: 5 },
+            { cat: "Técnica Livre", nome: "Técnica livre", max: 5 }
         ],
         "vermelha": [
-            { cat: "Kibon Donjak",   nome: "Kibon Poom-se",              max: 5  },
-            { cat: "Kibon Donjak",   nome: "Bal-Ki-Sull I , II e San",   max: 5  },
-            { cat: "Poom-se/Tull",   nome: "Hwa Rang Hian",              max: 5  },
-            { cat: "Poom-se/Tull",   nome: "Teguk Tchil Jang Hian",      max: 5  },
-            { cat: "Poom-se/Tull",   nome: "Sorteio Tui 1",              max: 5  },
-            { cat: "Poom-se/Tull",   nome: "Sorteio Tui 2",              max: 5  },
-            { cat: "Defesa Pessoal", nome: "Ho-Shin-Sull",               max: 5  },
-            { cat: "Tchagui",        nome: "Jejari Tchagui",             max: 15 },
-            { cat: "Tchagui",        nome: "Taguet Tchagui",             max: 15 },
-            { cat: "Combate",        nome: "Jaiu Kyorugui 1X1",          max: 10 },
-            { cat: "Combate",        nome: "Jaiu Kyorugui 1X2",          max: 5  },
-            { cat: "Combate",        nome: "Jaiu Kyorugui 1X3",          max: 5  },
-            { cat: "Quebramento",    nome: "Kyok-Pa Sull",               max: 15 }
+            { cat: "Kibon Donjak", nome: "Kibon Poom-se", max: 5 },
+            { cat: "Kibon Donjak", nome: "Bal-Ki-Sull Il , I e San", max: 5 },
+            { cat: "Poom-se/Tull", nome: "Hwa Rang Hian", max: 5 },
+            { cat: "Poom-se/Tull", nome: "Teguk Tchil Jang", max: 5 },
+            { cat: "Poom-se/Tull", nome: "Sorteio 1", max: 5 },
+            { cat: "Poom-se/Tull", nome: "Sorteio 2", max: 5 },
+            { cat: "Defesa Pessoal", nome: "Ho-Shin-Sull", max: 5 },
+            { cat: "Tchagui", nome: "Jejari", max: 15 },
+            { cat: "Tchagui", nome: "Taguet Tchagui", max: 15 },
+            { cat: "Combate Livre", nome: "Jaiu Kyorugui 1X1", max: 10 },
+            { cat: "Combate Livre", nome: "Jaiu Kyorugui 1X2", max: 5 },
+            { cat: "Combate Livre", nome: "Jaiu Kyorugui 1X3", max: 5 },
+            { cat: "Quebramento", nome: "Timio Yop Tchagui (3 pessoas)", max: 5 },
+            { cat: "Técnica Livre", nome: "Técnica livre", max: 5 },
+            { cat: "Quebramento", nome: "son nal, son nal dung (madeira)", max: 5 }
         ],
         "ponta preta": [
-            { cat: "Kibon Donjak",   nome: "Kibon Donjak 1, 2, 3 e 4",                  max: 10 },
-            { cat: "Kibon Donjak",   nome: "Kibom Poonsee",                              max: 10 },
-            { cat: "Poom-se/Tull",   nome: "Chung Mu Hian / Teguk Pal Jang",            max: 15 },
-            { cat: "Poom-se/Tull",   nome: "Sorteio Técnico (3 Formas)",                max: 15 },
-            { cat: "Defesa Pessoal", nome: "Ho-Shin-Sull / Bal-Ki-Sull",               max: 10 },
-            { cat: "Tchagui",        nome: "Sequência 1, 2, 3 (Jejari/Taguet)",        max: 15 },
-            { cat: "Combate",        nome: "Derion Unificado (1x1 ao 1x4)",            max: 15 },
-            { cat: "Quebramento",    nome: "Timio Yop Tchagui (5 pessoas) / Livre",    max: 10 }
+            { cat: "Kibon Donjak", nome: "Kibon Donjak Il, I, San e Sa", max: 5 },
+            { cat: "Kibon Donjak", nome: "Kibom Poonsee", max: 10 },
+            { cat: "Poom-se/Tull", nome: "Chung Mu Hian", max: 10 },
+            { cat: "Poom-se/Tull", nome: "Teguk Pal Jang", max: 10 },
+            { cat: "Poom-se/Tull", nome: "Sorteio 1", max: 5 },
+            { cat: "Poom-se/Tull", nome: "Sorteio 2", max: 5 },
+            { cat: "Poom-se/Tull", nome: "Sorteio 3", max: 5 },
+            { cat: "Defesa Pessoal", nome: "Ho-Shin-Sull", max: 5 },
+            { cat: "Defesa Pessoal", nome: "Bal - Ki - Sull", max: 5 },
+            { cat: "Tchagui", nome: "Sequencia 1, 2 e 3", max: 10 },
+            { cat: "Tchagui", nome: "Jejari", max: 5 },
+            { cat: "Tchagui", nome: "Taguet Tchagui", max: 5 },
+            { cat: "Combate", nome: "1X1", max: 5 },
+            { cat: "Combate", nome: "1X2", max: 3 },
+            { cat: "Combate", nome: "1X3", max: 3 },
+            { cat: "Combate", nome: "1X4", max: 4 },
+            { cat: "Quebramento", nome: "Timio Yop Tchagui (5 pessoas)", max: 5 }
         ]
     };
 
@@ -847,9 +868,28 @@
             btnGravar.disabled    = false;
             btnGravar.textContent = 'Gravar Notas de Toda a Banca';
         } else {
-            exibirToast('Notas gravadas com sucesso!', 'sucesso');
-            localStorage.removeItem('wtkd_sessao_exame'); // Limpa o estado salvo ao finalizar com sucesso
-            setTimeout(() => location.reload(), 1800);
+            exibirToast('Todas as notas foram gravadas com sucesso! ✅', 'sucesso', 5000);
+
+            // Feedback visual no botão original
+            btnGravar.textContent = '✅ Tudo Gravado';
+            btnGravar.style.background = '#1c421c';
+            btnGravar.style.color      = '#30d158';
+
+            // Cria botão de impressão
+            const btnImprimir = document.createElement('button');
+            btnImprimir.innerHTML = '🖨️ Imprimir Certificados';
+            btnImprimir.className = 'btn-acao';
+            btnImprimir.style.background = '#0a84ff';
+            btnImprimir.style.marginLeft = '10px';
+            btnImprimir.onclick = () => {
+                const idsParam = inserts.map(i => i.id_aluno).join(',');
+                window.open(`certificado.html?ids=${idsParam}`, '_blank');
+            };
+            btnGravar.insertAdjacentElement('afterend', btnImprimir);
+
+            // Desabilita tudo
+            document.querySelectorAll('.nota-input').forEach(i => i.disabled = true);
+            localStorage.removeItem('wtkd_sessao_exame');
         }
     });
 
@@ -948,6 +988,23 @@
                         if (badgeElem) badgeElem.textContent = '—';
                     }
                 }
+            }
+        });
+
+        // Atualiza os data-labels (para a visualização mobile exibir os nomes corretos)
+        rodadas.forEach(r => {
+            const prefix = r === 1 ? "" : `r${r}-`;
+            for (let i = 1; i <= 4; i++) {
+                const colId = r === 1 ? `col-aluno-${i}` : `${prefix}col-${i}`;
+                const colElem = document.getElementById(colId);
+                const nome = colElem ? colElem.textContent : `Candidato ${i}`;
+                const inputClass = r === 1 ? `.n-al${i}` : `.r${r}-al${i}`;
+                
+                document.querySelectorAll(inputClass).forEach(input => {
+                    if (input.parentElement) {
+                        input.parentElement.setAttribute('data-label', nome);
+                    }
+                });
             }
         });
     }
@@ -1453,6 +1510,21 @@
             btn.style.background = '#1c421c';
             btn.style.color      = '#30d158';
             btn.disabled = true;
+
+            // Injeta botão de certificado para a rodada
+            if (!btn.nextElementSibling || !btn.nextElementSibling.innerHTML.includes('Imprimir')) {
+                const btnImprimir = document.createElement('button');
+                btnImprimir.innerHTML = '🖨️ Imprimir Certificados';
+                btnImprimir.className = 'btn-acao';
+                btnImprimir.style.background = '#0a84ff';
+                btnImprimir.style.marginLeft = '10px';
+                btnImprimir.onclick = () => {
+                    const idsParam = inserts.map(i => i.id_aluno).join(',');
+                    window.open(`certificado.html?ids=${idsParam}`, '_blank');
+                };
+                btn.insertAdjacentElement('afterend', btnImprimir);
+            }
+
             desabilitarRodadaGravada(n);
             salvarEstadoLocalStorage();
         }

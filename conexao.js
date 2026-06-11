@@ -397,22 +397,32 @@ async function carregarListaChamada() {
         const tdEditar = document.createElement('td');
         tdEditar.style.textAlign = 'center';
 
-        const btnEditar = document.createElement('button');
-        btnEditar.textContent    = '✏️';
-        btnEditar.title          = 'Editar Cadastro';
-        btnEditar.style.cssText  = 'background:none;border:none;cursor:pointer;font-size:18px;padding:4px;';
-        btnEditar.dataset.action = 'editar';
+        // Permissão: Apenas contas master podem editar
+        const contaAtual = localStorage.getItem('wtkd_conta');
+        if (isMaster(contaAtual)) {
+            const btnEditar = document.createElement('button');
+            btnEditar.textContent    = '✏️';
+            btnEditar.title          = 'Editar Cadastro';
+            btnEditar.style.cssText  = 'background:none;border:none;cursor:pointer;font-size:18px;padding:4px;';
+            btnEditar.dataset.action = 'editar';
 
-        // Dados sensíveis em data-* (nunca em onclick=)
-        btnEditar.dataset.id    = aluno.id;
-        btnEditar.dataset.nome  = aluno.nome;
-        btnEditar.dataset.nasc  = aluno.data_nascimento || '';
-        btnEditar.dataset.cpf   = aluno.cpf             || '';
-        btnEditar.dataset.dobok = aluno.tamanho_dobok   || '';
-        btnEditar.dataset.faixa = aluno.tamanho_faixa   || '';
-        btnEditar.dataset.obs   = aluno.observacoes     || '';
+            // Dados sensíveis em data-* (nunca em onclick=)
+            btnEditar.dataset.id    = aluno.id;
+            btnEditar.dataset.nome  = aluno.nome;
+            btnEditar.dataset.nasc  = aluno.data_nascimento || '';
+            btnEditar.dataset.cpf   = aluno.cpf             || '';
+            btnEditar.dataset.dobok = aluno.tamanho_dobok   || '';
+            btnEditar.dataset.faixa = aluno.tamanho_faixa   || '';
+            btnEditar.dataset.obs   = aluno.observacoes     || '';
 
-        tdEditar.appendChild(btnEditar);
+            tdEditar.appendChild(btnEditar);
+        } else {
+            // Conta de dono de escola (sem privilégio de edição)
+            tdEditar.textContent = 'Bloqueado';
+            tdEditar.style.color = '#555';
+            tdEditar.style.fontSize = '11px';
+            tdEditar.style.textTransform = 'uppercase';
+        }
 
         // --- Coluna 7: Botão de Presença ---
         const tdPresenca = document.createElement('td');

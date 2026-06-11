@@ -19,6 +19,20 @@
 // Estes usuários são redirecionados para exame.html após o login.
 const CONTAS_AVALIADORES = ['avaliador1', 'avaliador2', 'avaliador3', 'avaliador4'];
 
+// Contas com privilégio máximo no sistema (ex: diretores gerais)
+// Estes usuários podem editar cadastros. Outros administradores só podem ver/incluir.
+const CONTAS_ADMIN_MASTER = ['wiliamlongo', 'master', 'admin'];
+
+function isAvaliador(conta) {
+    if (!conta) return false;
+    return CONTAS_AVALIADORES.includes(conta.toLowerCase().trim());
+}
+
+function isMaster(conta) {
+    if (!conta) return false;
+    return CONTAS_ADMIN_MASTER.includes(conta.toLowerCase().trim());
+}
+
 // Regex para validar o formato UUID v4 (formato padrão do Supabase para PKs)
 const REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -69,7 +83,7 @@ function verificarSessao() {
 // @returns {string} - URL de destino ('exame.html' ou 'painel.html')
 // ============================================================================
 function resolverDestino(conta) {
-    if (CONTAS_AVALIADORES.includes(conta.toLowerCase().trim())) {
+    if (isAvaliador(conta)) {
         return 'exame.html';
     }
     return 'painel.html';
@@ -199,3 +213,18 @@ function exibirToast(mensagem, tipo = 'aviso', duracao = 3500) {
         setTimeout(() => toast.remove(), 300);
     }, duracao);
 }
+
+// ============================================================================
+// 8. LOGOFF — fazerLogoff()
+//
+// Limpa a sessão do localStorage e redireciona para a tela de login.
+// ============================================================================
+function fazerLogoff() {
+    if (confirm("Deseja realmente sair e deslogar da sessão?")) {
+        localStorage.removeItem('wtkd_conta');
+        localStorage.removeItem('wtkd_nome_real');
+        localStorage.removeItem('wtkd_graduacao');
+        window.location.replace('login.html');
+    }
+}
+

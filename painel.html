@@ -191,13 +191,13 @@
         ====================================================== */
         @media (max-width: 768px) {
             /* Transforma a tabela em blocos */
-            #tabelaChamada,
-            #tabelaChamada tbody,
+            .tabela-wrapper table,
+            .tabela-wrapper tbody,
             #tabelaChamada tr,
             #tabelaChamada td { display: block; }
 
             /* Esconde o thead (labels são geradas via CSS ::before) */
-            #tabelaChamada thead { display: none; }
+            .tabela-wrapper thead { display: none; }
 
             /* Cada linha vira um card */
             #tabelaChamada tr {
@@ -230,12 +230,15 @@
 
             /* Idade */
             #tabelaChamada td:nth-of-type(3) { padding: 4px 0; color: var(--text-muted); font-size: 13px; }
+            #tabelaChamada td:nth-of-type(3)::before { content: "Idade: "; color: #666; font-size: 11px; text-transform: uppercase; margin-right: 5px; font-weight: 700; }
 
             /* Graduação */
             #tabelaChamada td:nth-of-type(4) { padding: 4px 0; }
+            #tabelaChamada td:nth-of-type(4)::before { content: "Grau: "; color: #666; font-size: 11px; text-transform: uppercase; margin-right: 5px; font-weight: 700; }
 
             /* Horas */
             #tabelaChamada td:nth-of-type(5) { padding: 4px 0 12px 0; }
+            #tabelaChamada td:nth-of-type(5)::before { content: "Horas: "; color: #666; font-size: 11px; text-transform: uppercase; margin-right: 5px; font-weight: 700; }
 
             /* Editar + Presença na mesma linha no final do card */
             #tabelaChamada td:nth-of-type(6),
@@ -301,6 +304,7 @@
             outline: none;
             transition: border-color 0.2s;
             -webkit-appearance: none;
+            appearance: none;
             width: 100%;
         }
 
@@ -346,7 +350,10 @@
         Badge preenchido via JS com o nome do operador logado.
         Vem do localStorage (wtkd_nome_real + wtkd_graduacao).
     -->
-    <div id="badge-operador">Carregando...</div>
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <div id="badge-operador" onclick="fazerLogoff()" style="cursor: pointer;" title="Clique para sair e deslogar">Carregando...</div>
+        <button onclick="fazerLogoff()" style="background: #ff3b30; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;">Sair</button>
+    </div>
 </header>
 
 <!-- ============================================================

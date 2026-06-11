@@ -121,6 +121,7 @@
             outline: none;
             transition: border-color 0.2s, box-shadow 0.2s;
             -webkit-appearance: none;
+            appearance: none;
         }
 
         input:focus, select:focus {
@@ -374,13 +375,22 @@
             // "avaliador1@wtkd.com.br" → "avaliador1"
             contaDefinida = email.split('@')[0].toLowerCase().trim();
 
-            // Alterna formulários sem refresh de página
-            authForm.classList.add('hidden');
-            profileForm.classList.remove('hidden');
-            flowTitle.textContent = `Sessão: ${contaDefinida.toUpperCase()}`;
+            if (isAvaliador(contaDefinida)) {
+                // Alterna formulários sem refresh de página (APENAS AVALIADORES)
+                authForm.classList.add('hidden');
+                profileForm.classList.remove('hidden');
+                flowTitle.textContent = `Sessão: ${contaDefinida.toUpperCase()}`;
 
-            // Foco automático no primeiro campo do passo 2
-            document.getElementById('nome-real').focus();
+                // Foco automático no primeiro campo do passo 2
+                document.getElementById('nome-real').focus();
+            } else {
+                // ADMIN/DONOS DE ESCOLA: Pula o Passo 2 e vai direto para o Painel
+                localStorage.setItem('wtkd_conta',     contaDefinida);
+                localStorage.setItem('wtkd_nome_real', 'Administração (' + contaDefinida.toUpperCase() + ')');
+                localStorage.setItem('wtkd_graduacao', 'Administrador');
+                
+                window.location.href = resolverDestino(contaDefinida);
+            }
         }
     });
 
