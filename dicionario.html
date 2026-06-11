@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="public/assets/images/logo.png">
     <title>Dicionário Técnico Coreano-Português | Wil TKD</title>
-    <meta name="description" content="Vocabulário oficial de Taekwondo. Aprenda o significado dos termos em coreano, fonética correta, sistemas de contagem numérica e nomes anatômicos utilizados nos treinos tradicionais.">
+    <meta name="description" content="Vocabulário oficial de Taekwondo. Aprenda o significado dos termos em coreano, fonética correta, sistemas de contagem numérica, nomes anatômicos e sistema de bases.">
     <link rel="canonical" href="https://wtkd.com.br/dicionario.html">
     <meta property="og:locale" content="pt_BR">
     <meta property="og:type" content="article">
@@ -25,8 +25,8 @@
           "isPartOf": {
             "@id": "https://wtkd.com.br/#website"
           },
-          "headline": "Dicionário Técnico de Termos em Coreano",
-          "description": "Guia de terminologias marciais, comandos de dojang e contagem com fonética aplicada.",
+          "headline": "Dicionário Técnico de Termos em Coreano e Sistema de Bases",
+          "description": "Guia completo de terminologias marciais, comandos de dojang, posições anatômicas, contagem e posturas de bases com fonética aplicada.",
           "inLanguage": "pt-BR",
           "mainEntityOfPage": "https://wtkd.com.br/dicionario.html"
         },
@@ -49,6 +49,14 @@
                 "@type": "Answer",
                 "text": "A contagem oficial utilizada no dojang segue o sistema nativo coreano: Hana (1), Dool (2), Set (3), Net (4), Da-sut (5), Yeo-sut (6), Il-gop (7), Yeodol (8), Ahop (9) e Yeol (10)."
               }
+            },
+            {
+              "@type": "Question",
+              "name": "Quais são as principais bases (Sogi) do Taekwondo?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "As principais bases incluem a Charyot Sogi (atenção), Narani Sogi (paralela), Junchum Sogi (cavaleiro), Ap Sogi (passo curto), Ap Kubi (passo longo), Dwit Kubi (base em L) e Beom Sogi (base do tigre)."
+              }
             }
           ]
         }
@@ -67,6 +75,7 @@
             --text-muted: #a0a0a0;
             --term-color: #30d158;
             --phonetic-color: #ff9f0a;
+            --base-section-color: #0a84ff;
         }
 
         body {
@@ -77,8 +86,6 @@
             color: var(--text-main);
             -webkit-font-smoothing: antialiased;
         }
-
-        /* Header gerenciado pelo nav.js (Web Component) */
 
         /* Container de Conteúdo */
         .main-container {
@@ -125,6 +132,11 @@
             margin: 40px 0 16px 0;
             padding-left: 10px;
             border-left: 3px solid var(--phonetic-color);
+        }
+
+        .section-title.bases-title {
+            color: var(--base-section-color);
+            border-left-color: var(--base-section-color);
         }
 
         .section-title:first-of-type {
@@ -238,11 +250,74 @@
     <div class="main-container">
         <div class="page-title">
             <h2>Dicionário Técnico</h2>
-            <p>Significado de termos em coreano comumente usados no Taekwondo, acompanhados da fonética para pronúncia
-                correta nas aulas.</p>
+            <p>Significado de termos em coreano comumente usados no Taekwondo, acompanhados da fonética para pronúncia correta nas aulas.</p>
         </div>
 
         <div class="dictionary-card">
+
+            <div class="section-title">Sistema de Bases</div>
+            <div class="table-container">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="term-col">Charyot Sogi</td>
+                            <td class="phonetic-col">(Tchá-riot Sô-guí)</td>
+                            <td class="meaning-col">Base de atenção e saudação inicial.</td>
+                        </tr>
+                        <tr>
+                            <td class="term-col">Narani Sogi</td>
+                            <td class="phonetic-col">(Ná-raní Sô-guí)</td>
+                            <td class="meaning-col">Base paralela na largura dos ombros.</td>
+                        </tr>
+                        <tr>
+                            <td class="term-col">Pyonhi Sogi</td>
+                            <td class="phonetic-col">(Piôn-hí Sô-guí)</td>
+                            <td class="meaning-col">Base de repouso natural / postura aberta confortável.</td>
+                        </tr>
+                        <tr>
+                            <td class="term-col">Moa Sogi</td>
+                            <td class="phonetic-col">(Mô-á Sô-guí)</td>
+                            <td class="meaning-col">Base com os pés e calcanhares completamente juntos.</td>
+                        </tr>
+                        <tr>
+                            <td class="term-col">Junchum Sogi</td>
+                            <td class="phonetic-col">(Djún-tchum Sô-guí)</td>
+                            <td class="meaning-col">Base do cavaleiro / postura assentada agachada.</td>
+                        </tr>
+                        <tr>
+                            <td class="term-col">Ap Sogi</td>
+                            <td class="phonetic-col">(Áp Sô-guí)</td>
+                            <td class="meaning-col">Base de passo normal / caminhada curta estável.</td>
+                        </tr>
+                        <tr>
+                            <td class="term-col">Ap Kubi</td>
+                            <td class="phonetic-col">(Áp Ku-bí)</td>
+                            <td class="meaning-col">Base de passo longo / postura avançada profunda.</td>
+                        </tr>
+                        <tr>
+                            <td class="term-col">Dwit Kubi</td>
+                            <td class="phonetic-col">(Duít Ku-bí)</td>
+                            <td class="meaning-col">Base em "L" / postura recuada com peso na perna traseira.</td>
+                        </tr>
+                        <tr>
+                            <td class="term-col">Beom Sogi</td>
+                            <td class="phonetic-col">(Bôm Sô-guí)</td>
+                            <td class="meaning-col">Base do tigre / gato, calcanhar dianteiro elevado.</td>
+                        </tr>
+                        <tr>
+                            <td class="term-col">Koa Sogi</td>
+                            <td class="phonetic-col">(Kô-á Sô-guí)</td>
+                            <td class="meaning-col">Base de pernas cruzadas (dividida em Dwit-koa Sogi e Ap-koa Sogi).</td>
+                        </tr>
+                        <tr>
+                            <td class="term-col">Hakdari Sogi</td>
+                            <td class="phonetic-col">(Hák-darí Sô-guí)</td>
+                            <td class="meaning-col">Base da garça / equilíbrio estrito apoiado em uma única perna.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
             <div class="section-title">Termos Técnicos e Comandos</div>
             <div class="table-container">
                 <table>
