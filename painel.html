@@ -4,220 +4,522 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel — Wil Taekwondo</title>
-
-    <!--
-        NOTA DE DEPENDÊNCIAS (ordem importa):
-        1. Supabase CDN deve vir ANTES de conexao.js
-        2. conexao.js usa "supabase" como namespace global da lib CDN
-        3. Ambos estão no FINAL do body para não bloquear a renderização do HTML
-    -->
-
     <style>
         /* ======================================================
-           BASE: reset e tipografia
+           DESIGN SYSTEM — Tokens globais
         ====================================================== */
-        body { font-family: sans-serif; background: #0a0a0a; color: #fff; padding: 20px; margin: 0; }
-        h2 { font-size: 22px; text-align: center; margin-bottom: 25px; }
+        :root {
+            --primary:      #ff1a1a;
+            --accent:       #ff9f0a;
+            --dark-bg:      #0a0a0a;
+            --card-bg:      #141414;
+            --card-border:  #262626;
+            --input-bg:     #1c1c1e;
+            --input-border: #333333;
+            --text-main:    #ffffff;
+            --text-muted:   #a0a0a0;
+            --text-label:   #8e8e93;
+            --success:      #30d158;
+            --success-bg:   #1c421c;
+            --danger:       #ff453a;
+            --btn-edit-bg:  transparent;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
 
         /* ======================================================
-           SISTEMA DE ABAS
-           Dois botões: "📅 Chamada" e "🥋 Matrícula"
-           Apenas uma seção fica visível por vez (class "ativa")
+           HEADER — Mobile-First com badge do operador
         ====================================================== */
-        .Abas-container { display: flex; gap: 10px; max-width: 1200px; margin: 0 auto 25px auto; }
-        .aba-botao { flex: 1; padding: 14px; background: #141414; color: #a0a0a0; border: 1px solid #262626; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; }
-        .aba-botao.ativa { background: #ff1a1a; color: #fff; border-color: #ff1a1a; }
+        header {
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+            gap: 12px;
+        }
 
-        /* Seções das abas: ocultas por padrão, exibidas quando têm class "ativa" */
-        .conteudo-secao { display: none; background: #141414; padding: 24px; border-radius: 8px; max-width: 1200px; margin: 0 auto; border: 1px solid #262626; box-sizing: border-box; }
+        .header-brand {
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .header-brand span { color: var(--primary); }
+
+        /* Badge do operador logado */
+        #badge-operador {
+            font-size: 12px;
+            color: var(--accent);
+            background: #1c1c1e;
+            border: 1px solid #3a3a3c;
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
+        }
+
+        /* ======================================================
+           NAVEGAÇÃO DE ABAS — Mobile-First com flex-wrap
+        ====================================================== */
+        .abas-nav {
+            display: flex;
+            flex-wrap: wrap;          /* Permite quebra em linha se necessário */
+            gap: 8px;
+            padding: 16px 20px;
+            background: var(--dark-bg);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 57px;               /* Abaixo do header fixo */
+            z-index: 100;
+        }
+
+        .aba-btn {
+            flex: 1;
+            min-width: 120px;         /* Evita botões muito estreitos */
+            padding: 12px 16px;
+            background: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .aba-btn:hover { color: var(--text-main); border-color: #3a3a3c; }
+        .aba-btn.ativa { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+        /* ======================================================
+           CONTEÚDO DAS ABAS
+        ====================================================== */
+        .conteudo-secao {
+            display: none;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
         .conteudo-secao.ativa { display: block; }
 
-        /* Formulário de matrícula centralizado com largura máxima confortável */
-        #aba-cadastro form { max-width: 500px; margin: 0 auto; }
+        /* Título de seção */
+        .secao-titulo {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-left: 12px;
+            border-left: 3px solid var(--primary);
+        }
 
         /* ======================================================
-           COMPONENTES DO FORMULÁRIO
+           FILTRO DE DATA DA CHAMADA
         ====================================================== */
-        .form-group { margin-bottom: 16px; display: flex; flex-direction: column; }
-        label { font-size: 12px; color: #a0a0a0; margin-bottom: 6px; text-transform: uppercase; }
-        input, select, textarea { padding: 12px; background: #222; border: 1px solid #333; color: #fff; border-radius: 4px; font-size: 14px; }
-        .btn-submit { width: 100%; padding: 14px; background: #ff1a1a; color: #fff; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; }
+        .filtro-data {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filtro-data label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        input[type="date"] {
+            padding: 10px 14px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 14px;
+            outline: none;
+        }
+
+        input[type="date"]:focus { border-color: var(--accent); }
 
         /* ======================================================
-           TABELA DE CHAMADA
-           Wrapper com scroll horizontal para telas estreitas
+           TABELA DE CHAMADA — Desktop
         ====================================================== */
-        .tabela-wrapper { overflow-x: auto; margin-top: 15px; }
+        .tabela-wrapper { overflow-x: auto; }
+
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th { padding: 12px 8px; text-align: left; color: #a0a0a0; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #262626; }
-        td { padding: 12px 8px; vertical-align: middle; }
+
+        th {
+            padding: 10px 12px;
+            text-align: left;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--card-border);
+            white-space: nowrap;
+        }
+
+        td { padding: 12px; vertical-align: middle; border-bottom: 1px solid var(--card-border); }
+
+        tr:last-child td { border-bottom: none; }
+
+        /* ======================================================
+           TABELA DE CHAMADA — Mobile: Cards empilhados (< 768px)
+        ====================================================== */
+        @media (max-width: 768px) {
+            /* Transforma a tabela em blocos */
+            #tabelaChamada,
+            #tabelaChamada tbody,
+            #tabelaChamada tr,
+            #tabelaChamada td { display: block; }
+
+            /* Esconde o thead (labels são geradas via CSS ::before) */
+            #tabelaChamada thead { display: none; }
+
+            /* Cada linha vira um card */
+            #tabelaChamada tr {
+                background: #1c1c1e;
+                border: 1px solid var(--card-border);
+                border-radius: 10px;
+                margin-bottom: 12px;
+                padding: 14px;
+                position: relative;
+            }
+
+            /* Foto no canto superior direito */
+            #tabelaChamada td:nth-of-type(1) {
+                position: absolute;
+                top: 14px;
+                right: 14px;
+                padding: 0;
+                border: none;
+            }
+
+            /* Nome em destaque */
+            #tabelaChamada td:nth-of-type(2) {
+                font-size: 16px;
+                font-weight: 700;
+                padding: 0 0 8px 0;
+                border-bottom: 1px dashed var(--card-border);
+                margin-bottom: 10px;
+                padding-right: 50px; /* espaço para a foto */
+            }
+
+            /* Idade */
+            #tabelaChamada td:nth-of-type(3) { padding: 4px 0; color: var(--text-muted); font-size: 13px; }
+
+            /* Graduação */
+            #tabelaChamada td:nth-of-type(4) { padding: 4px 0; }
+
+            /* Horas */
+            #tabelaChamada td:nth-of-type(5) { padding: 4px 0 12px 0; }
+
+            /* Editar + Presença na mesma linha no final do card */
+            #tabelaChamada td:nth-of-type(6),
+            #tabelaChamada td:nth-of-type(7) {
+                display: inline-block;
+                padding: 4px 0;
+                border: none;
+                vertical-align: middle;
+            }
+
+            #tabelaChamada td:nth-of-type(7) { float: right; }
+
+            .abas-nav { top: 53px; padding: 12px 16px; }
+            .conteudo-secao { padding: 14px 12px; }
+        }
+
+        /* ======================================================
+           FORMULÁRIO DE CADASTRO — Grid Mobile-First
+        ====================================================== */
+        .form-cadastro {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;    /* Mobile: 1 coluna */
+            gap: 16px;
+        }
+
+        @media (min-width: 560px) {
+            /* Tablet+: 2 colunas para campos compactos */
+            .form-grid { grid-template-columns: repeat(2, 1fr); }
+
+            /* Campos que devem ocupar a linha inteira */
+            .form-grid .full-width { grid-column: 1 / -1; }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-label);
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 14px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+            -webkit-appearance: none;
+            width: 100%;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder { color: #555; }
+
+        .form-group textarea { resize: vertical; min-height: 80px; }
+
+        /* Botão de submit do formulário de cadastro */
+        .btn-submit-cadastro {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-submit-cadastro:hover { background: #cc0000; }
+        .btn-submit-cadastro:active { transform: scale(0.99); }
     </style>
 </head>
 <body>
-    <h2>Wil Taekwondo — Dojang</h2>
 
-    <!-- ============================================================
-         BARRA DE NAVEGAÇÃO DE ABAS
-         alternarAba() é definida no <script> abaixo e ativa/desativa
-         as classes "ativa" nas seções e nos botões simultaneamente.
-    ============================================================ -->
-    <div class="Abas-container">
-        <button class="aba-botao ativa" onclick="alternarAba('aba-chamada', this)">📅 Chamada</button>
-        <button class="aba-botao"       onclick="alternarAba('aba-cadastro', this)">🥋 Matrícula</button>
+<!-- ============================================================
+     HEADER FIXO COM BADGE DO OPERADOR
+============================================================ -->
+<header>
+    <div class="header-brand">WIL <span>TKD</span> — Dojang</div>
+    <!--
+        Badge preenchido via JS com o nome do operador logado.
+        Vem do localStorage (wtkd_nome_real + wtkd_graduacao).
+    -->
+    <div id="badge-operador">Carregando...</div>
+</header>
+
+<!-- ============================================================
+     NAVEGAÇÃO DE ABAS
+============================================================ -->
+<nav class="abas-nav">
+    <button class="aba-btn ativa" onclick="alternarAba('aba-chamada', this)">
+        📅 Chamada Diária
+    </button>
+    <button class="aba-btn" onclick="alternarAba('aba-cadastro', this)">
+        🥋 Matrícula
+    </button>
+</nav>
+
+<!-- ============================================================
+     ABA 1: CHAMADA DIÁRIA
+     Renderizada dinamicamente pelo conexao.js (carregarListaChamada).
+     O tbody#tabelaChamada é o ponto de entrada do JS.
+============================================================ -->
+<section id="aba-chamada" class="conteudo-secao ativa">
+    <div class="secao-titulo">Lista de Chamada</div>
+
+    <div class="filtro-data">
+        <label for="data_chamada">Data da aula:</label>
+        <input type="date" id="data_chamada">
     </div>
 
-    <!-- ============================================================
-         ABA 1: CHAMADA DIÁRIA
-         Renderizada dinamicamente pelo conexao.js (carregarListaChamada).
-         O campo de data permite consultar chamadas de qualquer dia.
-         O tbody#tabelaChamada é o ponto de entrada do JS.
-    ============================================================ -->
-    <div id="aba-chamada" class="conteudo-secao ativa">
-        <h3>Lista de Chamada Diária</h3>
-        <!-- Campo de data: valor padrão = hoje (definido em conexao.js) -->
-        <div class="form-group">
-            <input type="date" id="data_chamada" style="max-width: 200px;">
-        </div>
-        <div class="tabela-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 50px;">Foto</th>
-                        <th>Nome</th>
-                        <th>Idade</th>
-                        <th>Graduação</th>
-                        <th>Treinos</th>
-                        <!-- Editar: botão ✏️ gerado inline pelo JS em cada linha -->
-                        <th style="text-align: center; width: 60px;">Editar</th>
-                        <!-- Ação: botão de presença ou lacre "Registrada" -->
-                        <th style="text-align: right;">Ação</th>
-                    </tr>
-                </thead>
+    <div class="tabela-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:50px">Foto</th>
+                    <th>Nome</th>
+                    <th>Idade</th>
+                    <th>Graduação</th>
+                    <th>Treinos</th>
+                    <th style="text-align:center; width:60px">Editar</th>
+                    <th style="text-align:right">Presença</th>
+                </tr>
+            </thead>
+            <!--
+                tbody#tabelaChamada: populado pela função carregarListaChamada()
+                do conexao.js via event delegation (sem onclick inline).
+            -->
+            <tbody id="tabelaChamada"></tbody>
+        </table>
+    </div>
+</section>
+
+<!-- ============================================================
+     ABA 2: MATRÍCULA / CADASTRO DE ALUNOS
+     Formulário híbrido INSERT (novo) / UPDATE (edição).
+     O campo oculto #aluno_id_edicao controla o modo:
+       - Vazio   → INSERT (novo aluno)
+       - Preenchido → UPDATE (edição)
+     A função prepararEdicao() do conexao.js injeta o ID e os dados.
+============================================================ -->
+<section id="aba-cadastro" class="conteudo-secao">
+    <div class="secao-titulo">Cadastrar / Editar Aluno</div>
+
+    <div class="form-cadastro">
+        <!-- ID oculto de controle: vazio = INSERT, preenchido = UPDATE -->
+        <input type="hidden" id="aluno_id_edicao" value="">
+
+        <form id="formAluno" novalidate>
+            <div class="form-grid">
+
+                <!-- Nome — ocupa linha inteira -->
+                <div class="form-group full-width">
+                    <label for="nome">Nome Completo *</label>
+                    <input type="text" id="nome" placeholder="Nome do aluno" required autocomplete="name">
+                </div>
+
+                <!-- Data de Nascimento -->
+                <div class="form-group">
+                    <label for="data_nascimento">Data de Nascimento *</label>
+                    <input type="date" id="data_nascimento" required>
+                </div>
+
+                <!-- CPF -->
+                <div class="form-group">
+                    <label for="cpf">CPF</label>
+                    <input type="text" id="cpf" placeholder="000.000.000-00" autocomplete="off">
+                </div>
+
                 <!--
-                    tbody#tabelaChamada: populado pela função carregarListaChamada()
-                    do conexao.js. O conteúdo é recriado a cada chamada da função.
+                    Graduação Inicial — campo histórico.
+                    Gravado como 'faixa_inicial_cadastro' em 'alunos'.
+                    A graduação ATUAL do aluno vive em progresso_tecnico.faixa_atual.
                 -->
-                <tbody id="tabelaChamada"></tbody>
-            </table>
-        </div>
-    </div>
+                <div class="form-group full-width">
+                    <label for="faixa_inicial">Graduação no Cadastro</label>
+                    <select id="faixa_inicial">
+                        <option value="Branca">10º Gub — Branca</option>
+                        <option value="Ponta Amarela">9º Gub — Ponta Amarela</option>
+                        <option value="Amarela">8º Gub — Amarela</option>
+                        <option value="Ponta Verde">7º Gub — Ponta Verde</option>
+                        <option value="Verde">6º Gub — Verde</option>
+                        <option value="Ponta Azul">5º Gub — Ponta Azul</option>
+                        <option value="Azul">4º Gub — Azul</option>
+                        <option value="Ponta Vermelha">3º Gub — Ponta Vermelha</option>
+                        <option value="Vermelha">2º Gub — Vermelha</option>
+                        <option value="Ponta Preta">1º Gub — Ponta Preta</option>
+                    </select>
+                </div>
 
-    <!-- ============================================================
-         ABA 2: MATRÍCULA / CADASTRO DE ALUNOS
-         Formulário híbrido: opera em modo INSERT ou UPDATE dependendo
-         do campo oculto #aluno_id_edicao (controlado pelo conexao.js).
+                <!-- Tamanho Dobok -->
+                <div class="form-group">
+                    <label for="tamanho_dobok">Dobok (cm)</label>
+                    <input type="number" id="tamanho_dobok" placeholder="Ex: 160" min="80" max="220">
+                </div>
 
-         MODO INSERT: id_edicao vazio → cadastrarAluno() faz INSERT
-         MODO UPDATE: id_edicao preenchido → cadastrarAluno() faz UPDATE
+                <!-- Tamanho Faixa -->
+                <div class="form-group">
+                    <label for="tamanho_faixa">Faixa (cm)</label>
+                    <input type="number" id="tamanho_faixa" placeholder="Ex: 220" min="100" max="350">
+                </div>
 
-         A função prepararEdicao() (conexao.js) preenche os campos
-         e injeta o ID quando o usuário clica em ✏️ na chamada.
-    ============================================================ -->
-    <div id="aba-cadastro" class="conteudo-secao">
-        <h3>Cadastrar Novo Aluno</h3>
-        <!--
-            ATENÇÃO: havia um <form> duplicado no HTML original (bug).
-            Corrigido para um único form#formAluno com o listener no conexao.js.
-        -->
-        <form id="formAluno">
-            <!-- Campo oculto de controle: vazio = INSERT, preenchido = UPDATE -->
-            <input type="hidden" id="aluno_id_edicao" value="">
+                <!-- Observações — ocupa linha inteira -->
+                <div class="form-group full-width">
+                    <label for="observacoes">Histórico Médico / Observações</label>
+                    <textarea id="observacoes" rows="3" placeholder="Alergias, restrições físicas, etc."></textarea>
+                </div>
 
-            <div class="form-group">
-                <label>Nome Completo</label>
-                <input type="text" id="nome" required>
-            </div>
+                <!-- Upload de Foto -->
+                <div class="form-group full-width">
+                    <label for="foto_aluno">Foto do Aluno (Carteirinha/Certificado)</label>
+                    <input type="file" id="foto_aluno" accept="image/*">
+                </div>
 
-            <div class="form-group">
-                <label>Data de Nascimento</label>
-                <input type="date" id="data_nascimento" required>
-            </div>
-
-            <div class="form-group">
-                <label>CPF</label>
-                <input type="text" id="cpf" placeholder="000.000.000-00">
-            </div>
-
-            <!--
-                Graduação Atual (faixa_inicial):
-                Gravada no banco como 'faixa_inicial_cadastro'.
-                NÃO é a graduação corrente — para isso, use progresso_tecnico.faixa_atual.
-                Este campo é histórico: registra com qual faixa o aluno ingressou.
-            -->
-            <div class="form-group">
-                <label>Graduação Atual</label>
-                <select id="faixa_inicial">
-                    <option value="Branca">10º Gub - Branca</option>
-                    <option value="Ponta Amarela">9º Gub - Branca Ponta Amarela</option>
-                    <option value="Amarela">8º Gub - Amarela</option>
-                    <option value="Ponta Verde">7º Gub - Amarela Ponta Verde</option>
-                    <option value="Verde">6º Gub - Verde</option>
-                    <option value="Ponta Azul">5º Gub - Verde Ponta Azul</option>
-                    <option value="Azul">4º Gub - Azul</option>
-                    <option value="Ponta Vermelha">3º Gub - Azul Ponta Vermelha</option>
-                    <option value="Vermelha">2º Gub - Vermelha</option>
-                    <option value="Ponta Preta">1º Gub - Vermelha Ponta Preta</option>
-                </select>
-            </div>
-
-            <!-- Medidas do equipamento (cm) — gravadas como INTEGER no banco -->
-            <div class="form-group">
-                <label>Dobok (cm)</label>
-                <input type="number" id="tamanho_dobok">
-            </div>
-            <div class="form-group">
-                <label>Faixa (cm)</label>
-                <input type="number" id="tamanho_faixa">
-            </div>
-
-            <!-- Histórico médico / restrições de saúde -->
-            <div class="form-group">
-                <label>Histórico Médico</label>
-                <textarea id="observacoes" rows="3"></textarea>
-            </div>
-
-            <!-- Upload da foto para o Storage "avatars" do Supabase -->
-            <div class="form-group">
-                <label>Foto do Aluno (Para Carteirinha/Certificado)</label>
-                <input type="file" id="foto_aluno" accept="image/*">
-            </div>
+            </div><!-- /form-grid -->
 
             <!--
-                Texto do botão muda dinamicamente:
-                  "Gravar Aluno"      → modo INSERT (novo cadastro)
-                  "Salvar Alterações" → modo UPDATE (edição via prepararEdicao)
+                O texto do botão muda via JS:
+                  "Gravar Aluno"      → modo INSERT
+                  "Salvar Alterações" → modo UPDATE (após prepararEdicao())
             -->
-            <button type="submit" class="btn-submit">Gravar Aluno</button>
+            <button type="submit" class="btn-submit-cadastro">Gravar Aluno</button>
         </form>
     </div>
+</section>
 
-    <script>
-        /**
-         * Alterna visibilidade das abas do painel.
-         * Remove "ativa" de todas as seções e botões, depois aplica
-         * apenas na seção e botão clicados.
-         *
-         * @param {string} secaoId      - ID da seção a exibir (ex: 'aba-chamada')
-         * @param {Element} botaoClicado - Elemento <button> que disparou o evento
-         */
-        function alternarAba(secaoId, botaoClicado) {
-            // Remove a classe ativa de todas as seções de conteúdo
-            document.querySelectorAll('.conteudo-secao').forEach(s => s.classList.remove('ativa'));
-            // Remove a classe ativa de todos os botões de aba
-            document.querySelectorAll('.aba-botao').forEach(b => b.classList.remove('ativa'));
-            // Ativa apenas a seção e o botão correspondentes
-            document.getElementById(secaoId).classList.add('ativa');
-            botaoClicado.classList.add('ativa');
-        }
-    </script>
+<!--
+    ORDEM DE CARREGAMENTO (crítica):
+    1. auth.js   → define verificarSessao() e sanitizar()
+    2. Supabase  → define o namespace global "supabase"
+    3. conexao.js → usa "supabase" e as funções do auth.js
+    Inverter qualquer ordem causaria erros de referência.
+-->
+<script src="auth.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    // ============================================================
+    // GUARDA DE ROTA — bloqueia acesso não autenticado
+    // verificarSessao() lança erro + redireciona se inválido.
+    // O código abaixo SÓ executa se a sessão for válida.
+    // ============================================================
+    const sessao = verificarSessao();
+    document.getElementById('badge-operador').textContent =
+        `${sessao.nome} (${sessao.graduacao})`;
 
-    <!--
-        ORDEM DE CARREGAMENTO (crítica):
-        1. Supabase CDN: define o namespace global "supabase"
-        2. conexao.js: usa "supabase" para criar o cliente e registrar listeners
-        Inverter essa ordem causaria "supabase is not defined".
-    -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="conexao.js"></script>
+    // ============================================================
+    // ALTERNÂNCIA DE ABAS
+    // Remove "ativa" de todas as seções e botões,
+    // depois aplica apenas na seção e botão clicados.
+    // ============================================================
+    function alternarAba(secaoId, botaoClicado) {
+        document.querySelectorAll('.conteudo-secao').forEach(s => s.classList.remove('ativa'));
+        document.querySelectorAll('.aba-btn').forEach(b => b.classList.remove('ativa'));
+        document.getElementById(secaoId).classList.add('ativa');
+        botaoClicado.classList.add('ativa');
+    }
+</script>
+<script src="conexao.js"></script>
 </body>
 </html>

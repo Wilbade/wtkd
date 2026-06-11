@@ -4,38 +4,41 @@
 //            Centraliza CRUD de alunos, controle de presença diária e
 //            cálculo de elegibilidade para exames de graduação.
 //
-// DEPENDÊNCIA EXTERNA: @supabase/supabase-js@2 (carregado via CDN no HTML)
-// ESCOPO: Este arquivo é importado pelo painel.html e index.html.
-//         O exame.html possui seu próprio cliente Supabase inline.
+// DEPENDÊNCIAS (ordem de carregamento no HTML):
+//   1. auth.js       → sanitizar(), verificarSessao(), exibirToast()
+//   2. supabase CDN  → namespace global "supabase"
+//   3. conexao.js    → este arquivo (usa os anteriores)
+//
+// ESCOPO: Importado por painel.html.
+//         O exame.html possui cliente e lógica próprios (standalone).
+//
+// SEGURANÇA:
+//   - Dados do banco são inseridos via textContent (nunca innerHTML direto)
+//   - Botões de ação usam event delegation com data-* attributes (anti-XSS)
+//   - Nenhuma string de dados externos é interpolada em onclick= ou innerHTML
 // ============================================================================
 
 
 // ============================================================================
-// 1. CONFIGURAÇÃO, CREDENCIAIS E INICIALIZAÇÃO DO CLIENTE SUPABASE
+// 1. CONFIGURAÇÃO E INICIALIZAÇÃO DO CLIENTE SUPABASE
 // ============================================================================
 
-// URL pública do projeto no Supabase (não é segredo — é a URL da API REST)
-const urlBanco = 'https://pkbusphlutnodgconbbc.supabase.co';
-
-// Chave anônima publicável (anon key). Protegida pelas RLS policies no Supabase.
-// Nunca usar a "service_role key" aqui — ela burla todas as RLS.
+const urlBanco   = 'https://pkbusphlutnodgconbbc.supabase.co';
 const chaveBanco = 'sb_publishable_AXK9wUTEpz-rSdmXYn2SUA_u8O_u6P0';
 
-// Criação da instância global do cliente. Usada por todas as funções abaixo.
-// O nome "supabaseClient" evita conflito com o namespace "supabase" da própria lib CDN.
+// Instância global. "supabaseClient" evita colisão com o namespace "supabase" da lib CDN.
 const supabaseClient = supabase.createClient(urlBanco, chaveBanco);
 
 /**
- * Faz uma leitura simples na tabela 'alunos' ao inicializar a página para
- * confirmar que a conexão com o Supabase está ativa e as RLS policies permitem
- * a leitura. Qualquer erro aqui indica problema de credencial ou de rede.
+ * Valida a comunicação com o banco ao inicializar.
+ * Erro aqui indica problema de credencial, rede ou RLS policy bloqueando leitura.
  */
 async function testarBanco() {
-    const { data, error } = await supabaseClient.from('alunos').select('*');
+    const { error } = await supabaseClient.from('alunos').select('id').limit(1);
     if (error) {
         console.error("❌ Falha na conexão com o Supabase:", error.message);
     } else {
-        console.log("🚀 Supabase conectado e validado com sucesso!");
+        console.log("🚀 Supabase conectado com sucesso!");
     }
 }
 testarBanco();
@@ -46,240 +49,227 @@ testarBanco();
 // ============================================================================
 
 /**
- * Controla o envio do formulário da aba Matrícula. Decide dinamicamente
- * se vai realizar um novo INSERT ou atualizar um registro via UPDATE,
+ * Controla o envio do formulário de matrícula.
+ * Decide dinamicamente se fará INSERT (novo aluno) ou UPDATE (edição),
  * baseando-se na presença do campo oculto `aluno_id_edicao`.
  *
  * FLUXO:
- *   1. Lê o ID oculto de controle.
- *   2. Se houver foto, faz upload no Storage "avatars" e captura a URL pública.
- *   3. Monta o objeto `dadosAluno` com todos os campos do formulário.
- *   4. Executa INSERT (novo aluno) ou UPDATE (edição) conforme o ID.
- *   5. Em caso de sucesso, reseta o formulário e volta para a aba de chamada.
+ *   1. Lê o campo oculto #aluno_id_edicao (vazio = INSERT, preenchido = UPDATE)
+ *   2. Se houver nova foto, faz upload no bucket "avatars" do Storage
+ *   3. Monta o payload com os dados do formulário
+ *   4. Executa INSERT ou UPDATE conforme o ID
+ *   5. Em sucesso: reseta o formulário e volta para a aba de chamada
  *
- * @param {Event} event - Evento nativo de submit do formulário HTML.
+ * @param {Event} event - Evento de submit do formulário HTML
  */
 async function cadastrarAluno(event) {
-    event.preventDefault(); // Impede o recarregamento padrão da página (evita "?" na URL)
+    event.preventDefault();
 
-    // Lê o campo oculto injetado pela função prepararEdicao().
-    // Se estiver preenchido com um ID, o sistema opera em modo EDIÇÃO.
-    // Se estiver vazio, opera em modo CADASTRO (INSERT).
-    const idEdicao = document.getElementById('aluno_id_edicao').value;
+    const btnSubmit = document.querySelector('.btn-submit-cadastro');
+    if (btnSubmit) { btnSubmit.disabled = true; btnSubmit.textContent = 'Salvando...'; }
 
-    // Captura todos os campos textuais do formulário de matrícula
-    const nome            = document.getElementById('nome').value;
+    // Campo oculto de controle: vazio = novo cadastro, preenchido = edição
+    const idEdicao = document.getElementById('aluno_id_edicao').value.trim();
+
+    // Coleta campos do formulário
+    const nome            = document.getElementById('nome').value.trim();
     const data_nascimento = document.getElementById('data_nascimento').value;
-    const cpf             = document.getElementById('cpf').value;
+    const cpf             = document.getElementById('cpf').value.trim();
     const faixa_inicial   = document.getElementById('faixa_inicial').value;
     const tamanho_dobok   = document.getElementById('tamanho_dobok').value;
     const tamanho_faixa   = document.getElementById('tamanho_faixa').value;
-    const observacoes     = document.getElementById('observacoes').value;
+    const observacoes     = document.getElementById('observacoes').value.trim();
+    const arquivoFoto     = document.getElementById('foto_aluno').files[0];
 
-    // Captura o arquivo de imagem (se o usuário anexou uma foto)
-    const arquivoFoto = document.getElementById('foto_aluno').files[0];
-    let urlFotoPublica = null; // Inicializa vazia — será preenchida só se houver upload
+    // Validação básica no front-end
+    if (!nome) {
+        exibirToast('O nome do aluno é obrigatório.', 'aviso');
+        if (btnSubmit) { btnSubmit.disabled = false; btnSubmit.textContent = idEdicao ? 'Salvar Alterações' : 'Gravar Aluno'; }
+        return;
+    }
 
-    console.log("Iniciando persistência dos dados do aluno:", nome);
+    let urlFotoPublica = null;
 
-    // --- MODO EDIÇÃO: recupera a URL da foto antiga ---
-    // Se estamos editando e o usuário NÃO enviou nova foto, mantém a foto atual do banco.
+    // --- MODO EDIÇÃO: recupera URL da foto atual se não enviou nova ---
     if (idEdicao && !arquivoFoto) {
         const { data: alunoAtual } = await supabaseClient
             .from('alunos')
             .select('foto_url')
             .eq('id', idEdicao)
-            .single(); // Espera exatamente 1 linha (busca por PK)
+            .single();
 
         if (alunoAtual) urlFotoPublica = alunoAtual.foto_url;
     }
 
-    // --- ARMAZENAMENTO (STORAGE): upload da imagem para o bucket "avatars" ---
-    // Só executa se o usuário selecionou um arquivo de imagem no formulário.
+    // --- UPLOAD DE FOTO (se o usuário selecionou um arquivo) ---
     if (arquivoFoto) {
-        const extensao = arquivoFoto.name.split('.').pop();
+        const extensao       = arquivoFoto.name.split('.').pop().toLowerCase();
+        const nomeUnico      = `${Date.now()}_${nome.replace(/\s+/g, '_').toLowerCase()}.${extensao}`;
 
-        // Gera um nome de arquivo único usando timestamp + nome do aluno sem espaços,
-        // evitando colisão de nomes no bucket de armazenamento.
-        const nomeArquivoUnico = `${Date.now()}_${nome.replace(/\s+/g, '_').toLowerCase()}.${extensao}`;
-
-        console.log("Enviando foto para o Storage Bucket 'avatars':", nomeArquivoUnico);
+        console.log("📸 Enviando foto para Storage 'avatars':", nomeUnico);
 
         const { error: uploadError } = await supabaseClient.storage
             .from('avatars')
-            .upload(nomeArquivoUnico, arquivoFoto, {
-                cacheControl: '3600', // Cache de 1h para otimizar requisições repetidas
-                upsert: true          // Substitui se já existir (prevenção de duplicata)
-            });
+            .upload(nomeUnico, arquivoFoto, { cacheControl: '3600', upsert: true });
 
         if (uploadError) {
-            // Avisa o usuário mas NÃO aborta o cadastro — o aluno é salvo sem foto
-            console.error("❌ Falha ao subir imagem para o Storage:", uploadError.message);
-            alert("Aviso: Não foi possível carregar a nova foto. Detalhes: " + uploadError.message);
+            console.error("❌ Falha no upload:", uploadError.message);
+            exibirToast('Aviso: Foto não pôde ser carregada. Aluno salvo sem foto.', 'aviso');
         } else {
-            // Upload bem-sucedido: captura a URL pública permanente da imagem
             const { data: publicUrlData } = supabaseClient.storage
                 .from('avatars')
-                .getPublicUrl(nomeArquivoUnico);
-
+                .getPublicUrl(nomeUnico);
             urlFotoPublica = publicUrlData.publicUrl;
-            console.log("🔥 URL pública gerada com sucesso:", urlFotoPublica);
+            console.log("✅ URL pública:", urlFotoPublica);
         }
     }
 
-    // --- MONTAGEM DO PAYLOAD ---
-    // Objeto estruturado com os campos da tabela 'alunos' no Supabase.
-    // Campos numéricos usam parseInt() e fallback null para evitar strings vazias no banco.
+    // --- PAYLOAD DA TABELA 'alunos' ---
     const dadosAluno = {
-        nome:                    nome,
-        data_nascimento:         data_nascimento,
-        cpf:                     cpf ? cpf : null,          // null se CPF não informado
-        faixa_inicial_cadastro:  faixa_inicial,             // Graduação no momento da matrícula
-        tamanho_dobok:           tamanho_dobok ? parseInt(tamanho_dobok) : null,
-        tamanho_faixa:           tamanho_faixa ? parseInt(tamanho_faixa) : null,
-        observacoes:             observacoes,
-        foto_url:                urlFotoPublica              // URL do Storage ou null
+        nome,
+        data_nascimento,
+        cpf:                    cpf       || null,
+        faixa_inicial_cadastro: faixa_inicial,       // Histórico — não é a faixa atual
+        tamanho_dobok:          tamanho_dobok ? parseInt(tamanho_dobok, 10) : null,
+        tamanho_faixa:          tamanho_faixa ? parseInt(tamanho_faixa, 10) : null,
+        observacoes:            observacoes   || null,
+        foto_url:               urlFotoPublica
     };
 
     let resposta;
 
-    // --- EXECUÇÃO NO SUPABASE ---
-    // Decide entre INSERT (novo) e UPDATE (edição) com base no ID de controle.
     if (idEdicao) {
-        console.log("Executando UPDATE para o ID:", idEdicao);
+        console.log("✏️ UPDATE para ID:", idEdicao);
         resposta = await supabaseClient.from('alunos').update(dadosAluno).eq('id', idEdicao);
     } else {
-        console.log("Executando INSERT para novo registro");
+        console.log("➕ INSERT novo aluno");
         resposta = await supabaseClient.from('alunos').insert([dadosAluno]);
     }
 
     if (resposta.error) {
-        console.error("❌ Erro nas operações de banco de dados:", resposta.error.message);
-        alert("Erro ao salvar os dados no Supabase: " + resposta.error.message);
+        console.error("❌ Erro no banco:", resposta.error.message);
+        exibirToast(`Erro ao salvar: ${resposta.error.message}`, 'erro', 6000);
     } else {
-        alert(idEdicao ? "Cadastro atualizado com sucesso!" : "Aluno cadastrado com sucesso!");
+        exibirToast(
+            idEdicao ? 'Cadastro atualizado com sucesso!' : 'Aluno cadastrado com sucesso!',
+            'sucesso'
+        );
 
-        // Reseta o formulário e limpa o campo oculto de controle de estado
+        // Reseta o formulário e o campo de controle de modo
         document.getElementById('formAluno').reset();
-        document.getElementById('aluno_id_edicao').value = "";
+        document.getElementById('aluno_id_edicao').value = '';
 
-        // Restaura o texto original do botão de envio
-        document.querySelector('.btn-submit').innerText = "Gravar Aluno";
+        if (btnSubmit) btnSubmit.textContent = 'Gravar Aluno';
 
-        // Volta a exibir a aba de Chamada Diária automaticamente
-        if (typeof alternarAba === "function") {
-            alternarAba('aba-chamada', document.querySelectorAll('.aba-botao')[0]);
+        // Volta para a aba de chamada
+        if (typeof alternarAba === 'function') {
+            alternarAba('aba-chamada', document.querySelectorAll('.aba-btn')[0]);
         }
 
-        // Recarrega a tabela de chamada para refletir o aluno recém-cadastrado
-        carregarListaChamada();
+        // Recarrega a lista para refletir o aluno salvo
+        setTimeout(carregarListaChamada, 500);
+    }
+
+    if (btnSubmit) {
+        btnSubmit.disabled    = false;
+        btnSubmit.textContent = idEdicao ? 'Salvar Alterações' : 'Gravar Aluno';
     }
 }
 
 
 // ============================================================================
-// 3. AUXILIAR DE INTERFACE: CARGA E PREPARO DOS DADOS DE EDIÇÃO
+// 3. AUXILIAR DE INTERFACE: PREPARO DOS DADOS DE EDIÇÃO
 // ============================================================================
 
 /**
- * Preenche o formulário de matrícula com os dados atuais de um aluno
- * para que o usuário possa editar. Os dados chegam diretamente do atributo
- * `onclick` da linha da tabela de chamada (strings dinâmicas do HTML).
+ * Preenche o formulário de matrícula com os dados de um aluno existente.
+ * Recebe um objeto dataset (de data-* attributes) em vez de N strings
+ * individuais — elimina a necessidade de inline onclick com strings escapadas.
  *
- * ATENÇÃO: O campo oculto `aluno_id_edicao` é a chave que sinaliza
- * para cadastrarAluno() que estamos em modo EDIÇÃO (UPDATE) e não INSERT.
+ * CHAMADO POR: event delegation no tbody#tabelaChamada (veja seção 5).
  *
- * @param {string} id         - UUID do aluno (chave primária da tabela)
- * @param {string} nome       - Nome completo
- * @param {string} nascimento - Data no formato YYYY-MM-DD
- * @param {string} cpf        - CPF ou "null" como string
- * @param {string} dobok      - Tamanho do dobok em cm ou "null"
- * @param {string} faixa      - Tamanho da faixa em cm ou "null"
- * @param {string} obs        - Observações / histórico médico
+ * @param {DOMStringMap} ds - dataset do elemento com [data-action="editar"]
  */
-function prepararEdicao(id, nome, nascimento, cpf, dobok, faixa, obs) {
-    // Injeta o ID no campo oculto — isso ativa o modo EDIÇÃO em cadastrarAluno()
-    document.getElementById('aluno_id_edicao').value = id;
-    document.getElementById('nome').value            = nome;
-    document.getElementById('data_nascimento').value = nascimento;
+function prepararEdicao(ds) {
+    // Injeta o ID no campo oculto — ativa modo EDIÇÃO em cadastrarAluno()
+    document.getElementById('aluno_id_edicao').value  = ds.id   || '';
+    document.getElementById('nome').value             = ds.nome || '';
+    document.getElementById('data_nascimento').value  = ds.nasc || '';
 
-    // Filtros para não exibir a string literal "null" nos inputs visuais
-    document.getElementById('cpf').value           = (cpf   === "null" || !cpf)   ? "" : cpf;
-    document.getElementById('tamanho_dobok').value = (dobok === "null" || !dobok) ? "" : dobok;
-    document.getElementById('tamanho_faixa').value = (faixa === "null" || !faixa) ? "" : faixa;
-    document.getElementById('observacoes').value   = (obs   === "null" || !obs)   ? "" : obs;
+    // Filtros para não exibir a string "null" nos inputs textuais
+    document.getElementById('cpf').value          = (ds.cpf   && ds.cpf   !== 'null') ? ds.cpf   : '';
+    document.getElementById('tamanho_dobok').value = (ds.dobok && ds.dobok !== 'null') ? ds.dobok : '';
+    document.getElementById('tamanho_faixa').value = (ds.faixa && ds.faixa !== 'null') ? ds.faixa : '';
+    document.getElementById('observacoes').value   = (ds.obs   && ds.obs   !== 'null') ? ds.obs   : '';
 
-    // Altera o label do botão para indicar que estamos no modo de alteração
-    document.querySelector('.btn-submit').innerText = "Salvar Alterações";
+    // Altera o label do botão para indicar modo de alteração
+    const btnSubmit = document.querySelector('.btn-submit-cadastro');
+    if (btnSubmit) btnSubmit.textContent = 'Salvar Alterações';
 
-    // Navega visualmente para a aba de Matrícula (índice 1)
-    if (typeof alternarAba === "function") {
-        alternarAba('aba-cadastro', document.querySelectorAll('.aba-botao')[1]);
+    // Navega para a aba de Matrícula
+    if (typeof alternarAba === 'function') {
+        alternarAba('aba-cadastro', document.querySelectorAll('.aba-btn')[1]);
     }
 }
 
 
 // ============================================================================
-// 4. REGRAS DE NEGÓCIO: METAS DE HORAS PARA EXAME DE GRADUAÇÃO
+// 4. REGRAS DE NEGÓCIO: METAS DE HORAS PARA EXAME
 // ============================================================================
 
 /**
- * Calcula a carga horária mínima de treinos que um aluno precisa acumular
- * para ser considerado APTO a realizar o exame de graduação.
+ * Calcula a carga horária mínima de treinos para o aluno ser considerado APTO.
  *
- * REGRA PEDAGÓGICA:
- *  - Ponta Preta (pré-faixa preta): sempre 104h independente de idade.
- *  - Crianças (4–10 anos): metas menores nas faixas iniciais (78h) e intermediárias (104h).
- *  - Adultos/Jovens (>10 anos): metas progressivas (52h → 52h → 78h).
+ * REGRA:
+ *   - Ponta Preta: sempre 104h (independente de idade)
+ *   - Crianças (4–10 anos): metas reduzidas nas faixas iniciais
+ *   - Adultos/Jovens (>10 anos): metas progressivas por faixa
  *
- * @param {number} idade  - Idade calculada em anos completos
- * @param {string} faixa  - Graduação atual (ex: 'Branca', 'Verde', 'Ponta Preta')
- * @returns {number}      - Meta em horas (ex: 52, 78 ou 104)
+ * @param {number} idade  - Idade em anos completos
+ * @param {string} faixa  - Graduação atual (ex: 'Verde', 'Ponta Preta')
+ * @returns {number}      - Meta de horas (52, 78 ou 104)
  */
 function calcularMetaHoras(idade, faixa) {
-    // Caso especial: pré-faixa preta exige o dobro de horas para todos
     if (faixa === 'Ponta Preta') return 104;
 
     if (idade >= 4 && idade <= 10) {
-        // Crianças nas faixas iniciais têm meta reduzida
         if (['Branca', 'Ponta Amarela', 'Amarela', 'Ponta Verde'].includes(faixa)) return 78;
-        return 104; // Crianças em faixas intermediárias/avançadas: meta padrão
+        return 104;
     } else {
-        // Adultos e jovens: faixas iniciais e intermediárias com meta menor
         if (['Branca', 'Ponta Amarela', 'Amarela', 'Ponta Verde'].includes(faixa)) return 52;
         if (['Verde', 'Ponta Azul'].includes(faixa)) return 52;
-        return 78; // Faixas avançadas (Azul, Ponta Vermelha, Vermelha)
+        return 78;
     }
 }
 
 
 // ============================================================================
-// 5. OPERAÇÕES DE FLUXO: CONTROLE DA LISTA DE CHAMADA DIÁRIA
+// 5. OPERAÇÕES DE FLUXO: LISTA DE CHAMADA DIÁRIA
 // ============================================================================
 
 /**
- * Carrega e renderiza a tabela de chamada do painel com todos os alunos ativos.
- * Para cada aluno exibe: foto, nome, idade, graduação atual, horas acumuladas,
- * selo de aptidão para o exame, botão de edição e botão de presença.
+ * Carrega e renderiza a tabela de chamada com todos os alunos ativos.
  *
- * QUERIES EXECUTADAS:
- *  1. Tabela 'alunos' + JOIN com 'progresso_tecnico' (faixa_atual + horas acumuladas)
- *  2. Tabela 'registro_presencas' filtrada pela data selecionada
+ * QUERIES:
+ *   1. alunos + JOIN progresso_tecnico → faixa_atual e horas acumuladas
+ *   2. registro_presencas filtrado pela data → quais alunos já têm presença
  *
- * A data padrão é o dia de hoje (new Date()). O campo de data no HTML
- * permite alterar manualmente para consultar chamadas de outros dias.
+ * SEGURANÇA ANTI-XSS:
+ *   - Todos os dados do banco são atribuídos via .textContent (nunca innerHTML)
+ *   - Os botões de ação usam data-* attributes; a lógica fica no listener
+ *     delegado no tbody (não no onclick= inline)
  */
 async function carregarListaChamada() {
-    // Pega o campo de data no HTML e define hoje como valor padrão
     const campoData = document.getElementById('data_chamada');
-    if (campoData && !campoData.value) {
-        campoData.value = new Date().toISOString().split('T')[0]; // Formato: YYYY-MM-DD
+    if (!campoData) return; // Proteção: elemento pode não existir em outras telas
+
+    // Define a data padrão como hoje se o campo estiver vazio
+    if (!campoData.value) {
+        campoData.value = new Date().toISOString().split('T')[0];
     }
     const dataSelecionada = campoData.value;
 
-    // --- QUERY 1: Busca todos os alunos com status "ativo" ---
-    // O JOIN com 'progresso_tecnico' traz faixa_atual e horas_acumuladas
-    // de uma tabela separada (relação 1:N — um aluno, muitos registros de progresso).
+    // --- QUERY 1: Alunos ativos com progresso técnico via JOIN ---
     const { data: listaAlunos, error: erroAlunos } = await supabaseClient
         .from('alunos')
         .select(`
@@ -293,140 +283,223 @@ async function carregarListaChamada() {
             foto_url,
             progresso_tecnico (faixa_atual, horas_acumuladas)
         `)
-        .eq('status', 'ativo')               // Ignora alunos inativos/cancelados
-        .order('nome', { ascending: true });  // Ordem alfabética para facilitar chamada
+        .eq('status', 'ativo')
+        .order('nome', { ascending: true });
 
-    // --- QUERY 2: Busca quais alunos já têm presença registrada hoje ---
-    // Usado para alternar o botão entre "Registrar" e "Registrada" (lock)
+    // --- QUERY 2: Presenças do dia selecionado ---
     const { data: presencasDoDia, error: erroPresencas } = await supabaseClient
         .from('registro_presencas')
         .select('aluno_id')
         .eq('data_aula', dataSelecionada);
 
     if (erroAlunos || erroPresencas) {
-        console.error("❌ Erro ao buscar dados estruturados:", erroAlunos?.message || erroPresencas?.message);
+        console.error("❌ Erro ao buscar dados:", erroAlunos?.message || erroPresencas?.message);
         return;
     }
 
-    // Cria um array plano de IDs para facilitar o includes() no loop abaixo
+    // Array de IDs com presença registrada hoje (para o includes() abaixo)
     const IDsComPresenca = presencasDoDia.map(p => p.aluno_id);
 
     const tabela = document.getElementById('tabelaChamada');
-    if (!tabela) return; // Sai silenciosamente se a tabela não existir na página atual
-    tabela.innerHTML = ''; // Limpa o conteúdo anterior antes de re-renderizar
+    if (!tabela) return;
+    tabela.innerHTML = ''; // Limpa iteração anterior
 
     listaAlunos.forEach(aluno => {
+
         // --- CÁLCULO DE IDADE ---
-        // Usa apenas o ano para evitar problemas com fuso horário em new Date(string)
-        let idadeTexto = "N/A";
+        let idadeTexto  = 'N/A';
         let idadeNumero = 0;
 
         if (aluno.data_nascimento) {
-            const anoNascimento = new Date(aluno.data_nascimento).getFullYear();
-            const anoAtual      = new Date().getFullYear();
-            idadeNumero = anoAtual - anoNascimento;
-            // Sanidade: evita exibir idades absurdas (menores de 0 ou maiores de 120)
+            const anoNasc  = new Date(aluno.data_nascimento).getFullYear();
+            const anoAtual = new Date().getFullYear();
+            idadeNumero    = anoAtual - anoNasc;
             if (!isNaN(idadeNumero) && idadeNumero > 0 && idadeNumero < 120) {
                 idadeTexto = `${idadeNumero} anos`;
             }
         }
 
-        // --- EXTRAÇÃO DO PROGRESSO TÉCNICO (JOIN) ---
-        // progresso_tecnico é um array (relação 1:N). Usa [0] para pegar o registro mais recente.
-        // Se não houver registro, assume Branca com 0 horas como estado inicial.
-        const progresso = aluno.progresso_tecnico && aluno.progresso_tecnico[0]
+        // --- PROGRESSO TÉCNICO (JOIN) ---
+        // Usa [0] do array retornado pelo JOIN (relação 1:N).
+        // Fallback: Branca + 0h se não houver registro de progresso.
+        const progresso = (aluno.progresso_tecnico && aluno.progresso_tecnico[0])
             ? aluno.progresso_tecnico[0]
             : { faixa_atual: 'Branca', horas_acumuladas: 0 };
 
-        const jaTemPresenca = IDsComPresenca.includes(aluno.id);
-        const metaHoras     = calcularMetaHoras(idadeNumero, progresso.faixa_atual);
+        const jaTemPresenca  = IDsComPresenca.includes(aluno.id);
+        const metaHoras      = calcularMetaHoras(idadeNumero, progresso.faixa_atual);
         const horasTreinadas = progresso.horas_acumuladas;
+        const estaApto       = horasTreinadas >= metaHoras;
 
-        // --- LÓGICA DE APTIDÃO PARA EXAME ---
-        // Aluno com horas >= meta recebe cor verde e o selo "🔥 Apto"
-        // Aluno sem horas suficientes recebe cor vermelha e a quantidade restante
-        let estiloHoras = `font-weight: bold; color: #ff1a1a;`;
-        let seloApto    = '';
+        // ============================================================
+        // CONSTRUÇÃO DO DOM VIA createElement + textContent (anti-XSS)
+        // Nenhum dado do banco é interpolado em innerHTML ou onclick=
+        // ============================================================
+        const tr = document.createElement('tr');
 
-        if (horasTreinadas >= metaHoras) {
-            estiloHoras = `font-weight: bold; color: #30d158; background: #1c421c; padding: 2px 6px; border-radius: 4px; border: 1px solid #30d158;`;
-            seloApto    = `<span style="font-size: 11px; color: #30d158; display: block; margin-top: 4px;">🔥 Apto</span>`;
-        } else {
-            seloApto = `<span style="font-size: 11px; color: #636366; display: block; margin-top: 4px;">Faltam ${metaHoras - horasTreinadas}h</span>`;
-        }
-
-        // --- RENDERIZAÇÃO DO AVATAR ---
-        // Exibe a foto do Storage se disponível, ou um ícone placeholder
-        let htmlAvatar = '';
+        // --- Coluna 1: Avatar ---
+        const tdFoto = document.createElement('td');
         if (aluno.foto_url) {
-            htmlAvatar = `<img src="${aluno.foto_url}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid #333;" alt="Foto">`;
+            const img = document.createElement('img');
+            img.src   = aluno.foto_url;                // URL segura (não é input do usuário)
+            img.alt   = 'Foto';
+            img.style.cssText = 'width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #333;';
+            tdFoto.appendChild(img);
         } else {
-            htmlAvatar = `<div style="width: 36px; height: 36px; border-radius: 50%; background: #222; display: flex; align-items: center; justify-content: center; border: 1px solid #333; color: #636366; font-size: 16px;">👤</div>`;
+            tdFoto.textContent = '👤';
+            tdFoto.style.cssText = 'font-size:20px;';
         }
 
-        // --- BOTÃO DE PRESENÇA ---
-        // Se o aluno já tem presença hoje: exibe lacre (botão desabilitado visualmente)
-        // Se não tem: exibe botão funcional que chama registrarPresenca()
-        let botaodeAcao = '';
+        // --- Coluna 2: Nome ---
+        const tdNome  = document.createElement('td');
+        tdNome.style.fontWeight = '600';
+        tdNome.textContent = aluno.nome;              // textContent: seguro, não interpreta HTML
+
+        // --- Coluna 3: Idade ---
+        const tdIdade = document.createElement('td');
+        tdIdade.style.color = '#a0a0a0';
+        tdIdade.textContent = idadeTexto;
+
+        // --- Coluna 4: Graduação ---
+        const tdGrad  = document.createElement('td');
+        const spanGrad = document.createElement('span');
+        spanGrad.style.cssText = 'background:#222;padding:4px 8px;border-radius:4px;border:1px solid #333;';
+        spanGrad.textContent = `🥋 ${progresso.faixa_atual}`;
+        tdGrad.appendChild(spanGrad);
+
+        // --- Coluna 5: Horas + Selo de Aptidão ---
+        const tdHoras = document.createElement('td');
+
+        const spanHoras = document.createElement('span');
+        if (estaApto) {
+            spanHoras.style.cssText = 'font-weight:bold;color:#30d158;background:#1c421c;padding:2px 6px;border-radius:4px;border:1px solid #30d158;';
+        } else {
+            spanHoras.style.cssText = 'font-weight:bold;color:#ff1a1a;';
+        }
+        spanHoras.textContent = `${horasTreinadas}h`;
+
+        const spanSelo = document.createElement('span');
+        spanSelo.style.cssText = 'font-size:11px;display:block;margin-top:4px;';
+        if (estaApto) {
+            spanSelo.style.color  = '#30d158';
+            spanSelo.textContent  = '🔥 Apto';
+        } else {
+            spanSelo.style.color  = '#636366';
+            spanSelo.textContent  = `Faltam ${metaHoras - horasTreinadas}h`;
+        }
+
+        tdHoras.appendChild(spanHoras);
+        tdHoras.appendChild(spanSelo);
+
+        // --- Coluna 6: Botão Editar ---
+        // ANTI-XSS: Dados do aluno ficam em data-* attributes,
+        // NÃO em strings de onclick=. O listener delegado abaixo lê o dataset.
+        const tdEditar = document.createElement('td');
+        tdEditar.style.textAlign = 'center';
+
+        const btnEditar = document.createElement('button');
+        btnEditar.textContent    = '✏️';
+        btnEditar.title          = 'Editar Cadastro';
+        btnEditar.style.cssText  = 'background:none;border:none;cursor:pointer;font-size:18px;padding:4px;';
+        btnEditar.dataset.action = 'editar';
+
+        // Dados sensíveis em data-* (nunca em onclick=)
+        btnEditar.dataset.id    = aluno.id;
+        btnEditar.dataset.nome  = aluno.nome;
+        btnEditar.dataset.nasc  = aluno.data_nascimento || '';
+        btnEditar.dataset.cpf   = aluno.cpf             || '';
+        btnEditar.dataset.dobok = aluno.tamanho_dobok   || '';
+        btnEditar.dataset.faixa = aluno.tamanho_faixa   || '';
+        btnEditar.dataset.obs   = aluno.observacoes     || '';
+
+        tdEditar.appendChild(btnEditar);
+
+        // --- Coluna 7: Botão de Presença ---
+        const tdPresenca = document.createElement('td');
+        tdPresenca.style.textAlign = 'right';
+
         if (jaTemPresenca) {
-            botaodeAcao = `<span style="padding: 6px 12px; font-size: 12px; background: #1c1c1e; color: #8e8e93; border: 1px solid #2c2c2e; border-radius: 4px; display: inline-block;">🔒 Registrada</span>`;
+            const lacre = document.createElement('span');
+            lacre.style.cssText = 'padding:6px 12px;font-size:12px;background:#1c1c1e;color:#8e8e93;border:1px solid #2c2c2e;border-radius:4px;display:inline-block;';
+            lacre.textContent   = '🔒 Registrada';
+            tdPresenca.appendChild(lacre);
         } else {
-            botaodeAcao = `<button onclick="registrarPresenca('${aluno.id}')" style="padding: 6px 12px; font-size: 12px; background: #2c421c; color: #30d158; border: 1px solid #1c421c; border-radius: 4px; cursor: pointer; font-weight: bold;">✔ Presença</button>`;
+            const btnPresenca        = document.createElement('button');
+            btnPresenca.textContent  = '✔ Presença';
+            btnPresenca.style.cssText = 'padding:6px 12px;font-size:12px;background:#2c421c;color:#30d158;border:1px solid #1c421c;border-radius:4px;cursor:pointer;font-weight:bold;';
+            btnPresenca.dataset.action  = 'presenca';
+            btnPresenca.dataset.alunoId = aluno.id;
+            tdPresenca.appendChild(btnPresenca);
         }
 
-        // --- ESCAPE DE STRINGS PARA INLINE onclick ---
-        // Aspas simples no nome ou observações quebrariam o atributo onclick do HTML.
-        // O replace aqui converte as aspas em aspas escapadas (\')
-        const nomeEscapado = aluno.nome.replace(/'/g, "\\'");
-        const obsEscapada  = aluno.observacoes
-            ? aluno.observacoes.replace(/'/g, "\\'").replace(/\n/g, " ")
-            : "";
+        // --- Monta a linha ---
+        tr.appendChild(tdFoto);
+        tr.appendChild(tdNome);
+        tr.appendChild(tdIdade);
+        tr.appendChild(tdGrad);
+        tr.appendChild(tdHoras);
+        tr.appendChild(tdEditar);
+        tr.appendChild(tdPresenca);
 
-        // --- MONTAGEM DA LINHA DA TABELA ---
-        const linha = document.createElement('tr');
-        linha.style.borderBottom = "1px solid #262626";
-
-        linha.innerHTML = `
-            <td style="padding: 12px 8px;">${htmlAvatar}</td>
-            <td style="padding: 12px 8px; font-weight: 600;">${aluno.nome}</td>
-            <td style="padding: 12px 8px; color: #a0a0a0;">${idadeTexto}</td>
-            <td style="padding: 12px 8px;"><span style="background: #222; padding: 4px 8px; border-radius: 4px; border: 1px solid #333;">🥋 ${progresso.faixa_atual}</span></td>
-            <td style="padding: 12px 8px;"><span style="${estiloHoras}">${horasTreinadas}h</span>${seloApto}</td>
-            <td style="padding: 12px 8px; text-align: center;">
-                <button onclick="prepararEdicao('${aluno.id}', '${nomeEscapado}', '${aluno.data_nascimento}', '${aluno.cpf}', '${aluno.tamanho_dobok}', '${aluno.tamanho_faixa}', '${obsEscapada}')" style="background: none; border: none; cursor: pointer; font-size: 16px;" title="Editar Cadastro">✏️</button>
-            </td>
-            <td style="padding: 12px 8px; text-align: right;">${botaodeAcao}</td>
-        `;
-        tabela.appendChild(linha);
+        tabela.appendChild(tr);
     });
 }
 
 
 // ============================================================================
-// 6. OPERAÇÕES DE FLUXO: GRAVAÇÃO DE PRESENÇAS E CONTROLE DE DUPLICIDADE
+// 6. EVENT DELEGATION NO TBODY — elimina onClick inline
+//
+// Em vez de onclick="prepararEdicao(...)" ou onclick="registrarPresenca(...)"
+// no HTML gerado, usamos um único listener no elemento pai (tabela).
+// Isso é mais seguro (nenhuma string de dados externa em atributos de evento)
+// e mais eficiente (1 listener para N botões).
+// ============================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    const tabelaChamada = document.getElementById('tabelaChamada');
+
+    if (tabelaChamada) {
+        tabelaChamada.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-action]');
+            if (!btn) return; // Clique fora de botões de ação
+
+            if (btn.dataset.action === 'editar') {
+                // Passa o dataset completo para prepararEdicao()
+                prepararEdicao(btn.dataset);
+            }
+
+            if (btn.dataset.action === 'presenca') {
+                registrarPresenca(btn.dataset.alunoId);
+            }
+        });
+    }
+});
+
+
+// ============================================================================
+// 7. OPERAÇÕES DE FLUXO: GRAVAÇÃO DE PRESENÇAS COM ANTI-DUPLICIDADE
 // ============================================================================
 
 /**
- * Registra a presença de um aluno na data selecionada no painel.
- * Antes de inserir, verifica se já existe registro para evitar duplicidade.
+ * Registra a presença de um aluno na data selecionada.
+ * Verifica duplicidade antes de inserir (busca aluno_id + data_aula).
  *
- * REGRA: cada aluno pode ter no máximo 1 presença por data_aula.
- * A verificação é feita em duas colunas: aluno_id + data_aula.
- *
- * NOTA: horas_aula está fixo em 1 (1 treino = 1 hora). Pode ser parametrizado
- * futuramente se o dojang adotar aulas de durações variadas.
- *
- * @param {string} alunoId - UUID do aluno (vem do onclick da linha da tabela)
+ * @param {string} alunoId - UUID do aluno (vem do data-aluno-id do botão)
  */
 async function registrarPresenca(alunoId) {
-    const dataAula = document.getElementById('data_chamada').value;
+    const dataAula = document.getElementById('data_chamada')?.value;
+
     if (!dataAula) {
-        alert("Por favor, selecione uma data.");
+        exibirToast('Selecione uma data de aula antes de registrar.', 'aviso');
+        return;
+    }
+
+    // Validação básica do UUID antes de fazer a query
+    if (!validarUUID(alunoId)) {
+        console.error('UUID inválido em registrarPresenca:', alunoId);
         return;
     }
 
     // --- VERIFICAÇÃO DE DUPLICIDADE ---
-    // Consulta se já existe um registro com a combinação aluno_id + data_aula
     const { data: presencaExistente } = await supabaseClient
         .from('registro_presencas')
         .select('id')
@@ -434,66 +507,50 @@ async function registrarPresenca(alunoId) {
         .eq('data_aula', dataAula);
 
     if (presencaExistente && presencaExistente.length > 0) {
-        alert("⚠️ Este aluno já tem presença hoje!");
-        return; // Aborta sem fazer INSERT duplicado
+        exibirToast('⚠️ Este aluno já tem presença registrada hoje!', 'aviso');
+        return;
     }
 
-    // --- INSERÇÃO DA PRESENÇA ---
-    // horas_aula: 1 = 1 hora de treino (unidade padrão do dojang)
+    // --- INSERT DE PRESENÇA ---
+    // horas_aula: 1 = 1 treino = 1 hora (padrão do dojang)
     const { error } = await supabaseClient
         .from('registro_presencas')
         .insert([{ aluno_id: alunoId, data_aula: dataAula, horas_aula: 1 }]);
 
     if (error) {
-        alert("Erro: " + error.message);
+        exibirToast(`Erro ao registrar: ${error.message}`, 'erro', 5000);
     } else {
-        // Recarrega a tabela inteira para refletir o estado atualizado
-        // (botão muda de "✔ Presença" para "🔒 Registrada")
+        // Recarrega a tabela para refletir o botão "Registrada"
         carregarListaChamada();
     }
 }
 
 
 // ============================================================================
-// 7. MAPEAMENTO E CONFIGURAÇÃO DOS ESCUTADORES DE EVENTOS DO SISTEMA (DOM)
+// 8. INICIALIZAÇÃO DO SISTEMA (DOM Ready)
 // ============================================================================
 
-/**
- * Inicialização principal acionada quando o DOM estiver completamente carregado.
- * Usa uma trava de segurança para verificar se a tabela de chamada existe na
- * página atual antes de registrar os listeners — isso permite que este mesmo
- * arquivo seja carregado em páginas sem a tela de painel (ex: index.html)
- * sem causar erros de elementos não encontrados.
- */
 document.addEventListener('DOMContentLoaded', () => {
     const tabelaExistente = document.getElementById('tabelaChamada');
 
     if (tabelaExistente) {
-        // --- TELA DO PAINEL (painel.html) ---
-        console.log("📅 Tela de Painel detectada. Inicializando motores da chamada...");
+        console.log("📅 Painel detectado. Iniciando chamada...");
 
-        // Carga inicial da lista assim que o DOM estiver pronto
+        // Carga inicial da chamada
         carregarListaChamada();
 
         // Listener do formulário de cadastro/edição
         const form = document.getElementById('formAluno');
         if (form) {
             form.addEventListener('submit', cadastrarAluno);
-            // Após o submit, aguarda 1s e recarrega a lista para refletir o novo aluno
-            form.addEventListener('submit', () => {
-                setTimeout(carregarListaChamada, 1000);
-            });
         }
 
-        // Listener do campo de data: recarrega a chamada sempre que o dia mudar
+        // Atualiza a lista quando o usuário muda a data
         const campoData = document.getElementById('data_chamada');
         if (campoData) {
             campoData.addEventListener('change', carregarListaChamada);
         }
     } else {
-        // --- OUTRAS TELAS (index.html, etc.) ---
-        // O arquivo foi carregado mas a tela de painel não está presente.
-        // Nenhuma ação necessária — apenas log informativo.
-        console.log("🏠 Tela institucional detectada. Motores do painel em espera.");
+        console.log("🏠 Tela sem painel. Conexao.js em espera.");
     }
 });

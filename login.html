@@ -3,89 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WTKD — Acesso à Banca de Exame</title>
-
-    <!--
-        Supabase JS v2 carregado via CDN.
-        Usado aqui exclusivamente para autenticação (auth.signInWithPassword).
-        NÃO importamos conexao.js nesta página pois a autenticação é
-        um fluxo independente do painel de chamada/cadastro.
-    -->
+    <title>WTKD — Acesso ao Sistema</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+    <!--
+        auth.js carregado primeiro para disponibilizar resolverDestino().
+        Não chamamos verificarSessao() aqui pois esta é a tela de LOGIN
+        (entrada, não protegida).
+    -->
+    <script src="auth.js"></script>
     <style>
-        /* Reset mínimo e fonte padrão */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial', sans-serif; }
+        /* ======================================================
+           DESIGN SYSTEM — Tokens globais
+        ====================================================== */
+        :root {
+            --primary:     #ff1a1a;
+            --accent:      #ff9f0a;
+            --dark-bg:     #111111;
+            --card-bg:     #1c1c1e;
+            --input-bg:    #2c2c2e;
+            --border:      #3a3a3c;
+            --border-focus:#ff9f0a;
+            --text-main:   #ffffff;
+            --text-muted:  #8e8e93;
+            --text-label:  #aeaeb2;
+            --error:       #ff453a;
+            --success:     #30d158;
+        }
 
-        /* Centralização vertical total para a tela de login */
-        body { background-color: #111; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        /* ======================================================
+           BASE
+        ====================================================== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* Card central de login — tamanho fixo e sombra profunda */
-        .login-container { background: #1c1c1e; padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; border: 1px solid #2c2c2e; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-        h2 { text-align: center; margin-bottom: 10px; font-size: 22px; color: #fff; }
+        /* ======================================================
+           CARD CENTRAL DE LOGIN
+        ====================================================== */
+        .login-card {
+            background: var(--card-bg);
+            border: 1px solid #2c2c2e;
+            border-radius: 16px;
+            padding: 36px 32px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+        }
 
-        /* Subtítulo dinâmico: muda entre os dois passos do fluxo de login */
-        .subtitle { text-align: center; color: #8e8e93; font-size: 14px; margin-bottom: 25px; }
+        /* Logo / Branding no topo do card */
+        .brand-block {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .brand-block .logo-text {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .brand-block .logo-text span { color: var(--primary); }
+        .brand-block .logo-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 4px;
+        }
 
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-size: 12px; color: #aeaea3; text-transform: uppercase; margin-bottom: 6px; font-weight: bold; }
+        /* Subtítulo dinâmico entre os dois passos */
+        .flow-title {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 24px;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 6px;
+            border: 1px solid #2c2c2e;
+        }
 
-        /* Inputs com borda laranja no foco (cor de destaque da marca) */
-        input, select { width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 6px; color: #fff; font-size: 15px; outline: none; }
-        input:focus, select:focus { border-color: #ff9f0a; }
+        /* ======================================================
+           COMPONENTES DE FORMULÁRIO
+        ====================================================== */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 18px;
+        }
 
-        /* Botão principal laranja (cor de ação, diferente do vermelho do TKD) */
-        button { width: 100%; padding: 14px; background: #ff9f0a; border: none; border-radius: 6px; color: #000; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 10px; }
-        button:hover { background: #ffb340; }
+        label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-label);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+        }
 
-        /* Utilitário para esconder o segundo formulário até o passo 1 ser concluído */
-        .hidden { display: none; }
+        input, select {
+            width: 100%;
+            padding: 13px 14px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            -webkit-appearance: none;
+        }
 
-        /* Mensagem de erro de autenticação (credenciais inválidas) */
-        .error-msg { color: #ff453a; font-size: 13px; margin-top: 10px; text-align: center; font-weight: bold; }
+        input:focus, select:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(255, 159, 10, 0.12);
+        }
+
+        input::placeholder { color: var(--text-muted); }
+
+        /* ======================================================
+           BOTÃO PRINCIPAL COM ESTADO DE LOADING
+        ====================================================== */
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-size: 15px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            margin-top: 8px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover:not(:disabled) { background: #ffb340; }
+        .btn-primary:active:not(:disabled) { transform: scale(0.98); }
+
+        /* Estado desabilitado durante a requisição assíncrona */
+        .btn-primary:disabled {
+            background: #3a3a3c;
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* Spinner SVG animado exibido durante o loading */
+        .spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0,0,0,0.3);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        .btn-primary.loading .spinner { display: block; }
+        .btn-primary.loading .btn-label { opacity: 0.6; }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ======================================================
+           MENSAGEM DE ERRO
+        ====================================================== */
+        .error-msg {
+            color: var(--error);
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            min-height: 20px;
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 6px;
+            background: transparent;
+            transition: background 0.2s;
+        }
+        .error-msg:not(:empty) {
+            background: rgba(255, 69, 58, 0.08);
+            border: 1px solid rgba(255, 69, 58, 0.2);
+        }
+
+        /* ======================================================
+           UTILITÁRIO DE VISIBILIDADE
+        ====================================================== */
+        .hidden { display: none !important; }
+
+        /* ======================================================
+           RODAPÉ MÍNIMO
+        ====================================================== */
+        .login-footer {
+            margin-top: 20px;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* ======================================================
+           RESPONSIVE — Ajustes para telas muito pequenas
+        ====================================================== */
+        @media (max-width: 440px) {
+            .login-card { padding: 28px 20px; border-radius: 12px; }
+            .brand-block .logo-text { font-size: 24px; }
+        }
     </style>
 </head>
 <body>
 
-<div class="login-container">
-    <h2>WTKD DO JANG</h2>
+<div class="login-card">
+    <!-- Branding do Dojang -->
+    <div class="brand-block">
+        <div class="logo-text">WIL <span>TKD</span></div>
+        <div class="logo-sub">Dojang Management System</div>
+    </div>
+
     <!--
-        Subtítulo dinâmico: atualizado via JS conforme o fluxo avança.
+        Subtítulo dinâmico — atualizado via JS conforme o fluxo avança:
         Passo 1: "Autenticação da Banca Examinadora"
         Passo 2: "Identificação da Banca [AVALIADOR1]"
     -->
-    <div class="subtitle" id="flow-title">Autenticação da Banca Examinadora</div>
+    <div class="flow-title" id="flow-title">Autenticação do Sistema</div>
 
-    <!--
-        PASSO 1 — AUTENTICAÇÃO (auth-form)
-        Valida as credenciais do avaliador contra o Supabase Auth.
-        Em caso de sucesso, esconde este form e exibe o profile-form.
-    -->
-    <form id="auth-form">
+    <!-- ============================================================
+         PASSO 1 — AUTENTICAÇÃO via Supabase Auth
+         Valida email + senha. Em sucesso → exibe passo 2.
+    ============================================================ -->
+    <form id="auth-form" novalidate>
         <div class="form-group">
-            <label for="email">Conta do Avaliador</label>
-            <input type="email" id="email" placeholder="avaliador1@wtkd.com.br" required>
+            <label for="email">Conta de Acesso</label>
+            <input type="email" id="email"
+                   placeholder="avaliador1@wtkd.com.br"
+                   autocomplete="email"
+                   required>
         </div>
         <div class="form-group">
             <label for="password">Senha de Segurança</label>
-            <input type="password" id="password" placeholder="••••••••" required>
+            <input type="password" id="password"
+                   placeholder="••••••••"
+                   autocomplete="current-password"
+                   required>
         </div>
-        <button type="submit">Validar Credenciais</button>
-        <!-- Div para exibir mensagens de erro da API do Supabase Auth -->
-        <div id="error-auth" class="error-msg"></div>
+        <button type="submit" class="btn-primary" id="btn-auth">
+            <div class="spinner"></div>
+            <span class="btn-label">Validar Credenciais</span>
+        </button>
+        <div id="error-auth" class="error-msg" role="alert" aria-live="polite"></div>
     </form>
 
-    <!--
-        PASSO 2 — PERFIL DA BANCA (profile-form)
-        Inicia oculto (class="hidden"). Exibido após login bem-sucedido.
-        Coleta nome e graduação do avaliador para auditoria das notas.
-        Estes dados são gravados no localStorage, não no Supabase.
-    -->
-    <form id="profile-form" class="hidden">
+    <!-- ============================================================
+         PASSO 2 — PERFIL DA BANCA
+         Inicia oculto. Exibido após autenticação bem-sucedida.
+         Coleta nome real e graduação do avaliador.
+         Dados gravados no localStorage (auditoria da sessão de exame).
+         O roteamento final é feito por resolverDestino() do auth.js.
+    ============================================================ -->
+    <form id="profile-form" class="hidden" novalidate>
         <div class="form-group">
-            <label for="nome-real">Nome do Avaliador</label>
-            <input type="text" id="nome-real" placeholder="Ex: Mestre Wiliam Longo" required>
+            <label for="nome-real">Nome Completo do Avaliador</label>
+            <input type="text" id="nome-real"
+                   placeholder="Ex: Mestre Wiliam Longo"
+                   autocomplete="name"
+                   required>
         </div>
         <div class="form-group">
             <label for="graduacao">Graduação Atual</label>
@@ -102,74 +298,103 @@
                 <option value="8º Dan">8º Dan (Grão-Mestre)</option>
             </select>
         </div>
-        <button type="submit">Entrar no Sistema de Exame</button>
+        <button type="submit" class="btn-primary" id="btn-profile">
+            <div class="spinner"></div>
+            <span class="btn-label">Entrar no Sistema</span>
+        </button>
     </form>
 </div>
 
+<div class="login-footer">© Wil Taekwondo — Team Marchesini</div>
+
 <script>
     // ============================================================
-    // INICIALIZAÇÃO DO CLIENTE SUPABASE
-    // Instanciado como "_supabase" (com underscore) para não colidir
-    // com o namespace global "supabase" da biblioteca CDN.
+    // CLIENTE SUPABASE LOCAL
+    // Instanciado como "_supabase" para não conflitar com o namespace
+    // global "supabase" da biblioteca CDN.
     // ============================================================
     const SUPABASE_URL = "https://pkbusphlutnodgconbbc.supabase.co";
     const SUPABASE_KEY = "sb_publishable_AXK9wUTEpz-rSdmXYn2SUA_u8O_u6P0";
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Referências DOM reutilizadas nos dois passos do fluxo
+    // Referências DOM
     const authForm    = document.getElementById('auth-form');
     const profileForm = document.getElementById('profile-form');
     const flowTitle   = document.getElementById('flow-title');
     const errorAuth   = document.getElementById('error-auth');
+    const btnAuth     = document.getElementById('btn-auth');
+    const btnProfile  = document.getElementById('btn-profile');
 
-    // Variável de módulo para passar o email entre os dois passos
-    // sem expor em campos ocultos do DOM
+    // Identificador curto da conta (preenchido no passo 1, usado no passo 2)
     let contaDefinida = "";
 
     // ============================================================
-    // PASSO 1: Validação de credenciais no Supabase Auth
+    // HELPER: estado de loading do botão
+    // ============================================================
+    function setBtnLoading(btn, loading) {
+        btn.disabled = loading;
+        btn.classList.toggle('loading', loading);
+    }
+
+    // ============================================================
+    // PASSO 1: Autenticação via Supabase Auth
     //
-    // Usa signInWithPassword — autenticação nativa do Supabase.
-    // Em caso de sucesso: troca o formulário visível (sem reload).
-    // Em caso de erro: exibe a mensagem retornada pela API.
+    // signInWithPassword envia as credenciais para o backend do Supabase.
+    // Em sucesso: mostra o Passo 2.
+    // Em erro: exibe a mensagem retornada pela API.
     // ============================================================
     authForm.addEventListener('submit', async (e) => {
-        e.preventDefault();     // Evita reload da página (comportamento padrão do form)
-        errorAuth.textContent = ""; // Limpa erro anterior
+        e.preventDefault();
+        errorAuth.textContent = "";
 
         const email    = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
 
-        // Dispara a autenticação via API REST do Supabase
+        if (!email || !password) {
+            errorAuth.textContent = "Preencha email e senha.";
+            return;
+        }
+
+        setBtnLoading(btnAuth, true);
+
         const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
 
-        if (error) {
-            // Exibe o erro original da API (ex: "Invalid login credentials")
-            errorAuth.textContent = "Erro: " + error.message;
-        } else {
-            // Extrai o identificador curto da conta: "avaliador1@wtkd.com.br" → "avaliador1"
-            contaDefinida = email.split('@')[0];
+        setBtnLoading(btnAuth, false);
 
-            // Alterna os formulários sem refresh de página
+        if (error) {
+            // Traduz erros comuns do Supabase para português
+            const errosTraduzidos = {
+                'Invalid login credentials': 'Credenciais inválidas. Verifique e-mail e senha.',
+                'Email not confirmed': 'E-mail não confirmado. Verifique sua caixa de entrada.',
+                'Too many requests': 'Muitas tentativas. Aguarde alguns minutos.'
+            };
+            errorAuth.textContent = errosTraduzidos[error.message] || `Erro: ${error.message}`;
+        } else {
+            // Login bem-sucedido: extrai o identificador curto da conta
+            // "avaliador1@wtkd.com.br" → "avaliador1"
+            contaDefinida = email.split('@')[0].toLowerCase().trim();
+
+            // Alterna formulários sem refresh de página
             authForm.classList.add('hidden');
             profileForm.classList.remove('hidden');
-            flowTitle.textContent = `Identificação da Banca [${contaDefinida.toUpperCase()}]`;
+            flowTitle.textContent = `Sessão: ${contaDefinida.toUpperCase()}`;
+
+            // Foco automático no primeiro campo do passo 2
+            document.getElementById('nome-real').focus();
         }
     });
 
     // ============================================================
-    // PASSO 2: Coleta de perfil e gravação no localStorage
+    // PASSO 2: Coleta de perfil → localStorage → roteamento
     //
-    // NÃO faz requisição ao banco — apenas salva os metadados
-    // localmente para que exame.html os leia na guarda de rota.
+    // CHAVES GRAVADAS:
+    //   wtkd_conta     → identificador curto (ex: "avaliador1")
+    //   wtkd_nome_real → nome completo digitado
+    //   wtkd_graduacao → graduação selecionada
     //
-    // CHAVES GRAVADAS NO LOCALSTORAGE:
-    //   wtkd_conta      → identificador curto (ex: "avaliador1")
-    //   wtkd_nome_real  → nome completo do avaliador
-    //   wtkd_graduacao  → graduação selecionada (ex: "3º Dan")
-    //
-    // Após salvar, redireciona para exame.html onde a guarda de rota
-    // valida a presença dessas chaves antes de renderizar a banca.
+    // ROTEAMENTO (definido em auth.js — resolverDestino()):
+    //   avaliador1-4 → exame.html
+    //   qualquer outro → painel.html
     // ============================================================
     profileForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -177,13 +402,25 @@
         const nomeReal  = document.getElementById('nome-real').value.trim();
         const graduacao = document.getElementById('graduacao').value;
 
-        // Persiste os metadados de auditoria da sessão de exame
+        if (!nomeReal) {
+            exibirToast('Informe seu nome completo.', 'aviso');
+            return;
+        }
+        if (!graduacao) {
+            exibirToast('Selecione sua graduação.', 'aviso');
+            return;
+        }
+
+        setBtnLoading(btnProfile, true);
+
+        // Persiste os metadados de auditoria da sessão
         localStorage.setItem('wtkd_conta',     contaDefinida);
         localStorage.setItem('wtkd_nome_real', nomeReal);
         localStorage.setItem('wtkd_graduacao', graduacao);
 
-        // Navega para a banca de exame após configuração completa
-        window.location.href = 'exame.html';
+        // Roteamento inteligente por perfil (via auth.js)
+        const destino = resolverDestino(contaDefinida);
+        window.location.href = destino;
     });
 </script>
 
