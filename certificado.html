@@ -5,13 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="public/assets/images/logo.png">
     <title>Certificado de Exame — WTKD</title>
+    
+    <!-- Fontes Elegantes (Playfair Display para títulos, Dancing Script para texto oficial/cursivo) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         /* CSS Reset e Configuração para Impressão */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Playfair Display', serif;
             background: #52525e;
             display: flex;
             flex-direction: column;
@@ -35,122 +41,153 @@
             background: #fff;
             position: relative;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            padding: 20mm;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
             overflow: hidden;
-            /* Fundo com marca d'água simulada */
-            background-image: radial-gradient(circle at center, rgba(255, 26, 26, 0.03) 0%, transparent 60%);
+            /* Fundo sutil */
+            background-image: radial-gradient(circle at center, rgba(255, 26, 26, 0.02) 0%, transparent 60%);
         }
 
-        /* Borda elegante */
-        .certificado::before {
-            content: '';
+        /* Barras Laterais com as tarjas coloridas nas extremidades */
+        .barra-lateral {
             position: absolute;
-            top: 10mm; left: 10mm; right: 10mm; bottom: 10mm;
-            border: 3px solid #111;
-            border-radius: 8px;
-            pointer-events: none;
+            top: 0;
+            bottom: 0;
+            width: 15mm;
+            display: flex;
+            flex-direction: column;
+            z-index: 1;
         }
-        .certificado::after {
-            content: '';
+        .barra-esquerda { left: 0; }
+        .barra-direita { right: 0; }
+
+        .tarja-amarela { background-color: #fce205; flex: 2; }
+        .tarja-verde { background-color: #7cb342; flex: 1; }
+
+        /* Moldura clássica com cantoneiras escuras */
+        .moldura {
             position: absolute;
-            top: 12mm; left: 12mm; right: 12mm; bottom: 12mm;
-            border: 1px solid #d4af37; /* Dourado */
-            border-radius: 6px;
+            top: 15mm;
+            bottom: 15mm;
+            left: 25mm; /* Distância para não sobrepor as barras laterais */
+            right: 25mm;
+            border: 2px solid #222;
             pointer-events: none;
+            z-index: 2;
         }
 
-        .cabecalho {
-            margin-bottom: 30px;
+        .cantoneira {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            border: 8px solid #222;
         }
+        .cantoneira.top-left { top: -5px; left: -5px; border-right: none; border-bottom: none; }
+        .cantoneira.top-right { top: -5px; right: -5px; border-left: none; border-bottom: none; }
+        .cantoneira.bottom-left { bottom: -5px; left: -5px; border-right: none; border-top: none; }
+        .cantoneira.bottom-right { bottom: -5px; right: -5px; border-left: none; border-top: none; }
+
+        /* Conteúdo centralizado */
+        .conteudo-interno {
+            position: relative;
+            z-index: 3;
+            width: 85%;
+            max-width: 220mm;
+            padding: 0 20px;
+        }
+
+        .cabecalho { margin-bottom: 25px; }
 
         .titulo-escola {
-            font-size: 32px;
-            font-weight: 900;
+            font-size: 26px;
+            font-weight: 700;
             color: #111;
             letter-spacing: 4px;
             text-transform: uppercase;
         }
-        
-        .titulo-escola span { color: #ff1a1a; }
+        .titulo-escola span { color: #b22222; }
 
         .subtitulo-escola {
-            font-size: 14px;
-            color: #666;
+            font-size: 13px;
+            color: #555;
             letter-spacing: 2px;
             text-transform: uppercase;
             margin-top: 5px;
         }
 
         .certificado-titulo {
-            font-size: 48px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 68px;
             font-weight: 700;
-            color: #d4af37;
-            text-transform: uppercase;
-            letter-spacing: 8px;
-            margin: 20px 0 40px 0;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            color: #111;
+            margin: 10px 0 30px 0;
+            letter-spacing: 2px;
         }
 
         .texto-corpo {
-            font-size: 22px;
-            color: #333;
+            font-family: 'Dancing Script', cursive;
+            font-size: 32px;
+            color: #222;
             line-height: 1.6;
-            max-width: 80%;
-            margin: 0 auto;
+            text-align: justify;
+            text-align-last: center;
+            margin-bottom: 30px;
         }
 
         .nome-aluno {
-            font-size: 36px;
+            color: #b22222;
             font-weight: 700;
-            color: #111;
-            margin: 15px 0;
-            text-transform: uppercase;
-            border-bottom: 2px solid #d4af37;
-            display: inline-block;
-            padding-bottom: 5px;
+            font-size: 38px;
         }
 
-        .detalhes {
-            font-size: 20px;
-            margin-top: 20px;
-            color: #555;
-            font-weight: 600;
-        }
-
+        /* 3 Assinaturas */
         .assinaturas {
             display: flex;
-            justify-content: space-around;
-            width: 80%;
+            justify-content: space-between;
+            width: 100%;
             margin-top: 60px;
         }
 
         .linha-assinatura {
-            width: 250px;
+            width: 28%;
             border-top: 1px solid #111;
-            padding-top: 10px;
-            font-size: 16px;
-            color: #333;
-            font-weight: 600;
+            padding-top: 8px;
+            font-size: 17px;
+            color: #111;
+            font-weight: 700;
+            text-align: center;
         }
         .linha-assinatura span {
             display: block;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 400;
-            color: #666;
+            color: #555;
+            margin-top: 2px;
         }
 
         .selo-data {
+            margin-top: 40px;
+            font-size: 16px;
+            color: #444;
+            font-style: italic;
+            text-align: center;
+        }
+
+        /* Texto Coreano Decorativo */
+        .korean-bg {
             position: absolute;
-            bottom: 25mm;
-            right: 25mm;
-            text-align: right;
-            font-size: 14px;
-            color: #555;
+            right: 40mm;
+            bottom: 60mm;
+            font-family: sans-serif;
+            font-size: 60px;
+            color: #222;
+            line-height: 1.2;
+            font-weight: bold;
+            z-index: 1;
+            opacity: 0.08;
         }
 
         .acoes {
@@ -178,7 +215,6 @@
         .btn:hover { background: #006ae6; }
         .btn-fechar { background: #3a3a3c; }
 
-        /* Esconder tudo que não é o certificado na hora de imprimir */
         @media print {
             body { background: transparent; padding: 0; }
             .acoes { display: none !important; }
@@ -188,8 +224,6 @@
                 page-break-after: always;
             }
             #certificados-container { gap: 0; }
-            
-            /* Remove margins da página e força paisagem no css print */
             @page { size: A4 landscape; margin: 0; }
         }
         
@@ -227,21 +261,18 @@
 
             const ids = idsParam.split(',').filter(id => id.trim() !== '');
             const container = document.getElementById('certificados-container');
-            container.innerHTML = ''; // Limpa loading
+            container.innerHTML = ''; 
 
-            // Hoje formatado
             const hoje = new Date();
             const dataFormatada = hoje.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
 
             for (const idAluno of ids) {
-                // Busca dados do aluno
                 const { data: aluno } = await _supabase
                     .from('alunos')
                     .select('nome')
                     .eq('id', idAluno)
                     .single();
 
-                // Busca a última nota de exame lançada
                 const { data: exames } = await _supabase
                     .from('exames_notas')
                     .select('nota, faixa_avaliada, nome_real_avaliador')
@@ -252,46 +283,67 @@
                 if (aluno && exames && exames.length > 0) {
                     const exame = exames[0];
                     
-                    // Monta o DOM do certificado
                     const cert = document.createElement('div');
                     cert.className = 'certificado';
                     cert.innerHTML = `
-                        <div class="cabecalho">
-                            <div class="titulo-escola">
-                                <img src="public/assets/images/logo.png" alt="Logo" style="height: 60px; margin-right: 15px; vertical-align: middle; border-radius: 50%;">
-                                WIL <span>TKD</span>
+                        <!-- Barras Laterais Coloridas -->
+                        <div class="barra-lateral barra-esquerda">
+                            <div class="tarja-amarela"></div>
+                            <div class="tarja-verde"></div>
+                        </div>
+                        <div class="barra-lateral barra-direita">
+                            <div class="tarja-amarela"></div>
+                            <div class="tarja-verde"></div>
+                        </div>
+
+                        <!-- Moldura Interna com Cantoneiras -->
+                        <div class="moldura">
+                            <div class="cantoneira top-left"></div>
+                            <div class="cantoneira top-right"></div>
+                            <div class="cantoneira bottom-left"></div>
+                            <div class="cantoneira bottom-right"></div>
+                        </div>
+
+                        <!-- Decoração Coreana -->
+                        <div class="korean-bg">태<br>권<br>도</div>
+
+                        <!-- Conteúdo Principal -->
+                        <div class="conteudo-interno">
+                            <div class="cabecalho">
+                                <div class="titulo-escola">
+                                    <img src="public/assets/images/logo.png" alt="Logo" style="height: 60px; margin-right: 15px; vertical-align: middle; border-radius: 50%;">
+                                    WIL <span>TKD</span>
+                                </div>
+                                <div class="subtitulo-escola">Dojang • Escola de Artes Marciais</div>
                             </div>
-                            <div class="subtitulo-escola">Dojang • Escola de Artes Marciais</div>
-                        </div>
 
-                        <div class="certificado-titulo">Certificado de Graduação</div>
+                            <div class="certificado-titulo">Certificado de Graduação</div>
 
-                        <div class="texto-corpo">
-                            Certificamos para os devidos fins que o(a) aluno(a)
-                            <div class="nome-aluno">${aluno.nome}</div>
-                            foi avaliado(a) e aprovado(a) no exame técnico oficial da escola, 
-                            demonstrando excelência e domínio das técnicas necessárias para a graduação de:
-                        </div>
-
-                        <div class="detalhes">
-                            Faixa Avaliada: <strong>${exame.faixa_avaliada}</strong><br>
-                            Nota Final do Exame: <strong>${exame.nota} pontos</strong>
-                        </div>
-
-                        <div class="assinaturas">
-                            <div class="linha-assinatura">
-                                Wiliam Longo
-                                <span>Mestre / Diretor Geral</span>
+                            <div class="texto-corpo">
+                                Conferimos o presente "CERTIFICADO DE GRADUAÇÃO" a <span class="nome-aluno">${aluno.nome}</span>, 
+                                por sua aprovação no exame técnico oficial de promoção de faixa da escola WIL TKD, demonstrando excelência 
+                                e domínio das técnicas necessárias, passando o titular, a partir desta data, 
+                                à graduação de <strong>${exame.faixa_avaliada}</strong> com nota final <strong>${exame.nota} pontos</strong>.
                             </div>
-                            <div class="linha-assinatura">
-                                ${exame.nome_real_avaliador || 'Banca Examinadora'}
-                                <span>Avaliador(a) Oficial</span>
-                            </div>
-                        </div>
 
-                        <div class="selo-data">
-                            Data de Emissão:<br>
-                            <strong>${dataFormatada}</strong>
+                            <div class="assinaturas">
+                                <div class="linha-assinatura">
+                                    Wiliam Longo
+                                    <span>Mestre / Diretor Geral</span>
+                                </div>
+                                <div class="linha-assinatura">
+                                    ${exame.nome_real_avaliador || 'Avaliador 1'}
+                                    <span>Avaliador Oficial</span>
+                                </div>
+                                <div class="linha-assinatura">
+                                    &nbsp;
+                                    <span>Avaliador 2</span>
+                                </div>
+                            </div>
+
+                            <div class="selo-data">
+                                São Paulo, ${dataFormatada}
+                            </div>
                         </div>
                     `;
                     container.appendChild(cert);
@@ -301,8 +353,7 @@
             if (container.children.length === 0) {
                 container.innerHTML = '<div class="loading">Nenhum exame encontrado para os IDs informados.</div>';
             } else {
-                // Força impressão automática após um breve delay para renderizar CSS
-                setTimeout(() => window.print(), 800);
+                setTimeout(() => window.print(), 1200); /* Delay aumentado para garantir carregamento das fontes do Google */
             }
         }
 
