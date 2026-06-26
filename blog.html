@@ -330,7 +330,7 @@
                 card.onclick = () => abrirPost(post.id);
 
                 card.innerHTML = `
-                    <img src="${post.cover}" alt="Capa" class="blog-card-img" onerror="this.src='https://via.placeholder.com/800x400/141414/ff1a1a?text=Sem+Imagem'">
+                    <img src="${post.cover}" alt="Capa" class="blog-card-img" onerror="this.onerror=null; this.src='public/assets/images/logo.png'">
                     <div class="blog-card-content">
                         <div class="blog-card-date">${data}</div>
                         <h3 class="blog-card-title">${post.title}</h3>
