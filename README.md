@@ -9,7 +9,8 @@ Sistema web completo para gerenciamento de alunos, controle de presença e banca
 | Módulo | Arquivo | Descrição |
 |--------|---------|-----------|
 | **Site Institucional** | `index.html` | Landing page com horários, localização e links de agendamento |
-| **Painel do Professor** | `painel.html` + `conexao.js` | Chamada diária, cadastro/edição de alunos, controle de horas |
+| **Blog e Notícias** | `blog.html` | Sistema de blog dinâmico integrado ao Supabase com SEO avançado e dados estruturados |
+| **Painel do Professor** | `painel.html` + `conexao.js` | Chamada diária, cadastro de alunos, controle de horas e **painel de postagem do Blog** |
 | **Banca de Exame** | `exame.html` | Avaliação de até 4 alunos simultâneos com matriz técnica por graduação |
 | **Login da Banca** | `login.html` | Autenticação em 2 passos via Supabase Auth |
 | **Conteúdo Técnico** | `curriculo.html`, `formas.html`, `dicionario.html`, `historia.html` | Material pedagógico do TKD |
@@ -62,6 +63,15 @@ materia               TEXT
 nota                  NUMERIC
 ```
 
+### Tabela `blog_posts`
+```
+id                    UUID (PK)
+title                 TEXT
+content               TEXT
+cover                 TEXT (URL da imagem)
+created_at            TIMESTAMP
+```
+
 ---
 
 ## 🏗️ Arquitetura
@@ -70,9 +80,10 @@ nota                  NUMERIC
 wtkd/
 ├── index.html          # Landing page institucional
 ├── login.html          # Autenticação da banca (Supabase Auth + localStorage)
-├── painel.html         # Painel do professor (usa conexao.js)
+├── painel.html         # Painel do professor e administração do Blog (usa conexao.js)
 ├── conexao.js          # Camada de acesso ao banco — CRUD, chamada, presença
 ├── exame.html          # Banca multialunos (standalone — não usa conexao.js)
+├── blog.html           # Página dinâmica de exibição dos artigos do Blog (SEO-friendly)
 ├── nav.js              # 🔑 Web Component <wtkd-nav> — menu global das páginas públicas
 ├── curriculo.html      # Currículo técnico de TKD
 ├── formas.html         # Biblioteca de formas (Poom-se/Hyun/Tull)

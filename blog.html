@@ -358,6 +358,19 @@
             document.getElementById('view-post').style.display = 'none';
             document.getElementById('view-list').style.display = 'grid';
             window.scrollTo(0, 0);
+
+            // Reverte metadados SEO ao voltar para a lista
+            document.title = "Blog e Notícias — Wil TKD";
+            
+            const metaDesc = document.querySelector('meta[name="description"]');
+            if (metaDesc) {
+                metaDesc.setAttribute('content', 'Conteúdos exclusivos sobre artes marciais, condicionamento físico, defesa pessoal e novidades da nossa equipe.');
+            }
+
+            const jsonLdScript = document.getElementById('supabase-blog-jsonld');
+            if (jsonLdScript) {
+                jsonLdScript.remove();
+            }
         }
 
         function carregarPostDaUrl() {
@@ -370,6 +383,56 @@
                 if (post) {
                     const data = new Date(post.created_at).toLocaleDateString('pt-BR');
                     
+                    // 1. Atualização Dinâmica de Metadados para SEO/GEO
+                    document.title = `${post.title} | Blog Wil TKD`;
+                    
+                    // Extrai resumo limpo do HTML para a meta description
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = post.content;
+                    const textoLimpo = tempDiv.textContent || tempDiv.innerText || "";
+                    const resumoMeta = textoLimpo.substring(0, 160).trim() + "...";
+                    
+                    let metaDesc = document.querySelector('meta[name="description"]');
+                    if (!metaDesc) {
+                        metaDesc = document.createElement('meta');
+                        metaDesc.setAttribute('name', 'description');
+                        document.head.appendChild(metaDesc);
+                    }
+                    metaDesc.setAttribute('content', resumoMeta);
+
+                    // 2. Injeção Dinâmica de Dados Estruturados (Schema.org para IAs)
+                    let jsonLdScript = document.getElementById('supabase-blog-jsonld');
+                    if (!jsonLdScript) {
+                        jsonLdScript = document.createElement('script');
+                        jsonLdScript.id = 'supabase-blog-jsonld';
+                        jsonLdScript.type = 'application/ld+json';
+                        document.head.appendChild(jsonLdScript);
+                    }
+                    
+                    const blogSchema = {
+                        "@context": "https://schema.org",
+                        "@type": "BlogPosting",
+                        "headline": post.title,
+                        "image": post.cover || "https://wtkd.com.br/public/assets/images/logo.png",
+                        "datePublished": post.created_at,
+                        "author": {
+                            "@type": "Person",
+                            "name": "Mestre Wiliam Longo",
+                            "url": "https://wtkd.com.br"
+                        },
+                        "publisher": {
+                            "@type": "SportsClub",
+                            "name": "Wil Taekwondo — Team Marchesini",
+                            "logo": {
+                                "@type": "ImageObject",
+                                "url": "https://wtkd.com.br/public/assets/images/logo.png"
+                            }
+                        },
+                        "articleBody": textoLimpo
+                    };
+                    jsonLdScript.text = JSON.stringify(blogSchema);
+
+                    // Renders originais da página
                     document.getElementById('post-title').innerText = post.title;
                     document.getElementById('post-date').innerText = 'Publicado em ' + data;
                     document.getElementById('post-content').innerHTML = post.content;
