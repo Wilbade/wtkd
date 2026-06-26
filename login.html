@@ -13,6 +13,13 @@
         (entrada, não protegida).
     -->
     <script src="auth.js"></script>
+    <script>
+        // Se já houver sessão ativa, redireciona o usuário para o painel apropriado 
+        // e não deixa ver a tela de login novamente.
+        if (localStorage.getItem('wtkd_conta')) {
+            window.location.replace(resolverDestino(localStorage.getItem('wtkd_conta')));
+        }
+    </script>
     <style>
         /* ======================================================
            DESIGN SYSTEM — Tokens globais

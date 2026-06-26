@@ -217,7 +217,7 @@
         { href: 'dicionario.html', label: 'Dicionário'},
         { href: 'curriculo.html',  label: 'Currículo' },
         { href: 'blog.html',       label: 'Blog'      },
-        { href: 'exame.html',      label: 'Login'     },
+        { href: 'login.html',      label: 'Login'     },
     ];
 
     // ============================================================
