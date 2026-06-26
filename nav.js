@@ -216,7 +216,7 @@
         { href: 'formas.html',     label: 'Formas'    },
         { href: 'dicionario.html', label: 'Dicionário'},
         { href: 'curriculo.html',  label: 'Currículo' },
-        { href: 'exame.html',      label: 'Exame'     },
+        { href: 'exame.html',      label: 'Login'     },
     ];
 
     // ============================================================
