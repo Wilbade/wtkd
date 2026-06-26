@@ -72,6 +72,27 @@ cover                 TEXT (URL da imagem)
 created_at            TIMESTAMP
 ```
 
+### Storage Buckets (Armazenamento de Arquivos)
+
+- **`blog-covers`** (Public Bucket): Usado para armazenar as capas dos posts do blog em formato WebP otimizado.
+
+**Políticas de RLS para o Bucket `blog-covers`:**
+Para permitir uploads pelo Painel (apenas para usuários logados), você deve executar o seguinte SQL no editor do Supabase:
+
+```sql
+-- Permite que usuários logados façam upload de imagens
+CREATE POLICY "Permitir Uploads no Blog" 
+ON storage.objects FOR INSERT 
+TO authenticated 
+WITH CHECK ( bucket_id = 'blog-covers' );
+
+-- Permite que usuários logados editem/atualizem as imagens
+CREATE POLICY "Permitir Updates no Blog" 
+ON storage.objects FOR UPDATE 
+TO authenticated 
+USING ( bucket_id = 'blog-covers' );
+```
+
 ---
 
 ## 🏗️ Arquitetura
