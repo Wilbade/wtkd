@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="public/assets/images/logo.png">
+    <title>Blog e Notícias — Wil TKD</title>
+    
+    <script src="nav.js" defer></script>
+    <style>
+        :root {
+            --primary: #ff1a1a;
+            --primary-glow: rgba(255, 26, 26, 0.15);
+            --dark-bg: #0a0a0a;
+            --card-bg: #141414;
+            --card-border: #262626;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+        }
+
+        body {
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .hero {
+            position: relative;
+            padding: 120px 24px 60px 24px;
+            text-align: center;
+            background: radial-gradient(circle at center, #1a0505 0%, var(--dark-bg) 70%);
+            overflow: hidden;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .hero h2 {
+            font-size: 42px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin: 0 0 16px 0;
+            color: var(--primary);
+        }
+
+        .hero p {
+            font-size: 16px;
+            color: var(--text-muted);
+            max-width: 640px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .main-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 24px 80px 24px;
+        }
+
+        /* View: Lista de Posts */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .blog-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .blog-card-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .blog-card-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-card-date {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .blog-card-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            line-height: 1.3;
+        }
+
+        /* View: Post Único */
+        .post-view {
+            display: none;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .post-header-img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .post-body {
+            padding: 40px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 24px;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-back:hover {
+            color: var(--primary);
+        }
+
+        /* Estilos do conteúdo rico gerado pelo Quill */
+        .rich-content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #d0d0d0;
+        }
+        .rich-content h1, .rich-content h2, .rich-content h3 {
+            color: var(--text-main);
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        .rich-content a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .rich-content a:hover {
+            text-decoration: underline;
+        }
+        .rich-content img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .rich-content blockquote {
+            border-left: 4px solid var(--primary);
+            margin: 0;
+            padding-left: 16px;
+            font-style: italic;
+            color: #a0a0a0;
+        }
+
+        /* Rodapé */
+        footer {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 32px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--card-border);
+        }
+
+        /* Responsividade para Celular */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 100px 16px 40px 16px;
+            }
+            .hero h2 {
+                font-size: 32px;
+            }
+            .main-container {
+                padding: 24px 16px 60px 16px;
+            }
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+            .post-body {
+                padding: 20px;
+            }
+            .post-header-img {
+                max-height: 250px;
+            }
+            #post-title {
+                font-size: 24px !important;
+            }
+            .rich-content img {
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <wtkd-nav></wtkd-nav>
+
+    <section class="hero">
+        <h2>Blog & Notícias</h2>
+        <p>Conteúdos exclusivos sobre artes marciais, condicionamento físico, defesa pessoal e novidades da nossa equipe.</p>
+    </section>
+
+    <main class="main-container">
+        
+        <!-- Lista de Posts -->
+        <div id="view-list" class="blog-grid">
+            <!-- Renderizado via JS -->
+        </div>
+
+        <!-- Post Único -->
+        <div id="view-post" class="post-view">
+            <img src="" id="post-cover" class="post-header-img" alt="Capa do Artigo" style="display: none;">
+            <div class="post-body">
+                <a onclick="voltarParaLista()" class="btn-back">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    Voltar para artigos
+                </a>
+                
+                <div class="blog-card-date" id="post-date" style="margin-bottom: 12px; font-size: 14px;"></div>
+                <h1 id="post-title" style="margin: 0 0 30px 0; font-size: 32px; color: var(--text-main);"></h1>
+                
+                <div id="post-content" class="rich-content"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 24px;">
+            <a href="https://www.instagram.com/aellitefighters/" target="_blank" rel="noopener noreferrer" aria-label="Siga a Elite Fighters no Instagram" style="color: #8e8e93; transition: color 0.2s ease; display: inline-flex; align-items: center;" onmouseover="this.style.color='#ff1a1a'" onmouseout="this.style.color='#8e8e93'">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a>
+            <a href="https://api.whatsapp.com/send/?phone=5511948759648&text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20as%20aulas%20de%20Taekwondo." target="_blank" rel="noopener noreferrer" aria-label="Fale conosco no WhatsApp" style="color: #8e8e93; transition: color 0.2s ease; display: inline-flex; align-items: center;" onmouseover="this.style.color='#30d158'" onmouseout="this.style.color='#8e8e93'">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            </a>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <img src="public/assets/images/logo.png" alt="Logo Wil Taekwondo" style="height: 50px; opacity: 0.9; filter: drop-shadow(0 0 10px rgba(255, 26, 26, 0.4)); transition: opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease;" onmouseover="this.style.opacity='1'; this.style.filter='drop-shadow(0 0 15px rgba(255, 26, 26, 0.7))'; this.style.transform='scale(1.05)'" onmouseout="this.style.opacity='0.9'; this.style.filter='drop-shadow(0 0 10px rgba(255, 26, 26, 0.4))'; this.style.transform='scale(1)'">
+        </div>
+
+        <p>© Todos os direitos reservados: <span style="color: #ff1a1a; font-weight: 700; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(255, 26, 26, 0.3);">Wil Taekwondo</span></p>
+        <p style="margin-top: 8px; font-size: 12px; color: #636366;">Desenvolvido por <a href="https://api.whatsapp.com/send/?phone=5511995314831&text=Ol%C3%A1!%20Vi%20o%20site%20do%20Wil%20Taekwondo%20e%20gostaria%20de%20saber%20mais%20sobre%20a%20cria%C3%A7%C3%A3o%20de%20sites." target="_blank" rel="noopener noreferrer" style="color: #a0a0a0; text-decoration: none; transition: color 0.2s ease, text-shadow 0.2s ease;" onmouseover="this.style.color='#fff'; this.style.textShadow='0 0 5px rgba(255,255,255,0.5)'" onmouseout="this.style.color='#a0a0a0'; this.style.textShadow='none'">Wiliam Longo</a></p>
+    </footer>
+
+    <!-- Supabase e Conexao -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="conexao.js"></script>
+
+    <script>
+        let postsCache = [];
+
+        async function carregarPostsSupabase() {
+            const container = document.getElementById('view-list');
+            if(postsCache.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center; grid-column: 1 / -1;">Carregando publicações...</p>';
+            }
+
+            const { data: posts, error } = await supabaseClient
+                .from('blog_posts')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error(error);
+                container.innerHTML = '<p style="color: #ff1a1a; text-align: center; grid-column: 1 / -1;">Erro ao carregar o blog.</p>';
+                return;
+            }
+
+            postsCache = posts || [];
+            
+            // Verifica a URL atual para decidir se renderiza a lista ou um post específico
+            carregarPostDaUrl();
+        }
+
+        function renderizarLista() {
+            const container = document.getElementById('view-list');
+            container.innerHTML = '';
+
+            if (postsCache.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--card-border);">
+                        <p style="color: var(--text-muted); font-size: 18px;">Nenhum artigo publicado ainda.</p>
+                        <p style="font-size: 14px; margin-top: 10px;">Vá até <a href="admin-blog.html" style="color: var(--primary);">admin-blog.html</a> para criar o primeiro post.</p>
+                    </div>`;
+                return;
+            }
+
+            postsCache.forEach(post => {
+                const data = new Date(post.created_at).toLocaleDateString('pt-BR');
+                // Extrai um resumo do HTML para exibir no card
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = post.content;
+                let resumo = tempDiv.textContent || tempDiv.innerText || "";
+                if(resumo.length > 120) resumo = resumo.substring(0, 120) + '...';
+
+                const card = document.createElement('div');
+                card.className = 'blog-card';
+                card.onclick = () => abrirPost(post.id);
+
+                card.innerHTML = `
+                    <img src="${post.cover}" alt="Capa" class="blog-card-img" onerror="this.src='https://via.placeholder.com/800x400/141414/ff1a1a?text=Sem+Imagem'">
+                    <div class="blog-card-content">
+                        <div class="blog-card-date">${data}</div>
+                        <h3 class="blog-card-title">${post.title}</h3>
+                        <p style="color: var(--text-muted); font-size: 14px; line-height: 1.5; margin: 0;">${resumo}</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function abrirPost(id) {
+            // Atualiza a URL sem recarregar a página para simular roteamento
+            const url = new URL(window.location);
+            url.searchParams.set('id', id);
+            window.history.pushState({}, '', url);
+
+            carregarPostDaUrl();
+        }
+
+        function voltarParaLista() {
+            const url = new URL(window.location);
+            url.searchParams.delete('id');
+            window.history.pushState({}, '', url);
+            
+            document.getElementById('view-post').style.display = 'none';
+            document.getElementById('view-list').style.display = 'grid';
+            window.scrollTo(0, 0);
+        }
+
+        function carregarPostDaUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+
+            if (id) {
+                const post = postsCache.find(p => p.id === id);
+
+                if (post) {
+                    const data = new Date(post.created_at).toLocaleDateString('pt-BR');
+                    
+                    document.getElementById('post-title').innerText = post.title;
+                    document.getElementById('post-date').innerText = 'Publicado em ' + data;
+                    document.getElementById('post-content').innerHTML = post.content;
+                    
+                    const coverImg = document.getElementById('post-cover');
+                    if (post.cover) {
+                        coverImg.src = post.cover;
+                        coverImg.style.display = 'block';
+                    } else {
+                        coverImg.style.display = 'none';
+                    }
+
+                    document.getElementById('view-list').style.display = 'none';
+                    document.getElementById('view-post').style.display = 'block';
+                    window.scrollTo(0, 0);
+                } else {
+                    // Se o cache já foi carregado e não achou, volta. 
+                    // Se o array tiver vazio, pode ser que ainda não carregou do DB.
+                    if (postsCache.length > 0) {
+                        voltarParaLista();
+                    }
+                }
+            } else {
+                // Sem ID na URL, mostra lista
+                document.getElementById('view-post').style.display = 'none';
+                document.getElementById('view-list').style.display = 'grid';
+                if (postsCache.length > 0) {
+                    renderizarLista();
+                }
+            }
+        }
+
+        // Intercepta botão voltar do navegador
+        window.addEventListener('popstate', carregarPostDaUrl);
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarPostsSupabase();
+        });
+    </script>
+</body>
+</html>

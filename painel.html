@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="public/assets/images/logo.png">
     <title>Painel — Wil Taekwondo</title>
+    <!-- Quill Rich Text Editor CSS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <style>
         /* ======================================================
            DESIGN SYSTEM — Tokens globais
@@ -397,6 +399,7 @@
     
     <nav id="main-nav" class="global-nav">
         <a href="#" id="nav-chamada" class="nav-item ativa" onclick="alternarAba('aba-chamada', this)"><span>📅</span>Chamada</a>
+        <a href="#" id="nav-blog" class="nav-item" onclick="alternarAba('aba-blog', this)"><span>📰</span>Blog</a>
         <a href="#" id="nav-matricula" class="nav-item" onclick="alternarAba('aba-cadastro', this)"><span>📝</span>Matrícula</a>
         <a href="exame.html" id="nav-exame" class="nav-item"><span>🥋</span>Exame</a>
         <a href="#" onclick="fazerLogoff()" class="nav-item"><span>🚪</span>Sair</a>
@@ -539,6 +542,76 @@
     </div>
 </section>
 
+<!-- ============================================================
+     ABA 3: ADMIN BLOG
+============================================================ -->
+<section id="aba-blog" class="conteudo-secao">
+    <div class="secao-titulo">Gerenciar Blog & Notícias</div>
+
+    <style>
+        /* Estilos específicos para o Blog Admin dentro do painel */
+        .blog-card-admin { background: #1c1c1e; border: 1px solid var(--card-border); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+        .blog-form-group { margin-bottom: 20px; }
+        .blog-form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-muted); font-size: 13px; text-transform: uppercase; }
+        .blog-input { width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid var(--card-border); color: white; border-radius: 6px; font-size: 14px; }
+        .blog-input:focus { outline: none; border-color: var(--primary); }
+        
+        #editor-container { height: 350px; background: #2c2c2e; color: white; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; border-color: var(--card-border); }
+        .ql-toolbar { background: #3a3a3c; border-top-left-radius: 6px; border-top-right-radius: 6px; border-color: var(--card-border) !important; }
+        .ql-stroke { stroke: #ccc !important; }
+        .ql-fill { fill: #ccc !important; }
+        .ql-picker-label { color: #ccc !important; }
+
+        .btn-blog { padding: 12px 24px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; transition: opacity 0.2s; }
+        .btn-blog:hover { opacity: 0.8; }
+        .btn-blog-primary { background-color: var(--primary); color: white; }
+        .btn-blog-outline { background-color: transparent; border: 1px solid var(--card-border); color: white; }
+
+        .post-list { display: grid; gap: 12px; }
+        .post-item { background: #2c2c2e; padding: 16px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--card-border); }
+        .post-actions button { margin-left: 8px; padding: 6px 12px; }
+
+        @media (max-width: 768px) {
+            .post-item { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .post-actions { width: 100%; display: flex; justify-content: flex-end; gap: 8px; }
+            .post-actions button { margin-left: 0; }
+        }
+    </style>
+
+    <div class="blog-card-admin">
+        <h2 id="form-title" style="font-size: 18px; margin-bottom: 16px;">Criar Novo Post</h2>
+        <input type="hidden" id="post-id">
+        
+        <div class="blog-form-group">
+            <label>Título do Post</label>
+            <input type="text" id="post-title" class="blog-input" placeholder="Ex: Benefícios do Taekwondo">
+        </div>
+
+        <div class="blog-form-group">
+            <label>URL da Imagem de Capa</label>
+            <input type="text" id="post-cover" class="blog-input" placeholder="Ex: https://link-da-imagem.com/foto.jpg">
+        </div>
+
+        <div class="blog-form-group">
+            <label>Conteúdo (Adicione textos, links de afiliados e imagens aqui)</label>
+            <div id="editor-container"></div>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+            <button class="btn-blog btn-blog-outline" onclick="limparFormularioBlog()">Cancelar</button>
+            <button class="btn-blog btn-blog-primary" id="btn-salvar-blog" onclick="salvarPost()">Salvar Publicação</button>
+        </div>
+    </div>
+
+    <div class="blog-card-admin">
+        <h2 style="font-size: 18px; margin-bottom: 16px;">Artigos Publicados</h2>
+        <div class="post-list" id="lista-posts">
+            <p style="color: #666;">Carregando...</p>
+        </div>
+    </div>
+</section>
+
+
 <!--
     ORDEM DE CARREGAMENTO (crítica):
     1. auth.js   → define verificarSessao() e sanitizar()
@@ -572,5 +645,169 @@
     }
 </script>
 <script src="conexao.js"></script>
+<!-- Quill JS -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+    // Inicializa o Editor de Texto Rico (Quill)
+    var quill;
+    
+    // Precisamos inicializar o quill só se a aba blog existir, mas ela sempre existe no DOM agora.
+    document.addEventListener('DOMContentLoaded', () => {
+        quill = new Quill('#editor-container', {
+            theme: 'snow',
+            placeholder: 'Escreva seu artigo aqui...',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    ['blockquote', 'code-block'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'align': [] }],
+                    ['link', 'image', 'video'],
+                    ['clean']
+                ]
+            }
+        });
+
+        // Carrega os posts se o usuário logado for Master (pode ver a aba)
+        if (typeof isMaster === 'function' && isMaster(sessao.conta)) {
+            getPostsBlog();
+        }
+    });
+
+    let postsBlogCache = [];
+
+    async function getPostsBlog() {
+        const container = document.getElementById('lista-posts');
+        if (!container) return;
+        
+        container.innerHTML = '<p style="color: #666;">Carregando...</p>';
+
+        const { data: posts, error } = await supabaseClient
+            .from('blog_posts')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error(error);
+            container.innerHTML = '<p style="color: #ff1a1a;">Erro ao carregar posts.</p>';
+            return;
+        }
+
+        postsBlogCache = posts || [];
+        renderizarPostsBlog();
+    }
+
+    async function salvarPost() {
+        const id = document.getElementById('post-id').value;
+        const title = document.getElementById('post-title').value;
+        const cover = document.getElementById('post-cover').value;
+        const content = quill.root.innerHTML;
+
+        if (!title) {
+            alert("O título é obrigatório!");
+            return;
+        }
+
+        const btn = document.getElementById('btn-salvar-blog');
+        btn.disabled = true;
+        btn.innerText = "Salvando...";
+
+        const payload = {
+            title: title,
+            cover: cover || 'https://via.placeholder.com/800x400/141414/ff1a1a?text=Wil+Taekwondo',
+            content: content
+        };
+
+        let error = null;
+
+        if (id) {
+            const res = await supabaseClient.from('blog_posts').update(payload).eq('id', id);
+            error = res.error;
+        } else {
+            const res = await supabaseClient.from('blog_posts').insert([payload]);
+            error = res.error;
+        }
+
+        btn.disabled = false;
+        btn.innerText = "Salvar Publicação";
+
+        if (error) {
+            console.error(error);
+            alert("Erro ao salvar: " + error.message);
+        } else {
+            limparFormularioBlog();
+            getPostsBlog();
+            alert("Post salvo com sucesso no banco de dados!");
+        }
+    }
+
+    function limparFormularioBlog() {
+        document.getElementById('post-id').value = '';
+        document.getElementById('post-title').value = '';
+        document.getElementById('post-cover').value = '';
+        quill.setContents([]);
+        document.getElementById('form-title').innerText = "Criar Novo Post";
+    }
+
+    function editarPostBlog(id) {
+        const post = postsBlogCache.find(p => p.id === id);
+        if (post) {
+            document.getElementById('post-id').value = post.id;
+            document.getElementById('post-title').value = post.title;
+            document.getElementById('post-cover').value = post.cover || '';
+            
+            quill.clipboard.dangerouslyPasteHTML(post.content);
+            
+            document.getElementById('form-title').innerText = "Editando: " + post.title;
+            
+            // Ativa a aba do blog se não estiver ativa e sobe a tela
+            const navBlog = document.getElementById('nav-blog');
+            if(navBlog) alternarAba('aba-blog', navBlog);
+            window.scrollTo(0, 0);
+        }
+    }
+
+    async function excluirPostBlog(id) {
+        if(confirm("Tem certeza que deseja excluir este post do banco de dados?")) {
+            const { error } = await supabaseClient.from('blog_posts').delete().eq('id', id);
+            if(error) {
+                alert("Erro ao excluir: " + error.message);
+            } else {
+                getPostsBlog();
+            }
+        }
+    }
+
+    function renderizarPostsBlog() {
+        const container = document.getElementById('lista-posts');
+        if (!container) return;
+        
+        container.innerHTML = '';
+
+        if (postsBlogCache.length === 0) {
+            container.innerHTML = '<p style="color: #666;">Nenhum post criado ainda.</p>';
+            return;
+        }
+
+        postsBlogCache.forEach(post => {
+            const data = new Date(post.created_at).toLocaleDateString('pt-BR');
+            const div = document.createElement('div');
+            div.className = 'post-item';
+            div.innerHTML = `
+                <div>
+                    <strong style="color:white;">${post.title}</strong>
+                    <div style="font-size: 12px; color: #a0a0a0; margin-top: 4px;">Criado em ${data}</div>
+                </div>
+                <div class="post-actions">
+                    <button class="btn-blog btn-blog-outline" onclick="editarPostBlog('${post.id}')">Editar</button>
+                    <button class="btn-blog btn-blog-outline" style="color: #ff1a1a; border-color: #ff1a1a;" onclick="excluirPostBlog('${post.id}')">Excluir</button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+</script>
 </body>
 </html>

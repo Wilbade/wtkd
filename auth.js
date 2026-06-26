@@ -109,6 +109,7 @@ function aplicarRegrasDeMenu() {
     const navChamada = document.getElementById('nav-chamada');
     const navMatricula = document.getElementById('nav-matricula');
     const navExame = document.getElementById('nav-exame');
+    const navBlog = document.getElementById('nav-blog');
 
     // Regras para não-Master
     if (!isM) {
@@ -120,6 +121,11 @@ function aplicarRegrasDeMenu() {
                 alternarAba('aba-cadastro', navMatricula);
             }
         }
+    }
+
+    // Ocultar aba Blog se a conta não for especificamente wiliamlongo
+    if (navBlog && contaAtual.toLowerCase().trim() !== 'wiliamlongo') {
+        navBlog.style.display = 'none';
     }
 
     // Regras para quem não é nem Master nem Avaliador (ex: Donos de Escola)
