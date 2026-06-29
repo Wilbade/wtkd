@@ -148,6 +148,20 @@ O `exame.html` é uma aplicação autossuficiente com seu próprio cliente Supab
 
 ---
 
+## 📱 SEO e Compartilhamento de Links (Open Graph)
+
+As principais páginas do projeto foram otimizadas com tags estruturadas (Open Graph e Twitter Cards) no `<head>` para garantir a geração correta de prévias (cards ricos com título, descrição e imagem) ao compartilhar os links em redes sociais e mensageiros como **WhatsApp** e **Facebook**.
+
+Arquivos atualizados com suporte a Open Graph Cards:
+- `index.html` (Home)
+- `blog.html` (Artigos e Notícias)
+- `historia.html` (História e Tradição)
+- `formas.html` (Formas e Poomsaes)
+
+**Dica de Cache:** Caso as informações do card não atualizem imediatamente no WhatsApp ao compartilhar um link, adicione um parâmetro falso na URL (ex: `https://wtkd.com.br/?v=2`) para forçar o rastreador a buscar os metadados mais recentes, ignorando o cache temporário do aplicativo.
+
+---
+
 ## 🚀 Deploy
 
 O projeto é hospedado via **GitHub Pages** (domínio configurado no `CNAME`).
