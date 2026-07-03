@@ -11,6 +11,7 @@ Sistema web completo para gerenciamento de alunos, controle de presença e banca
 - **Painel Mobile**: Ampliação da foto do aluno (60x60px) na lista de chamada para facilitar a identificação visual em celulares.
 - **Robustez no Upload de Fotos**: A função de upload de avatares no Supabase (`conexao.js`) agora limpa acentos e caracteres especiais (`normalize("NFD")`) dos nomes de arquivo, erradicando o erro `Invalid Key`.
 - **Correção de UX no Cadastro**: A edição de alunos agora carrega corretamente a `faixa_inicial_cadastro` registrada historicamente, corrigindo o bug visual onde o dropdown sempre exibia "Branca" por padrão. Correção também do erro `classList` ao alternar abas de matrícula.
+- **Rastreamento de Tráfego**: Implantação da tag global do **Google Analytics (gtag.js)** no cabeçalho (`<head>`) de todas as 10 páginas do projeto, permitindo análise completa de métricas de visitantes, tipos de dispositivos (Android/iOS) e origens de tráfego.
 
 ---
 
