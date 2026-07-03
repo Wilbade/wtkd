@@ -103,8 +103,11 @@ async function cadastrarAluno(event) {
 
     // --- UPLOAD DE FOTO (se o usuário selecionou um arquivo) ---
     if (arquivoFoto) {
-        const extensao       = arquivoFoto.name.split('.').pop().toLowerCase();
-        const nomeUnico      = `${Date.now()}_${nome.replace(/\s+/g, '_').toLowerCase()}.${extensao}`;
+        const extensao = arquivoFoto.name.split('.').pop().toLowerCase();
+        
+        // Remove acentos e caracteres especiais para evitar Invalid Key no Supabase
+        const nomeLimpo = nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+        const nomeUnico = `${Date.now()}_${nomeLimpo}.${extensao}`;
 
         console.log("📸 Enviando foto para Storage 'avatars':", nomeUnico);
 
