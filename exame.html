@@ -936,7 +936,39 @@
             btnGravar.disabled    = false;
             btnGravar.textContent = 'Gravar Notas de Toda a Banca';
         } else {
-            exibirToast('Todas as notas foram gravadas com sucesso! ✅', 'sucesso', 5000);
+            for (const item of inserts) {
+                const faixaAtualStr = item.faixa_avaliada.trim().toLowerCase();
+                
+                let proximaFaixa = item.faixa_avaliada;
+                if (faixaAtualStr === 'branca' || faixaAtualStr === 'ponta amarela') {
+                    proximaFaixa = 'Amarela';
+                } else {
+                    const ORDEM_PADRAO = ['amarela', 'ponta verde', 'verde', 'ponta azul', 'azul', 'ponta vermelha', 'vermelha', 'ponta preta', 'preta 1º dan'];
+                    const idx = ORDEM_PADRAO.indexOf(faixaAtualStr);
+                    if (idx !== -1 && idx < ORDEM_PADRAO.length - 1) {
+                        const prox = ORDEM_PADRAO[idx + 1];
+                        proximaFaixa = prox.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ').replace('1º dan', '1º Dan');
+                    }
+                }
+                
+                if (proximaFaixa !== item.faixa_avaliada) {
+
+                    const { error: errUpdate } = await _supabase
+                        .from('progresso_tecnico')
+                        .update({ 
+                            faixa_atual: proximaFaixa, 
+                            horas_acumuladas: 0,
+                            data_ultima_graduacao: new Date().toISOString().split('T')[0]
+                        })
+                        .eq('aluno_id', item.id_aluno);
+
+                    if (errUpdate) {
+                        console.error(`Erro ao promover o aluno ${item.id_aluno}:`, errUpdate.message);
+                    }
+                }
+            }
+
+            exibirToast('Todas as notas gravadas e alunos promovidos! ✅', 'sucesso', 5000);
 
             // Feedback visual no botão original
             btnGravar.textContent = '✅ Tudo Gravado';
@@ -1573,7 +1605,39 @@
             btn.disabled    = false;
             btn.textContent = `Gravar Notas da Rodada ${n}`;
         } else {
-            exibirToast(`Rodada ${n} gravada com sucesso! ✅`, 'sucesso');
+            for (const item of inserts) {
+                const faixaAtualStr = item.faixa_avaliada.trim().toLowerCase();
+                
+                let proximaFaixa = item.faixa_avaliada;
+                if (faixaAtualStr === 'branca' || faixaAtualStr === 'ponta amarela') {
+                    proximaFaixa = 'Amarela';
+                } else {
+                    const ORDEM_PADRAO = ['amarela', 'ponta verde', 'verde', 'ponta azul', 'azul', 'ponta vermelha', 'vermelha', 'ponta preta', 'preta 1º dan'];
+                    const idx = ORDEM_PADRAO.indexOf(faixaAtualStr);
+                    if (idx !== -1 && idx < ORDEM_PADRAO.length - 1) {
+                        const prox = ORDEM_PADRAO[idx + 1];
+                        proximaFaixa = prox.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ').replace('1º dan', '1º Dan');
+                    }
+                }
+
+                if (proximaFaixa !== item.faixa_avaliada) {
+
+                    const { error: errUpdate } = await _supabase
+                        .from('progresso_tecnico')
+                        .update({ 
+                            faixa_atual: proximaFaixa, 
+                            horas_acumuladas: 0,
+                            data_ultima_graduacao: new Date().toISOString().split('T')[0]
+                        })
+                        .eq('aluno_id', item.id_aluno);
+
+                    if (errUpdate) {
+                        console.error(`Erro ao promover o aluno ${item.id_aluno}:`, errUpdate.message);
+                    }
+                }
+            }
+
+            exibirToast(`Rodada ${n} gravada e alunos promovidos! ✅`, 'sucesso');
             btn.textContent = '✅ Gravado';
             btn.style.background = '#1c421c';
             btn.style.color      = '#30d158';

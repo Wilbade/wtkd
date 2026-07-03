@@ -429,11 +429,20 @@ async function carregarListaChamada() {
             tdEditar.appendChild(btnEditar);
         } else {
             // Conta de dono de escola (sem privilégio de edição)
-            tdEditar.textContent = 'Bloqueado';
-            tdEditar.style.color = '#555';
-            tdEditar.style.fontSize = '11px';
-            tdEditar.style.textTransform = 'uppercase';
+            const spanBloqueado = document.createElement('span');
+            spanBloqueado.textContent = 'Bloqueado';
+            spanBloqueado.style.color = '#555';
+            spanBloqueado.style.fontSize = '11px';
+            spanBloqueado.style.textTransform = 'uppercase';
+            tdEditar.appendChild(spanBloqueado);
         }
+
+        const btnCertificado = document.createElement('button');
+        btnCertificado.textContent    = '🖨️';
+        btnCertificado.title          = 'Imprimir Certificado (Último Exame)';
+        btnCertificado.style.cssText  = 'background:none;border:none;cursor:pointer;font-size:18px;padding:4px;margin-left:5px;';
+        btnCertificado.onclick = () => window.open(`certificado.html?ids=${aluno.id}`, '_blank');
+        tdEditar.appendChild(btnCertificado);
 
         // --- Coluna 7: Botão de Presença ---
         const tdPresenca = document.createElement('td');

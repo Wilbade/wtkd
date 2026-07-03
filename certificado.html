@@ -6,18 +6,16 @@
     <link rel="icon" type="image/png" href="public/assets/images/logo.png">
     <title>Certificado de Exame — WTKD</title>
     
-    <!-- Fontes Elegantes (Playfair Display para títulos, Dancing Script para texto oficial/cursivo) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Times+New+Roman:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* CSS Reset e Configuração para Impressão */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Times New Roman', Times, serif;
             background: #52525e;
             display: flex;
             flex-direction: column;
@@ -25,7 +23,6 @@
             padding: 20px;
         }
 
-        /* Container que segura as páginas */
         #certificados-container {
             width: 100%;
             display: flex;
@@ -45,151 +42,202 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
             overflow: hidden;
-            /* Fundo sutil */
-            background-image: radial-gradient(circle at center, rgba(255, 26, 26, 0.02) 0%, transparent 60%);
+            padding: 10mm; /* Espaço externo da moldura */
         }
 
-        /* Barras Laterais com as tarjas coloridas nas extremidades */
-        .barra-lateral {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 15mm;
-            display: flex;
-            flex-direction: column;
-            z-index: 1;
-        }
-        .barra-esquerda { left: 0; }
-        .barra-direita { right: 0; }
-
-        .tarja-amarela { background-color: #fce205; flex: 2; }
-        .tarja-verde { background-color: #7cb342; flex: 1; }
-
-        /* Moldura clássica com cantoneiras escuras */
-        .moldura {
-            position: absolute;
-            top: 15mm;
-            bottom: 15mm;
-            left: 25mm; /* Distância para não sobrepor as barras laterais */
-            right: 25mm;
-            border: 2px solid #222;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        .cantoneira {
-            position: absolute;
-            width: 35px;
-            height: 35px;
-            border: 8px solid #222;
-        }
-        .cantoneira.top-left { top: -5px; left: -5px; border-right: none; border-bottom: none; }
-        .cantoneira.top-right { top: -5px; right: -5px; border-left: none; border-bottom: none; }
-        .cantoneira.bottom-left { bottom: -5px; left: -5px; border-right: none; border-top: none; }
-        .cantoneira.bottom-right { bottom: -5px; right: -5px; border-left: none; border-top: none; }
-
-        /* Conteúdo centralizado */
-        .conteudo-interno {
+        /* Moldura Dupla (fina externa, grossa interna) */
+        .moldura-dupla {
+            width: 100%;
+            height: 100%;
+            border: 2px solid #000; /* Fina Externa */
+            padding: 5px;
             position: relative;
-            z-index: 3;
-            width: 85%;
-            max-width: 220mm;
-            padding: 0 20px;
+        }
+        .moldura-interna {
+            width: 100%;
+            height: 100%;
+            border: 5px solid #000; /* Grossa Interna */
+            padding: 20px;
+            position: relative;
         }
 
-        .cabecalho { margin-bottom: 25px; }
-
-        .titulo-escola {
-            font-size: 26px;
-            font-weight: 700;
-            color: #111;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-        }
-        .titulo-escola span { color: #b22222; }
-
-        .subtitulo-escola {
-            font-size: 13px;
-            color: #555;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-top: 5px;
-        }
-
-        .certificado-titulo {
-            font-family: 'Dancing Script', cursive;
-            font-size: 68px;
-            font-weight: 700;
-            color: #111;
-            margin: 10px 0 30px 0;
-            letter-spacing: 2px;
-        }
-
-        .texto-corpo {
-            font-family: 'Dancing Script', cursive;
-            font-size: 32px;
-            color: #222;
-            line-height: 1.6;
-            text-align: justify;
-            text-align-last: center;
-            margin-bottom: 30px;
-        }
-
-        .nome-aluno {
-            color: #b22222;
-            font-weight: 700;
-            font-size: 38px;
-        }
-
-        /* 3 Assinaturas */
-        .assinaturas {
+        /* HEADER LOGOS E TEXTO */
+        .cabecalho {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             width: 100%;
-            margin-top: 60px;
+            padding: 0 30px;
+            margin-top: 10px;
         }
 
-        .linha-assinatura {
-            width: 28%;
-            border-top: 1px solid #111;
-            padding-top: 8px;
-            font-size: 17px;
-            color: #111;
-            font-weight: 700;
+        .logo-esq, .logo-dir {
+            width: 140px;
+            height: 140px;
+            object-fit: contain;
+        }
+
+        .header-center {
             text-align: center;
-        }
-        .linha-assinatura span {
-            display: block;
-            font-size: 13px;
-            font-weight: 400;
-            color: #555;
-            margin-top: 2px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .selo-data {
-            margin-top: 40px;
-            font-size: 16px;
-            color: #444;
-            font-style: italic;
-            text-align: center;
+        .world-musa {
+            font-family: Arial, sans-serif;
+            font-size: 52px;
+            font-weight: 900;
+            letter-spacing: -2px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .taekwondo-brasil {
+            font-family: Arial, sans-serif;
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .brasil-badge {
+            background: #2a9d8f; /* Verde-azulado base, ajuste de imagem */
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 26px;
+            letter-spacing: 0;
+            background: linear-gradient(to right, #009c3b 33%, #ffdf00 33%, #ffdf00 66%, #002776 66%); /* Cores do BR */
+            color: white;
+            text-shadow: 1px 1px 2px black;
         }
 
-        /* Texto Coreano Decorativo */
-        .korean-bg {
-            position: absolute;
-            right: 40mm;
-            bottom: 60mm;
-            font-family: sans-serif;
-            font-size: 60px;
-            color: #222;
-            line-height: 1.2;
+        .korean-subtitle {
+            margin-top: 15px;
+            font-size: 18px;
+            letter-spacing: 12px;
+            color: #333;
+        }
+
+        /* TÍTULO CERTIFICADO DE GUB */
+        .titulo-certificado {
+            font-family: 'Times New Roman', serif;
+            font-size: 38px;
             font-weight: bold;
-            z-index: 1;
-            opacity: 0.08;
+            color: #b59b58; /* Dourado */
+            text-align: center;
+            letter-spacing: 4px;
+            margin: 15px 0 25px 0;
         }
 
+        /* TEXTO CENTRAL */
+        .corpo-texto {
+            font-size: 19px;
+            line-height: 1.8;
+            text-align: justify;
+            width: 82%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .corpo-texto .linha-aluno {
+            display: inline-block;
+            min-width: 60%;
+            border-bottom: 1px solid #000;
+            text-align: center;
+            font-weight: bold;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+            font-style: italic;
+            padding: 0 10px;
+            line-height: 1.2;
+        }
+
+        .corpo-texto .linha-curta {
+            display: inline-block;
+            min-width: 40px;
+            border-bottom: 1px solid #000;
+            text-align: center;
+            font-weight: bold;
+            padding: 0 5px;
+            line-height: 1.2;
+        }
+
+        /* TEXTO COREANO VERTICAL DIREITO */
+        .korean-vertical {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 80px;
+            font-weight: bold;
+            line-height: 1.1;
+            text-align: center;
+            color: #000;
+        }
+
+        /* ASSINATURAS (3 Colunas) */
+        .assinaturas-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 90%;
+            margin: 30px auto 0 auto;
+            position: relative;
+        }
+
+        .assinatura {
+            text-align: center;
+            font-size: 12px;
+            line-height: 1.3;
+            width: 32%;
+            position: relative;
+        }
+
+        .assinatura strong {
+            font-size: 13px;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .assinatura-img-container {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .assinatura-carimbo-coreano {
+            position: absolute;
+            left: -20px;
+            top: -10px;
+            height: 50px;
+        }
+        .assinatura-caneta-azul {
+            height: 50px;
+            opacity: 0.8;
+            transform: rotate(-10deg);
+        }
+
+        /* DATA RODAPÉ */
+        .data-rodape {
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        /* BOTOES */
         .acoes {
             position: fixed;
             bottom: 30px;
@@ -250,6 +298,28 @@
         const SUPABASE_KEY = "sb_publishable_AXK9wUTEpz-rSdmXYn2SUA_u8O_u6P0";
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // Mapeamento de Faixa para GUB
+        const MAPA_GUB = {
+            'branca': 10,
+            'ponta amarela': 9,
+            'amarela': 8,
+            'ponta verde': 7,
+            'verde': 6,
+            'ponta azul': 5,
+            'azul': 4,
+            'ponta vermelha': 3,
+            'vermelha': 2,
+            'ponta preta': 1
+        };
+
+        // Meses em português
+        const MESES = [
+            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+        ];
+
+
+
         async function gerarCertificados() {
             const urlParams = new URLSearchParams(window.location.search);
             const idsParam = urlParams.get('ids');
@@ -263,8 +333,7 @@
             const container = document.getElementById('certificados-container');
             container.innerHTML = ''; 
 
-            const hoje = new Date();
-            const dataFormatada = hoje.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+            const hoje = new Date(); // Usado só como fallback
 
             for (const idAluno of ids) {
                 const { data: aluno } = await _supabase
@@ -275,74 +344,112 @@
 
                 const { data: exames } = await _supabase
                     .from('exames_notas')
-                    .select('nota, faixa_avaliada, nome_real_avaliador')
+                    .select('nota, faixa_avaliada, nome_real_avaliador, data_exame')
                     .eq('id_aluno', idAluno)
-                    .order('criado_em', { ascending: false })
+                    .order('data_exame', { ascending: false })
                     .limit(1);
 
                 if (aluno && exames && exames.length > 0) {
                     const exame = exames[0];
                     
+                    // Conta quantos exames o aluno fez até a data deste exame para saber qual é o "Xº teste"
+                    let numeroTeste = 1;
+                    const dataRef = exame.data_exame || new Date().toISOString();
+                    const { count } = await _supabase
+                        .from('exames_notas')
+                        .select('*', { count: 'exact', head: true })
+                        .eq('id_aluno', idAluno)
+                        .lte('data_exame', dataRef);
+                    if (count) numeroTeste = count;
+
+                    const faixaAnterior = exame.faixa_avaliada.trim().toLowerCase();
+                    let novaFaixa = exame.faixa_avaliada;
+                    
+                    if (faixaAnterior === 'branca' || faixaAnterior === 'ponta amarela') {
+                        novaFaixa = 'Amarela';
+                    } else {
+                        const ORDEM_PADRAO = ['amarela', 'ponta verde', 'verde', 'ponta azul', 'azul', 'ponta vermelha', 'vermelha', 'ponta preta', 'preta 1º dan'];
+                        const idx = ORDEM_PADRAO.indexOf(faixaAnterior);
+                        if (idx !== -1 && idx < ORDEM_PADRAO.length - 1) {
+                            const prox = ORDEM_PADRAO[idx + 1];
+                            novaFaixa = prox.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ').replace('1º dan', '1º Dan'); 
+                        }
+                    }
+                    
+                    const gub = MAPA_GUB[novaFaixa.toLowerCase()] || "X";
+                    
+                    // Tratamento para não deixar número quebrado se não quiser
+                    const notaFinal = Math.round(exame.nota);
+                    
+                    // Pega a data exata em que o exame foi gravado no banco de dados
+                    const dataRealDoExame = exame.data_exame ? new Date(exame.data_exame) : hoje;
+                    const dataExtenso = `${dataRealDoExame.getDate()} de ${MESES[dataRealDoExame.getMonth()]} de ${dataRealDoExame.getFullYear()}`;
+                    
                     const cert = document.createElement('div');
                     cert.className = 'certificado';
                     cert.innerHTML = `
-                        <!-- Barras Laterais Coloridas -->
-                        <div class="barra-lateral barra-esquerda">
-                            <div class="tarja-amarela"></div>
-                            <div class="tarja-verde"></div>
-                        </div>
-                        <div class="barra-lateral barra-direita">
-                            <div class="tarja-amarela"></div>
-                            <div class="tarja-verde"></div>
-                        </div>
+                        <div class="moldura-dupla">
+                            <div class="moldura-interna">
+                                
+                                <!-- CABEÇALHO -->
+                                <div class="cabecalho">
+                                    <img src="public/assets/images/logo1.png" class="logo-esq" alt="Wil TKD Team" onerror="this.style.visibility='hidden'">
+                                    
+                                    <div class="header-center">
+                                        <div class="world-musa">WORLD MUSA</div>
+                                        <div class="taekwondo-brasil">TAEKWONDO <span class="brasil-badge">BRASIL</span></div>
+                                        <div class="korean-subtitle">태 권 도  마 르 케 시 니</div>
+                                    </div>
 
-                        <!-- Moldura Interna com Cantoneiras -->
-                        <div class="moldura">
-                            <div class="cantoneira top-left"></div>
-                            <div class="cantoneira top-right"></div>
-                            <div class="cantoneira bottom-left"></div>
-                            <div class="cantoneira bottom-right"></div>
-                        </div>
-
-                        <!-- Decoração Coreana -->
-                        <div class="korean-bg">태<br>권<br>도</div>
-
-                        <!-- Conteúdo Principal -->
-                        <div class="conteudo-interno">
-                            <div class="cabecalho">
-                                <div class="titulo-escola">
-                                    <img src="public/assets/images/logo.png" alt="Logo" style="height: 60px; margin-right: 15px; vertical-align: middle; border-radius: 50%;">
-                                    WIL <span>TKD</span>
+                                    <img src="public/assets/images/musa.png" class="logo-dir" alt="WMT Brasil" onerror="this.style.visibility='hidden'">
                                 </div>
-                                <div class="subtitulo-escola">Dojang • Escola de Artes Marciais</div>
-                            </div>
 
-                            <div class="certificado-titulo">Certificado de Graduação</div>
+                                <!-- TÍTULO -->
+                                <div class="titulo-certificado">CERTIFICADO DE GUB</div>
 
-                            <div class="texto-corpo">
-                                Conferimos o presente "CERTIFICADO DE GRADUAÇÃO" a <span class="nome-aluno">${aluno.nome}</span>, 
-                                por sua aprovação no exame técnico oficial de promoção de faixa da escola WIL TKD, demonstrando excelência 
-                                e domínio das técnicas necessárias, passando o titular, a partir desta data, 
-                                à graduação de <strong>${exame.faixa_avaliada}</strong> com nota final <strong>${exame.nota} pontos</strong>.
-                            </div>
-
-                            <div class="assinaturas">
-                                <div class="linha-assinatura">
-                                    Wiliam Longo
-                                    <span>Mestre / Diretor Geral</span>
+                                <!-- TEXTO PRINCIPAL -->
+                                <div class="corpo-texto">
+                                    <p style="text-align: center; margin-bottom: 15px;">Conferimos o presente "CERTIFICADO DE GUB" ao(à) aluno(a)</p>
+                                    <p style="text-align: center; margin-bottom: 15px;">
+                                        <span class="linha-aluno">${aluno.nome}</span>, por
+                                    </p>
+                                    <p style="text-align: justify;">
+                                        sua aprovação no <span class="linha-curta">${numeroTeste}º</span> teste de promoção de faixa da academia 
+                                        Wil TaeKwonDo Tean Marchesini, realizado de acordo com os regulamentos da Liga de TaeKwonDo do Estado de São Paulo — LITESP, 
+                                        passando o titular, a partir desta data, ao grau de <strong>${gub}º GUB (Faixa ${novaFaixa})</strong> com média final de <span class="linha-curta">${notaFinal}</span>%.
+                                    </p>
                                 </div>
-                                <div class="linha-assinatura">
-                                    ${exame.nome_real_avaliador || 'Avaliador 1'}
-                                    <span>Avaliador Oficial</span>
-                                </div>
-                                <div class="linha-assinatura">
-                                    &nbsp;
-                                    <span>Avaliador 2</span>
-                                </div>
-                            </div>
 
-                            <div class="selo-data">
-                                São Paulo, ${dataFormatada}
+                                <!-- TEXTO COREANO LATERAL DIREITO -->
+                                <div class="korean-vertical">태<br>권<br>도</div>
+
+                                <!-- ASSINATURAS -->
+                                <div class="assinaturas-container">
+                                    <div class="assinatura">
+                                        <strong>Grão Mestre José Alberto dos Santos</strong>
+                                        Presidente W.M.T.K.D. Brasil<br>
+                                        8º Dan
+                                    </div>
+                                    
+                                    <img src="public/assets/images/carimbo.png" style="position: absolute; left: 33%; top: 40px; transform: translateX(-50%); height: 70px; z-index: 10;" onerror="this.style.display='none'">
+
+                                    <div class="assinatura">
+                                        <strong>Mestre Fabricio Marchesini Fernandes</strong>
+                                        Sabonim 4º Dan<br>
+                                        CREF nº 042.659-G/SP
+                                    </div>
+                                    <div class="assinatura">
+                                        <strong>Wiliam Elteto Longo</strong>
+                                        Kyosanim 1º Dan<br>
+                                        <img src="public/assets/images/AssiWiliam.png" class="assinatura-caneta-azul" style="margin-top: 5px; display: block; margin-left: auto; margin-right: auto;" onerror="this.style.display='none'">
+                                    </div>
+                                </div>
+
+                                <!-- DATA (RODAPÉ) -->
+                                <div class="data-rodape">
+                                    São Bernardo do Campo, ${dataExtenso}.
+                                </div>
+
                             </div>
                         </div>
                     `;
@@ -353,7 +460,7 @@
             if (container.children.length === 0) {
                 container.innerHTML = '<div class="loading">Nenhum exame encontrado para os IDs informados.</div>';
             } else {
-                setTimeout(() => window.print(), 1200); /* Delay aumentado para garantir carregamento das fontes do Google */
+                setTimeout(() => window.print(), 1200);
             }
         }
 
