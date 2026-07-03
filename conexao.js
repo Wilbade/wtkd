@@ -210,6 +210,7 @@ function prepararEdicao(ds) {
 
     // Filtros para não exibir a string "null" nos inputs textuais
     document.getElementById('cpf').value          = (ds.cpf   && ds.cpf   !== 'null') ? ds.cpf   : '';
+    document.getElementById('faixa_inicial').value = ds.faixainicial || 'Branca';
     document.getElementById('tamanho_dobok').value = (ds.dobok && ds.dobok !== 'null') ? ds.dobok : '';
     document.getElementById('tamanho_faixa').value = (ds.faixa && ds.faixa !== 'null') ? ds.faixa : '';
     document.getElementById('observacoes').value   = (ds.obs   && ds.obs   !== 'null') ? ds.obs   : '';
@@ -294,6 +295,7 @@ async function carregarListaChamada() {
             tamanho_faixa,
             observacoes,
             foto_url,
+            faixa_inicial_cadastro,
             progresso_tecnico (faixa_atual, horas_acumuladas)
         `)
         .eq('status', 'ativo')
@@ -421,14 +423,14 @@ async function carregarListaChamada() {
             btnEditar.style.cssText  = 'background:none;border:none;cursor:pointer;font-size:18px;padding:4px;';
             btnEditar.dataset.action = 'editar';
 
-            // Dados sensíveis em data-* (nunca em onclick=)
-            btnEditar.dataset.id    = aluno.id;
-            btnEditar.dataset.nome  = aluno.nome;
-            btnEditar.dataset.nasc  = aluno.data_nascimento || '';
-            btnEditar.dataset.cpf   = aluno.cpf             || '';
-            btnEditar.dataset.dobok = aluno.tamanho_dobok   || '';
-            btnEditar.dataset.faixa = aluno.tamanho_faixa   || '';
-            btnEditar.dataset.obs   = aluno.observacoes     || '';
+            btnEditar.dataset.id           = aluno.id;
+            btnEditar.dataset.nome         = aluno.nome;
+            btnEditar.dataset.nasc         = aluno.data_nascimento || '';
+            btnEditar.dataset.cpf          = aluno.cpf             || '';
+            btnEditar.dataset.faixainicial = aluno.faixa_inicial_cadastro || '';
+            btnEditar.dataset.dobok        = aluno.tamanho_dobok   || '';
+            btnEditar.dataset.faixa        = aluno.tamanho_faixa   || '';
+            btnEditar.dataset.obs          = aluno.observacoes     || '';
 
             tdEditar.appendChild(btnEditar);
         } else {

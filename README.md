@@ -4,6 +4,16 @@ Sistema web completo para gerenciamento de alunos, controle de presença e banca
 
 ---
 
+## 🆕 Atualizações Recentes (Última Versão)
+
+- **Certificados Digitais Dinâmicos**: Botão de impressão adicionado direto na Lista de Chamada (`painel.html`). O certificado busca automaticamente a graduação exata do banco (`progresso_tecnico`) e aplica assinaturas e carimbos reposicionados (`certificado.html`).
+- **Lógica de Transição de Faixas**: O sistema de exame (`exame.html`) foi atualizado para que alunos ingressantes (Branca) pulem diretamente para Amarela, mantendo suporte retroativo para os antigos alunos de Ponta Amarela, que também avançam para Amarela.
+- **Painel Mobile**: Ampliação da foto do aluno (60x60px) na lista de chamada para facilitar a identificação visual em celulares.
+- **Robustez no Upload de Fotos**: A função de upload de avatares no Supabase (`conexao.js`) agora limpa acentos e caracteres especiais (`normalize("NFD")`) dos nomes de arquivo, erradicando o erro `Invalid Key`.
+- **Correção de UX no Cadastro**: A edição de alunos agora carrega corretamente a `faixa_inicial_cadastro` registrada historicamente, corrigindo o bug visual onde o dropdown sempre exibia "Branca" por padrão. Correção também do erro `classList` ao alternar abas de matrícula.
+
+---
+
 ## 🥋 Funcionalidades
 
 | Módulo | Arquivo | Descrição |
