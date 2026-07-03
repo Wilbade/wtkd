@@ -220,7 +220,8 @@ function prepararEdicao(ds) {
 
     // Navega para a aba de Matrícula
     if (typeof alternarAba === 'function') {
-        alternarAba('aba-cadastro', document.querySelectorAll('.aba-btn')[1]);
+        const navMatricula = document.getElementById('nav-matricula');
+        alternarAba('aba-cadastro', navMatricula);
     }
 }
 

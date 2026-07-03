@@ -645,9 +645,10 @@
     // ============================================================
     function alternarAba(secaoId, botaoClicado) {
         document.querySelectorAll('.conteudo-secao').forEach(s => s.classList.remove('ativa'));
-        document.querySelectorAll('.aba-btn').forEach(b => b.classList.remove('ativa'));
-        document.getElementById(secaoId).classList.add('ativa');
-        botaoClicado.classList.add('ativa');
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('ativa'));
+        const secao = document.getElementById(secaoId);
+        if (secao) secao.classList.add('ativa');
+        if (botaoClicado) botaoClicado.classList.add('ativa');
     }
 </script>
 <script src="conexao.js"></script>
