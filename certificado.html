@@ -362,18 +362,16 @@
                         .lte('data_exame', dataRef);
                     if (count) numeroTeste = count;
 
-                    const faixaAnterior = exame.faixa_avaliada.trim().toLowerCase();
                     let novaFaixa = exame.faixa_avaliada;
                     
-                    if (faixaAnterior === 'branca' || faixaAnterior === 'ponta amarela') {
-                        novaFaixa = 'Amarela';
-                    } else {
-                        const ORDEM_PADRAO = ['amarela', 'ponta verde', 'verde', 'ponta azul', 'azul', 'ponta vermelha', 'vermelha', 'ponta preta', 'preta 1º dan'];
-                        const idx = ORDEM_PADRAO.indexOf(faixaAnterior);
-                        if (idx !== -1 && idx < ORDEM_PADRAO.length - 1) {
-                            const prox = ORDEM_PADRAO[idx + 1];
-                            novaFaixa = prox.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ').replace('1º dan', '1º Dan'); 
-                        }
+                    const { data: progresso } = await _supabase
+                        .from('progresso_tecnico')
+                        .select('faixa_atual')
+                        .eq('aluno_id', idAluno)
+                        .single();
+
+                    if (progresso && progresso.faixa_atual) {
+                        novaFaixa = progresso.faixa_atual.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ').replace('1º dan', '1º Dan');
                     }
                     
                     const gub = MAPA_GUB[novaFaixa.toLowerCase()] || "X";
