@@ -262,7 +262,7 @@
                     <a href="index.html" class="nav-brand">
                         <img src="public/assets/images/logo.png" alt="WIL TKD Logo">
                         <div class="nav-brand-text">
-                            <h1>WIL <span>TKD</span></h1>
+                            <h1>WIL <span>TAEKWONDO</span></h1>
                         </div>
                     </a>
 
