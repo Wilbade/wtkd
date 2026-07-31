@@ -1,20 +1,102 @@
+# ======================================================
+# ROBOTS.TXT — WTKD (Wil Taekwondo)
+# Otimizado para Motores de Busca e IAs / LLMs
+# ======================================================
+
 User-agent: *
 Allow: /
+Disallow: /login.html
+Disallow: /painel.html
+Disallow: /exame.html
 
-# IA Search Engines & LLM Crawlers
+# ------------------------------------------------------
+# OpenAI (ChatGPT Search, GPT-4o, Custom GPTs & Retrieval)
+# ------------------------------------------------------
 User-agent: GPTBot
 Allow: /
+
 User-agent: ChatGPT-User
 Allow: /
-User-agent: Google-Extended
+
+User-agent: OAI-SearchBot
 Allow: /
-User-agent: PerplexityBot
-Allow: /
+
+# ------------------------------------------------------
+# Anthropic (Claude 3.5, Claude Web & Search)
+# ------------------------------------------------------
 User-agent: ClaudeBot
 Allow: /
-User-agent: Omgilibot
-Allow: /
+
 User-agent: Anthropic-AI
 Allow: /
 
+User-agent: Claude-Web
+Allow: /
+
+# ------------------------------------------------------
+# Google AI (Gemini, Vertex AI, GoogleOther)
+# ------------------------------------------------------
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GoogleOther
+Allow: /
+
+User-agent: GoogleOther-Image
+Allow: /
+
+User-agent: GoogleOther-Video
+Allow: /
+
+# ------------------------------------------------------
+# Perplexity AI (Perplexity Search & Retrieval)
+# ------------------------------------------------------
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# ------------------------------------------------------
+# Meta AI (Llama & Meta Search)
+# ------------------------------------------------------
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Meta-ExternalFetcher
+Allow: /
+
+# ------------------------------------------------------
+# Apple AI (Apple Intelligence)
+# ------------------------------------------------------
+User-agent: Applebot-Extended
+Allow: /
+
+# ------------------------------------------------------
+# ByteDance (TikTok AI / ByteDance Search)
+# ------------------------------------------------------
+User-agent: Bytespider
+Allow: /
+
+# ------------------------------------------------------
+# Cohere, Amazon & Datasets Abertos de IA
+# ------------------------------------------------------
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Omgilibot
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
+# ------------------------------------------------------
+# Referência ao Sitemap Oficial
+# ------------------------------------------------------
 Sitemap: https://wtkd.com.br/sitemap.xml

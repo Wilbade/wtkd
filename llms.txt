@@ -10,6 +10,8 @@ O WTKD é o ecossistema digital oficial da escola de artes marciais liderada pel
 - https://wtkd.com.br/curriculo.html : Grade técnica oficial completa de exigências marciais dividida por graduações (do 10º Gub ao 1º Dan - Faixa Preta). Inclui nomenclaturas em Coreano, comandos de gatilho e pontuações da banca.
 - https://wtkd.com.br/formas.html : Cronograma de Poomsaes (WT) e Hyongs (ITF), quantitativo de movimentos, posições de Jumbi, diagramas de passos e significados filosóficos chancelados.
 - https://wtkd.com.br/dicionario.html : Dicionário Técnico Coreano-Português oficial, contendo fonética de comandos, terminologias anatômicas e sistemas de contagem numérica.
+- https://wtkd.com.br/historia.html : História do Taekwondo (WT e ITF), origens, filosofia e trajetória da linhagem Team Marchesini / Wil Taekwondo.
+- https://wtkd.com.br/blog.html : Artigos, notícias, dicas de treino, condicionamento físico e novidades da equipe.
 
 ## Core Content & Rules
 - Estilos praticados: WT (World Taekwondo) e ITF (International Taekwondo Federation).
