@@ -212,6 +212,7 @@
     // ============================================================
     const NAV_LINKS = [
         { href: 'index.html',      label: 'Início'    },
+        { href: 'wmt.html',        label: 'W.M.T'     },
         { href: 'historia.html',   label: 'História'  },
         { href: 'formas.html',     label: 'Formas'    },
         { href: 'dicionario.html', label: 'Dicionário'},
