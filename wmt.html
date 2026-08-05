@@ -32,7 +32,7 @@
           "name": "World Musa Taekwondo (W.M.T)",
           "alternateName": ["WMT Korea", "World Musa Taekwondo Brasil", "W.M.T"],
           "url": "https://wtkd.com.br/wmt.html",
-          "logo": "https://wtkd.com.br/public/assets/images/logo.png",
+          "logo": "https://wtkd.com.br/public/assets/images/musa.png",
           "description": "Entidade mundial sediada na Coreia do Sul dedicada ao resgate dos valores tradicionais, disciplina, defesa pessoal real (Hosinsul) e promoção do Taekwondo esportivo e tradicional em âmbito global.",
           "knowsAbout": [
             "Taekwondo Tradicional (ITF)",
@@ -314,6 +314,68 @@
             line-height: 1.6;
         }
 
+        /* Hero Banner e Logos Oficiais */
+        .wmt-hero-banner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, rgba(255, 26, 26, 0.15) 0%, rgba(20, 20, 20, 0.95) 70%);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 36px 24px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wmt-logos-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 36px;
+            flex-wrap: wrap;
+        }
+
+        .wmt-logo-emblem {
+            max-height: 140px;
+            width: auto;
+            filter: drop-shadow(0 0 20px rgba(255, 26, 26, 0.35));
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .wmt-logo-emblem:hover {
+            transform: scale(1.06);
+            filter: drop-shadow(0 0 30px rgba(255, 26, 26, 0.6));
+        }
+
+        .wmt-logo-banner {
+            max-height: 80px;
+            max-width: 100%;
+            width: auto;
+            filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.9));
+            transition: transform 0.3s ease;
+        }
+
+        .wmt-logo-banner:hover {
+            transform: scale(1.03);
+        }
+
+        @media (max-width: 600px) {
+            .wmt-logos-wrapper {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .wmt-logo-emblem {
+                max-height: 110px;
+            }
+            .wmt-logo-banner {
+                max-height: 55px;
+            }
+        }
+
         footer {
             background-color: rgba(0, 0, 0, 0.5);
             padding: 32px 24px;
@@ -338,6 +400,13 @@
         <div class="page-title">
             <h2>World Musa Taekwondo (W.M.T)</h2>
             <p>Chancela Internacional Coreana, Formação Marcial Integral e Validação de Graduações</p>
+        </div>
+
+        <div class="wmt-hero-banner">
+            <div class="wmt-logos-wrapper">
+                <img src="public/assets/images/musa.png" alt="Emblema Oficial World Musa Taekwondo W.M.T - Brasil" class="wmt-logo-emblem">
+                <img src="public/assets/images/wmt-banner.png" alt="World Musa Taekwondo Brasil Logo" class="wmt-logo-banner">
+            </div>
         </div>
 
         <div class="card-wmt">
