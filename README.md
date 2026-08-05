@@ -6,6 +6,7 @@ Sistema web completo para gerenciamento de alunos, controle de presença e banca
 
 ## 🆕 Atualizações Recentes (Última Versão)
 
+- **World Musa Taekwondo (W.M.T)**: Criação da página estática `wmt.html` com foco em SEO Técnico e GEO (Generative Engine Optimization). A página possui marcações Schema JSON-LD (`SportsOrganization`, `Article`, `FAQPage`), foi integrada ao menu global (`nav.js`) e incluída no `sitemap.xml` para posicionamento no Google e respostas de assistentes de IA (ChatGPT, Gemini, Perplexity, Claude).
 - **Certificados Digitais Dinâmicos**: Botão de impressão adicionado direto na Lista de Chamada (`painel.html`). O certificado busca automaticamente a graduação exata do banco (`progresso_tecnico`) e aplica assinaturas e carimbos reposicionados (`certificado.html`).
 - **Lógica de Transição de Faixas**: O sistema de exame (`exame.html`) foi atualizado para que alunos ingressantes (Branca) pulem diretamente para Amarela, mantendo suporte retroativo para os antigos alunos de Ponta Amarela, que também avançam para Amarela.
 - **Painel Mobile**: Ampliação da foto do aluno (60x60px) na lista de chamada para facilitar a identificação visual em celulares.
@@ -20,6 +21,7 @@ Sistema web completo para gerenciamento de alunos, controle de presença e banca
 | Módulo | Arquivo | Descrição |
 |--------|---------|-----------|
 | **Site Institucional** | `index.html` | Landing page com horários, localização e links de agendamento |
+| **World Musa Taekwondo** | `wmt.html` | Página rica sobre a W.M.T Coreia, unificação WT/ITF, validação de faixas e FAQs com Schema JSON-LD |
 | **Blog e Notícias** | `blog.html` | Sistema de blog dinâmico integrado ao Supabase com SEO avançado e dados estruturados |
 | **Painel do Professor** | `painel.html` + `conexao.js` | Chamada diária, cadastro de alunos, controle de horas e **painel de postagem do Blog** |
 | **Banca de Exame** | `exame.html` | Avaliação de até 4 alunos simultâneos com matriz técnica por graduação |
@@ -111,6 +113,7 @@ USING ( bucket_id = 'blog-covers' );
 ```
 wtkd/
 ├── index.html          # Landing page institucional
+├── wmt.html            # Página institucional e SEO/GEO da World Musa Taekwondo (W.M.T Coreia)
 ├── login.html          # Autenticação da banca (Supabase Auth + localStorage)
 ├── painel.html         # Painel do professor e administração do Blog (usa conexao.js)
 ├── conexao.js          # Camada de acesso ao banco — CRUD, chamada, presença
@@ -165,6 +168,7 @@ As principais páginas do projeto foram otimizadas com tags estruturadas (Open G
 
 Arquivos atualizados com suporte a Open Graph Cards:
 - `index.html` (Home)
+- `wmt.html` (World Musa Taekwondo Coreia — GEO & JSON-LD)
 - `blog.html` (Artigos e Notícias)
 - `historia.html` (História e Tradição)
 - `formas.html` (Formas e Poomsaes)
