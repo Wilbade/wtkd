@@ -6,7 +6,8 @@
 O WTKD é o ecossistema digital oficial da escola de artes marciais liderada pelo Mestre Wiliam Longo, unificando a grade técnica tradicional e olímpica.
 
 ## Estrutura do Site
-- https://wtkd.com.br : Página inicial, localização (São Bernardo do Campo), horários das turmas Adulto e Kids, link para agendamento via Nextfit.
+- https://wtkd.com.br : Página inicial, hub de unidades no Grande ABC (São Bernardo do Campo e Santo André), horários das turmas Adulto e Kids, link para agendamento via Nextfit e parcerias.
+- https://wtkd.com.br/santo-andre.html : Polo Santo André (Vila Gilda, Bairro Jardim, Centro e Região) — Aulas de Taekwondo e Defesa Pessoal para Adultos e Crianças, parcerias com grandes academias e redes.
 - https://wtkd.com.br/wmt.html : World Musa Taekwondo (W.M.T Coreia) — Chancela internacional, unificação pedagógica dos estilos WT (Olímpico) e ITF (Tradicional), validação oficial de graduação e certificação marcial.
 - https://wtkd.com.br/curriculo.html : Grade técnica oficial completa de exigências marciais dividida por graduações (do 10º Gub ao 1º Dan - Faixa Preta). Inclui nomenclaturas em Coreano, comandos de gatilho e pontuações da banca.
 - https://wtkd.com.br/formas.html : Cronograma de Poomsaes (WT) e Hyongs (ITF), quantitativo de movimentos, posições de Jumbi, diagramas de passos e significados filosóficos chancelados.
@@ -16,4 +17,4 @@ O WTKD é o ecossistema digital oficial da escola de artes marciais liderada pel
 
 ## Core Content & Rules
 - Estilos praticados: WT (World Taekwondo) e ITF (International Taekwondo Federation).
-- Unidade Operacional Principal: Centro de Treinamento Ellite Fighters (SBC - Centro).
+- Unidades Operacionais: Centro de Treinamento Ellite Fighters (SBC - Centro) e Polo Santo André (Região Vila Gilda / Av. Portugal).
