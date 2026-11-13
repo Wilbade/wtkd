@@ -416,6 +416,7 @@
     
     <nav id="main-nav" class="global-nav">
         <a href="#" id="nav-chamada" class="nav-item ativa" onclick="alternarAba('aba-chamada', this)"><span>📅</span>Chamada</a>
+        <a href="#" id="nav-relatorio" class="nav-item" onclick="alternarAba('aba-relatorio', this)"><span>📋</span>Presenças</a>
         <a href="#" id="nav-blog" class="nav-item" onclick="alternarAba('aba-blog', this)"><span>📰</span>Blog</a>
         <a href="#" id="nav-matricula" class="nav-item" onclick="alternarAba('aba-cadastro', this)"><span>📝</span>Matrícula</a>
         <a href="exame.html" id="nav-exame" class="nav-item"><span>🥋</span>Exame</a>
@@ -435,9 +436,15 @@
 <section id="aba-chamada" class="conteudo-secao ativa">
     <div class="secao-titulo">Lista de Chamada</div>
 
-    <div class="filtro-data">
-        <label for="data_chamada">Data da aula:</label>
-        <input type="date" id="data_chamada">
+    <div class="filtro-data" style="justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <label for="data_chamada">Data da aula:</label>
+            <input type="date" id="data_chamada">
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" onclick="alternarAba('aba-relatorio', document.getElementById('nav-relatorio'))" style="padding: 8px 14px; background: #1c1c1e; border: 1px solid #3a3a3c; color: #ff9f0a; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;">📋 Ver Lista / WhatsApp</button>
+            <button type="button" onclick="abrirRelatorioPDFExterno()" style="padding: 8px 14px; background: var(--primary); border: none; color: #fff; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;">📄 PDF Detalhado</button>
+        </div>
     </div>
 
     <div class="tabela-wrapper">
@@ -463,7 +470,624 @@
 </section>
 
 <!-- ============================================================
-     ABA 2: MATRÍCULA / CADASTRO DE ALUNOS
+     ABA 1.5: RELATÓRIO DE PRESENÇAS (A PARTIR DE OUTUBRO/2026)
+     Visualização por Mês, Data ou Período, Copia e Cola fácil
+     para WhatsApp e botão para gerar PDF detalhado externo.
+============================================================ -->
+<section id="aba-relatorio" class="conteudo-secao">
+    <style>
+        .relatorio-topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .relatorio-aviso-outubro {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--accent);
+            background: rgba(255, 159, 10, 0.1);
+            border: 1px solid rgba(255, 159, 10, 0.3);
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        .btn-pdf-externo {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 18px;
+            background: linear-gradient(135deg, #ff1a1a, #b30000);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 26, 26, 0.3);
+            transition: transform 0.15s, opacity 0.2s;
+            text-decoration: none;
+        }
+        .btn-pdf-externo:hover { transform: translateY(-1px); opacity: 0.95; }
+
+        /* Barra de Filtros do Relatório */
+        .relatorio-filtros-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 18px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 14px;
+            align-items: end;
+        }
+
+        .relatorio-campo {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .relatorio-campo label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-label);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .relatorio-campo select,
+        .relatorio-campo input {
+            padding: 10px 12px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 13.5px;
+            outline: none;
+            width: 100%;
+        }
+
+        .relatorio-campo select:focus,
+        .relatorio-campo input:focus {
+            border-color: var(--accent);
+        }
+
+        /* Cards de Resumo (KPIs) */
+        .relatorio-kpis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .kpi-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 14px 16px;
+        }
+
+        .kpi-card .kpi-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+        }
+
+        .kpi-card .kpi-valor {
+            font-size: 24px;
+            font-weight: 900;
+            margin-top: 4px;
+            color: #fff;
+        }
+
+        .kpi-card .kpi-sub {
+            font-size: 11.5px;
+            color: #8e8e93;
+            margin-top: 3px;
+            line-height: 1.3;
+        }
+
+        /* Painel WhatsApp (Copia e Cola Fácil) */
+        .whats-box {
+            background: #121c15;
+            border: 1px solid rgba(48, 209, 88, 0.35);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .whats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .whats-titulo {
+            font-size: 15px;
+            font-weight: 800;
+            color: #30d158;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .whats-formatos {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .btn-formato-whats {
+            padding: 7px 12px;
+            background: #1c2b20;
+            color: #b7e4c7;
+            border: 1px solid rgba(48, 209, 88, 0.25);
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-formato-whats.ativo {
+            background: #30d158;
+            color: #000;
+            border-color: #30d158;
+            font-weight: 800;
+        }
+
+        .whats-textarea {
+            width: 100%;
+            min-height: 175px;
+            max-height: 320px;
+            background: #0b110d;
+            border: 1px solid rgba(48, 209, 88, 0.3);
+            border-radius: 8px;
+            color: #e8f5e9;
+            padding: 12px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            resize: vertical;
+            outline: none;
+        }
+
+        .whats-acoes {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-copiar-whats {
+            padding: 10px 18px;
+            background: #30d158;
+            color: #06210c;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        .btn-copiar-whats:hover { opacity: 0.9; }
+        .btn-copiar-whats:active { transform: scale(0.98); }
+
+        .btn-abrir-whats {
+            padding: 10px 16px;
+            background: #1f3524;
+            color: #30d158;
+            border: 1px solid #30d158;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-abrir-whats:hover { background: #27452e; }
+
+        /* Alternador de Visualização (Lista Detalhada vs Matriz de Dias) */
+        .relatorio-view-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .view-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-view-tab {
+            padding: 8px 14px;
+            background: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-view-tab.ativo {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        /* Lista Visual de Alunos (Datas que vieram e faltaram) */
+        .relatorio-lista-alunos {
+            display: grid;
+            gap: 10px;
+        }
+
+        .aluno-presenca-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: border-color 0.15s;
+        }
+
+        .aluno-presenca-card:hover {
+            border-color: #3a3a3c;
+        }
+
+        .aluno-presenca-topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .aluno-presenca-nome {
+            font-size: 15.5px;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .aluno-presenca-grad {
+            font-size: 11px;
+            font-weight: 600;
+            color: #ccc;
+            background: #222;
+            border: 1px solid #333;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .aluno-presenca-badges {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .pill-stat {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .pill-veio {
+            background: rgba(48, 209, 88, 0.15);
+            color: #30d158;
+            border: 1px solid rgba(48, 209, 88, 0.35);
+        }
+
+        .pill-faltou {
+            background: rgba(255, 69, 58, 0.12);
+            color: #ff6961;
+            border: 1px solid rgba(255, 69, 58, 0.3);
+        }
+
+        .pill-freq {
+            background: #222;
+            color: #d1d1d6;
+            border: 1px solid #38383a;
+        }
+
+        .btn-copiar-individual {
+            padding: 5px 10px;
+            background: #1c1c1e;
+            color: #a0a0a0;
+            border: 1px solid #333;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-copiar-individual:hover {
+            color: #fff;
+            border-color: #30d158;
+        }
+
+        .aluno-datas-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed #262626;
+        }
+
+        @media (min-width: 700px) {
+            .aluno-datas-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .bloco-datas-linha {
+            font-size: 12.5px;
+            line-height: 1.5;
+            background: #101012;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #1f1f22;
+        }
+
+        .bloco-datas-label {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .data-chip {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            margin: 2px 4px 2px 0;
+            font-family: 'Consolas', monospace;
+        }
+
+        .data-chip-veio {
+            background: rgba(48, 209, 88, 0.16);
+            color: #4cd964;
+            border: 1px solid rgba(48, 209, 88, 0.3);
+        }
+
+        .data-chip-faltou {
+            background: rgba(255, 69, 58, 0.12);
+            color: #ff6961;
+            border: 1px solid rgba(255, 69, 58, 0.25);
+        }
+
+        /* Matriz / Tabela Cruzada de Dias */
+        .matriz-presenca-wrapper {
+            overflow-x: auto;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+        }
+
+        .tabela-matriz {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.5px;
+        }
+
+        .tabela-matriz th,
+        .tabela-matriz td {
+            padding: 9px 8px;
+            border-bottom: 1px solid #222;
+            border-right: 1px solid #1f1f1f;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .tabela-matriz th:first-child,
+        .tabela-matriz td:first-child {
+            text-align: left;
+            position: sticky;
+            left: 0;
+            background: #161618;
+            z-index: 2;
+            font-weight: 700;
+            min-width: 190px;
+            border-right: 2px solid #2c2c2e;
+        }
+
+        .tabela-matriz tr:hover td {
+            background: #1c1c1f;
+        }
+    </style>
+
+    <div class="relatorio-topo">
+        <div>
+            <div class="secao-titulo" style="margin-bottom: 4px;">Lista de Presença &amp; Frequência</div>
+            <div class="relatorio-aviso-outubro">
+                📌 Dados contabilizados a partir de 01 de Outubro de 2026
+            </div>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button type="button" class="btn-pdf-externo" onclick="abrirRelatorioPDFExterno()">
+                📄 Gerar PDF Detalhado (Página Externa)
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="relatorio-filtros-card">
+        <div class="relatorio-campo">
+            <label for="relatorio_modo_filtro">Filtrar Por</label>
+            <select id="relatorio_modo_filtro" onchange="alternarModoFiltroRelatorio()">
+                <option value="mensal">📅 Mensal / Acumulado</option>
+                <option value="data">📍 Data Específica (Dia de Aula)</option>
+                <option value="periodo">📆 Intervalo de Datas</option>
+            </select>
+        </div>
+
+        <!-- Controle Mensal -->
+        <div class="relatorio-campo" id="grupo_filtro_mes">
+            <label for="relatorio_mes">Mês (a partir de Out/2026)</label>
+            <select id="relatorio_mes" onchange="renderizarRelatorioPresenca()">
+                <option value="todos">📊 Todos (Desde Outubro/2026)</option>
+            </select>
+        </div>
+
+        <!-- Controle Data Específica -->
+        <div class="relatorio-campo" id="grupo_filtro_data_aula" style="display: none;">
+            <label for="relatorio_select_aula">Aula Registrada</label>
+            <select id="relatorio_select_aula" onchange="sincronizarDataAulaSelect()">
+                <option value="">Selecione uma aula...</option>
+            </select>
+        </div>
+
+        <div class="relatorio-campo" id="grupo_filtro_data_input" style="display: none;">
+            <label for="relatorio_data_unica">Ou escolha no Calendário</label>
+            <input type="date" id="relatorio_data_unica" min="2026-10-01" onchange="renderizarRelatorioPresenca()">
+        </div>
+
+        <!-- Controle Intervalo -->
+        <div class="relatorio-campo" id="grupo_filtro_inicio" style="display: none;">
+            <label for="relatorio_data_inicio">De (Mín. 01/10/2026)</label>
+            <input type="date" id="relatorio_data_inicio" min="2026-10-01" value="2026-10-01" onchange="renderizarRelatorioPresenca()">
+        </div>
+
+        <div class="relatorio-campo" id="grupo_filtro_fim" style="display: none;">
+            <label for="relatorio_data_fim">Até</label>
+            <input type="date" id="relatorio_data_fim" min="2026-10-01" onchange="renderizarRelatorioPresenca()">
+        </div>
+
+        <!-- Busca de Aluno -->
+        <div class="relatorio-campo">
+            <label for="relatorio_busca_aluno">Buscar Aluno</label>
+            <input type="text" id="relatorio_busca_aluno" placeholder="Digite o nome..." oninput="renderizarRelatorioPresenca()">
+        </div>
+
+        <!-- Filtro de Presença -->
+        <div class="relatorio-campo">
+            <label for="relatorio_filtro_status">Exibir Alunos</label>
+            <select id="relatorio_filtro_status" onchange="renderizarRelatorioPresenca()">
+                <option value="todos">Todos os Alunos</option>
+                <option value="vieram">Com Presença no Período</option>
+                <option value="faltaram">Com Faltas no Período</option>
+                <option value="sem_presenca">Sem Nenhuma Presença</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Indicadores Resumo -->
+    <div class="relatorio-kpis">
+        <div class="kpi-card">
+            <div class="kpi-label">Alunos na Lista</div>
+            <div class="kpi-valor" id="kpi_total_alunos">0</div>
+            <div class="kpi-sub" id="kpi_sub_alunos">Ativos no sistema</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Aulas no Período</div>
+            <div class="kpi-valor" id="kpi_total_aulas">0</div>
+            <div class="kpi-sub" id="kpi_sub_aulas">Datas com chamada</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Total de Presenças</div>
+            <div class="kpi-valor" style="color: #30d158;" id="kpi_total_presencas">0</div>
+            <div class="kpi-sub" id="kpi_sub_presencas">Treinos realizados</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Frequência Média</div>
+            <div class="kpi-valor" style="color: var(--accent);" id="kpi_media_freq">0%</div>
+            <div class="kpi-sub" id="kpi_sub_freq">Taxa de assiduidade</div>
+        </div>
+    </div>
+
+    <!-- Caixa de Copia e Cola para WhatsApp -->
+    <div class="whats-box">
+        <div class="whats-header">
+            <div class="whats-titulo">
+                <span>📲</span> Lista Pronta para Copiar / Enviar no WhatsApp
+            </div>
+            <div class="whats-acoes">
+                <button type="button" class="btn-copiar-whats" onclick="copiarTextoRelatorioWhats()">
+                    📋 Copiar Lista (Copia e Cola)
+                </button>
+                <button type="button" class="btn-abrir-whats" onclick="enviarRelatorioWhatsDireto()">
+                    🟢 Abrir no WhatsApp
+                </button>
+            </div>
+        </div>
+
+        <div class="whats-formatos">
+            <button type="button" class="btn-formato-whats ativo" data-formato="simples" onclick="selecionarFormatoWhats('simples', this)">
+                1. Simples (Nome Completo + Dias que Vieram)
+            </button>
+            <button type="button" class="btn-formato-whats" data-formato="compacto" onclick="selecionarFormatoWhats('compacto', this)">
+                2. Compacto (1 Linha por Aluno)
+            </button>
+            <button type="button" class="btn-formato-whats" data-formato="completo" onclick="selecionarFormatoWhats('completo', this)">
+                3. Completo (Dias que Vieram + Dias que Faltaram)
+            </button>
+            <button type="button" class="btn-formato-whats" data-formato="por_dia" onclick="selecionarFormatoWhats('por_dia', this)">
+                4. Resumo de Presentes ✅ e Faltantes ❌
+            </button>
+        </div>
+
+        <textarea id="texto_whatsapp_relatorio" class="whats-textarea" onclick="this.select()" title="Clique para selecionar tudo"></textarea>
+        <div style="font-size: 11.5px; color: #8e8e93; margin-top: 6px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <span>💡 Dica: Clique em "Copiar Lista" acima ou clique dentro da caixa para selecionar tudo e colar no WhatsApp.</span>
+            <span id="contador_linhas_whats"></span>
+        </div>
+    </div>
+
+    <!-- Barra de Alternância entre Lista de Cards e Grade/Matriz -->
+    <div class="relatorio-view-bar">
+        <div class="view-tabs">
+            <button type="button" class="btn-view-tab ativo" id="btn_view_cards" onclick="alternarVisaoRelatorio('cards')">
+                📋 Lista com Datas (Vieram e Faltaram)
+            </button>
+            <button type="button" class="btn-view-tab" id="btn_view_matriz" onclick="alternarVisaoRelatorio('matriz')">
+                🗓️ Grade de Dias (Tabela Cruzada)
+            </button>
+        </div>
+        <button type="button" onclick="carregarRelatorioPresenca(true)" style="padding: 7px 12px; background: #1c1c1e; border: 1px solid #333; color: #ccc; border-radius: 6px; font-size: 12px; cursor: pointer;">
+            🔄 Atualizar Dados
+        </button>
+    </div>
+
+    <!-- Visão 1: Cards/Lista com Nome Completo, Datas que Vieram e Datas que Faltaram -->
+    <div id="relatorio_visao_cards" class="relatorio-lista-alunos"></div>
+
+    <!-- Visão 2: Matriz Cruzada (Aluno x Dias de Aula) -->
+    <div id="relatorio_visao_matriz" class="matriz-presenca-wrapper" style="display: none;">
+        <table class="tabela-matriz" id="tabela_matriz_presenca"></table>
+    </div>
+</section>
      Formulário híbrido INSERT (novo) / UPDATE (edição).
      O campo oculto #aluno_id_edicao controla o modo:
        - Vazio   → INSERT (novo aluno)
@@ -661,6 +1285,9 @@
         const secao = document.getElementById(secaoId);
         if (secao) secao.classList.add('ativa');
         if (botaoClicado) botaoClicado.classList.add('ativa');
+        if (secaoId === 'aba-relatorio' && typeof carregarRelatorioPresenca === 'function') {
+            carregarRelatorioPresenca();
+        }
     }
 </script>
 <script src="conexao.js"></script>

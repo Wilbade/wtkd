@@ -107,19 +107,23 @@ function aplicarRegrasDeMenu() {
     const isA = isAvaliador(contaAtual);
 
     const navChamada = document.getElementById('nav-chamada');
+    const navRelatorio = document.getElementById('nav-relatorio');
     const navMatricula = document.getElementById('nav-matricula');
     const navExame = document.getElementById('nav-exame');
     const navBlog = document.getElementById('nav-blog');
 
     // Regras para não-Master
     if (!isM) {
-        // Esconde Chamada (Navegação inferior/superior)
+        // Esconde Chamada e Relatório (Navegação inferior/superior)
         if (navChamada) {
             navChamada.style.display = 'none';
             // Se a pessoa está no painel, força abrir a aba matrícula
             if (typeof alternarAba === 'function' && navMatricula) {
                 alternarAba('aba-cadastro', navMatricula);
             }
+        }
+        if (navRelatorio) {
+            navRelatorio.style.display = 'none';
         }
     }
 
@@ -137,6 +141,7 @@ function aplicarRegrasDeMenu() {
     if (isA && !isM) {
         if (navMatricula) navMatricula.style.display = 'none';
         if (navChamada) navChamada.style.display = 'none';
+        if (navRelatorio) navRelatorio.style.display = 'none';
     }
 }
 
